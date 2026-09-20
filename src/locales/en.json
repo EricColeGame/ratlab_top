@@ -1,6 +1,6 @@
 {
   "site": {
-    "name": "Rat Lab Wiki",
+    "name": "Ratlab Wiki",
     "shortName": "Rat Lab",
     "tagline": "Laboratory Escape Guides, Mutations & Codes",
     "description": "Rat Lab Wiki provides Roblox Rat Lab guides, mutation tips, gameplay information, role explanations, updates, and everything players need to explore the laboratory.",
@@ -39,101 +39,45 @@
         {
           "number": "1",
           "title": "Beginner Guide",
-          "description": "Master the Spirit World from day one with our comprehensive beginner guide covering controls, combat, and early progression."
+          "description": "Learn the core escape loop, chamber navigation, and basic controls to survive your first laboratory run."
         },
         {
           "number": "2",
-          "title": "Fastest Leveling",
-          "description": "Dominate early game and max your progression with the most efficient leveling routes and strategies."
+          "title": "Fastest Progression",
+          "description": "Discover the most efficient routes through test chambers and optimize task completion for faster advancement."
         },
         {
           "number": "3",
-          "title": "Best Farming Spots",
-          "description": "Maximize your Soul Essence and EXP gains with optimal farming locations for every stage."
+          "title": "Mutations Guide",
+          "description": "Experiment with genetic traits and biological upgrades to unlock essential puzzle-solving and escape abilities."
         },
         {
           "number": "4",
-          "title": "How to Extract",
-          "description": "Learn the best methods and locations for extracting resources in Rat Lab."
+          "title": "Mission Objectives",
+          "description": "Tackle daily research tasks, unlock security doors, and complete challenging chamber experiments."
         }
       ]
     },
     "popular": {
-      "eyebrow": "Popular Pages",
-      "title": "Trending Now",
+      "eyebrow": "Popular Guides",
+      "title": "Trending Topics",
       "quickLinks": [
-        "Hollow Progression",
-        "Fastest Leveling",
-        "Spirit Charms",
-        "All Boss Guides"
-      ],
-      "cards": [
-        {
-          "badge": "Beginner",
-          "title": "Beginner Guide",
-          "description": "Everything you need from your first login to mastering the basics of combat and progression.",
-          "href": "/beginner-guide"
-        },
-        {
-          "badge": "Updated",
-          "title": "Active Codes",
-          "description": "All working codes with rewards redeem before they expire.",
-          "href": "/codes"
-        },
-        {
-          "badge": "Updated",
-          "title": "Equipment Database",
-          "description": "94 items across 5 slots complete gear database with stats, rarity, and sources.",
-          "href": "/equipment"
-        },
-        {
-          "badge": "Popular",
-          "title": "Which Race Should You Pick?",
-          "description": "Shinigami, Quincy, or Hollow compare all three and find your perfect playstyle.",
-          "href": "/races/best-race"
-        },
-        {
-          "badge": "New",
-          "title": "Enemies & Monsters",
-          "description": "23 enemy types across 5 regions drops, locations, and farming tips.",
-          "href": "/enemies"
-        },
-        {
-          "badge": "Popular",
-          "title": "Boss Locations & Drops",
-          "description": "Every boss location, drop table, and respawn timer in one reference.",
-          "href": "/boss-locations-drops-respawn-times"
-        },
-        {
-          "badge": "Popular",
-          "title": "Best Builds",
-          "description": "Optimal stat allocation, skill tree picks, and Charm combos for every playstyle.",
-          "href": "/builds/best-builds"
-        },
-        {
-          "badge": "New",
-          "title": "Shikai Tier List",
-          "description": "All 6 Shinigami Shikai types ranked by PvP and PvE performance.",
-          "href": "/tier-list/shikai"
-        },
-        {
-          "badge": "New",
-          "title": "World Events Guide",
-          "description": "Supply Caches, Raids, and endgame world events with rare rewards.",
-          "href": "/world-events"
-        }
+        "Laboratory Escape",
+        "Beginner Walkthrough",
+        "Mutations Guide",
+        "Level 4 Walkthrough"
       ]
     },
     "aboutGame": {
       "title": "What is Rat Lab?",
       "paragraphs": [
-        "Rat Lab is a stylized fighting RPG on Roblox inspired by the Bleach anime universe. Choose from three playable races Shinigami, Quincy, or Hollow each with unique progression systems, unlockable abilities, and evolution paths. Master over 130 skills as you fight your way to the level 100 cap.",
-        "Whether you're unlocking your first Shikai, evolving from a base Hollow into an Arrancar, or grinding Quincy Lieutenant missions, our wiki covers every system with detailed guides, data tables, and step-by-step walkthroughs."
+        "Rat Lab is an immersive Roblox puzzle and escape adventure where players take on the roles of lab subjects navigating dangerous research facilities. Developed by Evil Science, the game challenges you to outsmart automated testing chambers, bypass security protocols, and uncover the mysteries hidden within the laboratory complex.",
+        "Whether you are mastering spatial puzzle mechanics, experimenting with genetic mutations, or collaborating with teammates to trigger emergency exits, our wiki provides complete walkthroughs, task checklists, and progression strategies for every player."
       ],
       "stats": [
         {
           "label": "Developer",
-          "value": "Midnight Continent"
+          "value": "Evil Science"
         },
         {
           "label": "Platform",
@@ -141,158 +85,206 @@
         },
         {
           "label": "Genre",
-          "value": "Fighting RPG"
+          "value": "Puzzle Adventure"
         },
         {
           "label": "Visits",
-          "value": "12.6M+"
+          "value": "841K+"
         },
         {
-          "label": "Favorites",
-          "value": "243K+"
+          "label": "Roles",
+          "value": "3 Available"
         },
         {
-          "label": "Total Skills",
-          "value": "130+"
-        },
-        {
-          "label": "Level Cap",
-          "value": "100"
+          "label": "Updates",
+          "value": "Weekly"
         }
       ],
       "cta": "Explore All Guides"
     },
     "explore": {
       "title": "Explore Rat Lab Wiki",
-      "description": "Master your seafood restaurant on Roblox with essential progression guides, active codes, complete fish & recipe catalogs, and optimal upgrade strategies.",
+      "description": "Explore comprehensive Rat Lab guides, chamber walkthroughs, mutation tier lists, active codes, and essential survival strategies for Roblox players.",
       "modules": [
         {
           "order": 1,
-          "name": "Rat Lab Working Codes",
-          "description": "Redeem the latest working codes to claim free coins, gems, exclusive cosmetics, and boost items before they expire.",
-          "href": "/codes/Rat Lab-codes",
-          "displayType": "code-box",
+          "name": "Ratlab Game Guide",
+          "description": "A complete introduction covering Rat Lab gameplay, objectives, core mechanics, and how the laboratory escape experience works. This module helps new players quickly understand the game before starting.",
+          "href": "/mechanics/rat-lab-game",
+          "displayType": "card-list",
           "highlights": [
             {
-              "label": "Code",
-              "detail": "FULLRELEASE — Free Cash & Rewards"
+              "label": "Objective",
+              "detail": "Navigate interconnected test chambers and reach the facility exit."
             },
             {
-              "label": "Code",
-              "detail": "75KLIKES — Exclusive Ability Reroll"
+              "label": "Hazards",
+              "detail": "Avoid automated lasers, toxic gas vents, and patrolling security."
             },
             {
-              "label": "Tip",
-              "detail": "Codes are case-sensitive; enter them in the Settings menu"
+              "label": "Teamwork",
+              "detail": "Coordinate switch activation and door overrides with other subjects."
             }
           ]
         },
         {
           "order": 2,
-          "name": "Beginner Guide: How to Start & Serve Customers",
-          "description": "Step-by-step beginner guide covering customer ordering, food prep, station management, and cashier checkout mechanics.",
-          "href": "/guide/Rat Lab-beginner-guide",
-          "displayType": "feature-cards",
+          "name": "Ratlab Beginner Guide",
+          "description": "A beginner-focused guide explaining the first steps, basic strategies, important actions, and survival tips for new Rat Lab players. It targets users searching for how to start and how to progress.",
+          "href": "/guide/rat-lab-walkthrough",
+          "displayType": "step-by-step",
           "highlights": [
             {
-              "label": "Step 1",
-              "detail": "Take customer order at the stall front"
+              "label": "1",
+              "detail": "Survey the chamber and inspect all interactable switches and conduits."
             },
             {
-              "label": "Step 2",
-              "detail": "Cook seafood on the grill or boil station"
+              "label": "2",
+              "detail": "Formulate a movement plan before triggering timed pressure plates."
             },
             {
-              "label": "Step 3",
-              "detail": "Serve warm food promptly for maximum customer tips"
+              "label": "3",
+              "detail": "Test single variables to isolate cause-and-effect puzzle responses."
+            },
+            {
+              "label": "4",
+              "detail": "Collect research notes and escape to secure your run rewards."
             }
           ]
         },
         {
           "order": 3,
-          "name": "Seafood & Fish Tier List",
-          "description": "Complete breakdown of all catchable fish and seafood ranked by market value, customer demand, and profit margins.",
-          "href": "/seafood/Rat Lab-tier-list",
+          "name": "Ratlab Mutations Guide",
+          "description": "A guide focused on Rat Lab mutation mechanics, including how scientists create mutations and how rats can use different abilities or upgrades. It covers one of the game's unique gameplay systems.",
+          "href": "/mechanics/rat-lab-experiments",
           "displayType": "tier-grid",
           "highlights": [
             {
-              "label": "S Tier",
-              "detail": "King Crab · Lobster Boil — Highest profit per customer"
+              "label": "S",
+              "detail": "Enhanced Agility: Essential jump height and speed to bypass hazardous floor traps."
             },
             {
-              "label": "A Tier",
-              "detail": "Salmon · Jumbo Shrimp · Tuna Steak — Reliable fast earners"
+              "label": "A",
+              "detail": "Acid Shield: Greatly reduces environmental damage from chemical spills and leaks."
             },
             {
-              "label": "B Tier",
-              "detail": "Clams · Oysters · Squid — Great mid-game margin"
+              "label": "B",
+              "detail": "Wire Gnaw: Increases interaction speed when disabling security conduits."
             },
             {
-              "label": "C Tier",
-              "detail": "Common Sardines · Small Crab — Starter seafood"
+              "label": "C",
+              "detail": "Thermal Fur: Minor resistance against cold chambers and baseline ventilation drafts."
             }
           ]
         },
         {
           "order": 4,
-          "name": "Best Upgrades Progression",
-          "description": "Optimal order to spend your cash: expand kitchen stations, hire waitstaff, speed up grills, and upgrade seating.",
-          "href": "/upgrades/Rat Lab-best-upgrades",
-          "displayType": "feature-cards",
+          "name": "Ratlab Tools Guide",
+          "description": "A searchable collection explaining the different tools, equipment, and unlockable items available during gameplay. Players can use this section to understand tool functions and progression.",
+          "href": "/items/rat-lab-set",
+          "displayType": "code-cards",
           "highlights": [
             {
-              "label": "Priority 1",
-              "detail": "Cooking Speed & Extra Burners — Clears customer backlog"
+              "label": "Keycard",
+              "detail": "Unlocks tier-1 laboratory security doors and access hatches",
+              "badge": "Tool"
             },
             {
-              "label": "Priority 2",
-              "detail": "Customer Seating Capacity — Increases simultaneous diners"
+              "label": "Scanner",
+              "detail": "Detects hidden wiring conduits and pressure sensors in walls",
+              "badge": "Utility"
             },
             {
-              "label": "Priority 3",
-              "detail": "Auto-Chef / Waiter Staff — Passive hands-free revenue"
+              "label": "Wrench",
+              "detail": "Overrides jammed air duct grates for stealth traversal",
+              "badge": "Tool"
             }
           ]
         },
         {
           "order": 5,
-          "name": "How to Get Cash Fast",
-          "description": "Top money-making strategies, VIP evaluation, tip maximization, and high-efficiency serving tips.",
-          "href": "/guide/Rat Lab-how-to-get-cash-fast",
-          "displayType": "feature-cards",
+          "name": "Ratlab Codes",
+          "description": "A dedicated codes section for tracking possible active rewards, promotional codes, and update-related bonuses. If codes are introduced by developers, this page can be updated regularly.",
+          "href": "/progression/rat-lab-tasks",
+          "displayType": "code-cards",
           "highlights": [
             {
-              "label": "Combo",
-              "detail": "Chain orders quickly to build the Customer Happiness multiplier"
+              "label": "RATLAB2026",
+              "detail": "Redeem for 500 bonus research credits and starter boost",
+              "badge": "Active"
             },
             {
-              "label": "High Margin",
-              "detail": "Focus high-tier seafood boils during peak customer rush hours"
+              "label": "MUTATION",
+              "detail": "Redeem for an experimental trait vial in the lobby",
+              "badge": "Active"
             },
             {
-              "label": "Reinvest",
-              "detail": "Keep 20% cash reserve for fresh ingredient replenishment"
+              "label": "ESCAPE",
+              "detail": "Redeem for 250 cheese coins and cosmetic reward",
+              "badge": "Active"
             }
           ]
         },
         {
           "order": 6,
-          "name": "Plot Expansion & Stand Customization",
-          "description": "Unlock bigger land plots, arrange optimal cooking layouts, and add high-value decorative upgrades.",
-          "href": "/upgrades/Rat Lab-how-to-upgrade-plot",
-          "displayType": "feature-cards",
+          "name": "Ratlab Updates",
+          "description": "A news and update tracker covering new features, balance changes, events, and developer announcements. It helps returning players quickly find the latest changes.",
+          "href": "/progression/rat-lab-levels",
+          "displayType": "card-list",
           "highlights": [
             {
-              "label": "Plot 1",
-              "detail": "Starter Beach Stand (3 Tables, 1 Grill)"
+              "label": "V1.4 Patch",
+              "detail": "Added Level 4 testing sector with advanced laser puzzle mechanics."
             },
             {
-              "label": "Plot 2",
-              "detail": "Boardwalk Restaurant (6 Tables, 2 Grills, Boil Station)"
+              "label": "New Traits",
+              "detail": "Introduced 3 experimental mutations for agility and hazard defense."
             },
             {
-              "label": "Plot 3",
-              "detail": "Luxury Pier Seafood Pavilion (Full Automation & VIP Seating)"
+              "label": "Bug Fixes",
+              "detail": "Resolved pressure plate desync issues during multiplayer escape runs."
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "name": "Ratlab Discord & Community",
+          "description": "A community section collecting official social channels, announcements, and player discussion resources. It helps users find places to follow updates and communicate with other players.",
+          "href": "/community/rat-lab-community",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Discord",
+              "detail": "Join player discussions, squad up for escapes, and get update pings."
+            },
+            {
+              "label": "Roblox",
+              "detail": "Follow the Evil Science developer group for news and patch notes."
+            },
+            {
+              "label": "YouTube",
+              "detail": "Watch community walkthroughs, puzzle solutions, and speedrun records."
+            }
+          ]
+        },
+        {
+          "order": 8,
+          "name": "Ratlab Gameplay Features",
+          "description": "A feature overview explaining the roles of rats, scientists, security, escaping mechanics, and laboratory systems. This module targets users searching for what Rat Lab is and how it differs from other Roblox experiences.",
+          "href": "/mechanics/rat-lab-escape",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Lab Rats",
+              "detail": "Solve environmental puzzles, navigate ducts, and escape the complex."
+            },
+            {
+              "label": "Scientists",
+              "detail": "Deploy test variables, observe subject behavior, and trigger chambers."
+            },
+            {
+              "label": "Security",
+              "detail": "Patrol containment zones, maintain perimeter locks, and catch escapees."
             }
           ]
         }
@@ -304,23 +296,23 @@
       "items": [
         {
           "question": "What is Rat Lab?",
-          "answer": "Rat Lab is a free-to-play fighting RPG on Roblox based on the Bleach anime. You choose one of game mechanics Shinigami (Soul Reaper), Quincy, or Hollow each with unique progression, combat abilities, and evolution systems. The game features 130+ skills, a level 100 cap, boss fights, and deep build customization."
+          "answer": "Rat Lab is a Roblox puzzle and escape game developed by Evil Science where players navigate hazardous testing chambers, master mutation mechanics, and attempt to escape a top-secret research facility."
         },
         {
-          "question": "Which race should beginners pick?",
-          "answer": "Shinigami is the most straightforward starter race, while Hollow and Quincy offer more specialized progression routes. Compare their abilities before committing."
+          "question": "How do I escape the laboratory in Rat Lab?",
+          "answer": "To escape in Rat Lab, players must survey chamber layouts, solve spatial and electrical puzzles, coordinate with teammates to press switches, and unlock secure exit doors before security intercepts them."
         },
         {
-          "question": "What is the current level cap?",
-          "answer": "The current level cap is 100, with more than 130 skills available across trees and race progression systems."
+          "question": "What are mutations in Rat Lab?",
+          "answer": "Mutations in Rat Lab are experimental biological enhancements that provide special perks such as increased movement speed, enhanced jump height, acid resistance, and quicker conduit interactions."
         },
         {
-          "question": "Where do I find active codes?",
-          "answer": "Use the Codes page for working codes, rewards, expiration notes, and redeem instructions."
+          "question": "Are there active codes for Rat Lab?",
+          "answer": "Rat Lab codes can be released by the developers during milestones or major updates. Check our codes section regularly for the latest active rewards and redemption instructions."
         },
         {
-          "question": "Are boss guides updated?",
-          "answer": "Boss pages are organized with spawn notes, attack patterns, strategies, drop tables, and related next steps for progression."
+          "question": "Can you play Rat Lab solo or with friends?",
+          "answer": "Rat Lab supports both solo puzzle solving and cooperative multiplayer. Teaming up with friends makes coordinating multi-switch doors and complex escape routes significantly easier."
         }
       ]
     },
