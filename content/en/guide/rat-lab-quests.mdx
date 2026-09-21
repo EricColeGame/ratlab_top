@@ -1,0 +1,143 @@
+export const metadata = {
+  title: "Rat Lab Quests Guide: Solve Every Threat Intel Challenge Step by Step",
+  description: "A practical walkthrough of every Rat Lab quests challenge, from the starting hash to C2 confirmation, with the exact sources analysts use.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+Rat Lab quests look deceptively simple on the surface: you open a challenge archive, read a single SHA256 hash, and answer a short list of questions. That tiny starting point is the whole point. Completing the Rat Lab quests forces you through the entire threat intelligence workflow — pivoting between sandbox reports, reputation services, and vendor writeups until every claim is confirmed by more than one source.
+
+If you are aiming at incident response, threat hunting, or CTI work, this lab is one of the most efficient ways to build real investigative muscle in an afternoon. This guide breaks down what each quest asks, which tool answers it, and the mistakes that cost first-time analysts the most time.
+
+## What Are the Rat Lab Quests?
+
+The Rat Lab is a hands-on cyber threat intelligence challenge built around one realistic incident. You receive a challenge file containing a hash, and that hash is your only lead. From there, a sequence of quests walks you from "what is this file?" all the way to "who is it talking to?"
+
+Community walkthroughs describe the underlying scenario as a routine IT security check at a mid-size company where abnormal network traffic appears on multiple workstations, and employees' search queries begin redirecting to unfamiliar websites. That framing is deliberate. Real investigations rarely start with a clean indicator — they start with a vague symptom and a lot of guessing.
+
+| Quest | What It Asks | Where the Answer Usually Lives |
+|---|---|---|
+| 1 | Malware family causing the abnormal traffic | Sandbox report found by hash search |
+| 2 | Common filename the sample uses | File version / signature info on a reputation service |
+| 3 | Compilation timestamp of the binary | Portable executable header data |
+| 4 | Date the sample was first publicly submitted | Submission history timeline |
+| 5 | Name of the `.dat` file dropped in AppData | Vendor detection writeup |
+| 6 | Command-and-control (C2) server | Vendor writeup, behavior tab, sandbox external systems |
+
+Each quest builds on the last. Skip ahead and you will not have the context to interpret what you are reading.
+
+## Tools You Need Before Starting the Rat Lab Quests
+
+You do not need a paid toolchain or a lab VM of your own. Every platform the Rat Lab quests rely on offers a free tier that is more than enough to finish the challenge.
+
+| Tool | Role in the Quest Chain | Where to Look |
+|---|---|---|
+| Hybrid Analysis | Sandbox execution reports and external system lists | Report search by file hash |
+| VirusTotal | File identity, PE metadata, behavior, domain reputation | Details tab and Behavior tab |
+| Red Canary Intelligence | Vendor detection writeup covering dropped files and C2 | Detection report for the family |
+| Open web search | Cross-checking family names against public reporting | Vendor blogs, analyst posts |
+| A scratch notes file | Track answers, URLs, and timestamps as you go | Anywhere — just use one |
+
+The documented starting artifact is a SHA256 hash stored in a text file inside the challenge archive. Analysts who have published community walkthroughs note that multiple reports exist for the same hash, so picking any report that matches your hash works — you do not need the exact one someone else used.
+
+Registering on the [CyberDefenders challenge platform](https://cyberdefenders.org/) gives you access to this lab plus a large library of similar investigations if you want to keep going afterward.
+
+## Rat Lab Quests Walkthrough, Quest by Quest
+
+### Quest 1: Identify the Malware Family
+
+Copy the hash out of the challenge file and paste it into a sandbox report search. You are looking for a report that shows an actual execution record, not just a detection count. Community reports suggest filtering for reports with a high threat score and a full sandbox execution attached.
+
+Once inside the report, the family name appears alongside the threat classification. Write it down exactly as shown — later quests depend on you searching for the right family on other platforms.
+
+### Quests 2–4: Pivot to VirusTotal
+
+With the family identified, move to a reputation service and search the same hash. Three of the quests are answered on a single page if you know which fields to read.
+
+| Quest | Field to Read | Navigation Path |
+|---|---|---|
+| 2 | Original Name (the common filename) | Details → File Version Information → Signature info |
+| 3 | Compilation Timestamp | Details → PE Info → Header |
+| 4 | First Submission date | Details → History |
+
+A frequent point of confusion: the *common filename* is the original name recorded in the file's version information, not the internal malware name and not the detection label. Those are three different strings, and the lab asks for a specific one.
+
+Compilation time and first submission time are also unrelated. A sample can be compiled months before anyone uploads it, and that gap is itself useful intelligence about how long the malware may have been in the wild undetected.
+
+### Quest 5: Track Down the Dropped .dat File
+
+This is the first quest where the reputation service stops being enough. The dropped file list is not available there, so you have to change sources and read a vendor detection writeup instead.
+
+Vendor intelligence reports typically list persistence artifacts, dropped files, and registry keys in a bulleted section near the top. Look for a `.dat` file written into the user's AppData folder. That detail matters operationally — it gives responders a concrete file to hunt across the rest of the environment.
+
+### Quest 6: Confirm the C2 Server
+
+The final quest asks for the command-and-control server the sample communicates with. This is where the Rat Lab quests reward patience over speed, because the answer should be confirmed from at least three angles.
+
+| Source | Section to Check | What It Proves |
+|---|---|---|
+| Vendor detection writeup | Observed indicators list | The C2 was seen in a real environment |
+| Reputation service | Behavior → Network Communication | The string exists inside the sample itself |
+| Sandbox report | Suspicious Indicators → External Systems | The sample attempted that connection at runtime |
+
+Once you have the URL, check the domain's reputation on the reputation service. A domain flagged by multiple engines closes the loop and gives you the confidence to write it into a blocklist.
+
+## How the Rat Lab Quests Teach Triangulation
+
+The real lesson of this lab is not any single answer. It is the habit of never trusting one source. Each quest pushes you to a new platform precisely because no single platform holds the full picture.
+
+| Finding | Primary Source | Confirming Source | Why Cross-Checking Matters |
+|---|---|---|---|
+| Malware family | Sandbox report | Detection label from anti-malware engines | Families get renamed and rebranded |
+| Dropped file | Vendor writeup | Sandbox file system artifacts | Dropped files can vary by configuration |
+| C2 server | Vendor writeup | Behavior tab plus sandbox external systems | Strings in a binary are not always contacted |
+
+This triangulation habit transfers directly to real incident response. The same logic applies when you confirm an indicator before blocking it, or when you verify a vendor's claim against your own telemetry before escalating.
+
+## Common Mistakes That Slow People Down
+
+| Mistake | Why It Happens | How to Avoid It |
+|---|---|---|
+| Opening the wrong report | Many reports share the same hash | Verify the hash matches before reading |
+| Reading the wrong filename field | Several name fields sit near each other | Confirm you are in Signature info, not detections |
+| Mixing up timestamps | Compilation and submission data look similar | Read the field label carefully, not the value format |
+| Assuming one site has everything | The dropped file list is not on the reputation service | Switch to vendor intelligence for artifacts |
+| Stopping at one C2 source | The first hit feels conclusive | Confirm across three sources minimum |
+| Skipping notes | Answers build on each other | Track each finding as you go |
+
+## Tips for Finishing the Rat Lab Quests Faster
+
+- **Keep the hash on your clipboard.** You will paste it into three or four platforms before you are done.
+- **Open tabs in parallel.** Load the sandbox report, the reputation page, and the vendor writeup side by side so you can compare fields instead of re-searching.
+- **Check the history section early.** Knowing when the sample first appeared publicly frames everything else you read.
+- **Write the family name exactly as shown.** Misspellings send later searches down dead ends.
+- **Read the whole vendor report, not just the indicators.** Context about delivery and persistence often explains the artifacts you find.
+- **Log your sources.** If you plan to publish your own writeup, citing where each answer came from is half the value.
+
+## Why This Lab Is Worth Your Time
+
+The Rat Lab quests compress a realistic investigation into a short, structured exercise. You practice hash pivoting, metadata reading, artifact hunting, and infrastructure confirmation — the same skills that appear in entry-level CTI and SOC analyst interviews.
+
+Player experience from community walkthroughs consistently points to the same takeaway: the value is in the workflow, not the answers. Anyone can look up a final answer. Being able to explain how you got there, and which source confirmed it, is what gets noticed.
+
+## FAQ
+
+**What exactly are the Rat Lab quests?**
+
+They are a structured set of challenge questions inside a threat intelligence lab. You start with a single file hash and answer six questions covering malware identification, file metadata, timeline, dropped artifacts, and command-and-control infrastructure.
+
+**Do I need malware analysis experience to finish the Rat Lab quests?**
+
+No reverse engineering is required. Every answer can be found by reading sandbox reports, reputation service pages, and vendor intelligence writeups. Basic familiarity with Windows file paths and PE metadata helps, but the lab teaches that as you go.
+
+**Are the Rat Lab quests free?**
+
+The lab is hosted on a community challenge platform that offers free access to its challenge library. Check the host site for current account and access details before you start.
+
+**How long do the Rat Lab quests take?**
+
+Most analysts report finishing in one to two hours on a first attempt. The bottleneck is usually not the analysis but remembering which tab holds which field — once you know the navigation paths, the answers come quickly.
+
+**Can I publish my own walkthrough afterward?**
+
+Yes, and it is encouraged. Writing up your methodology forces you to justify every conclusion, which is exactly the skill the Rat Lab quests are designed to build.

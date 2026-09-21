@@ -1,0 +1,108 @@
+export const metadata = {
+  title: "Ubicaciones de Rat Lab: El mapa completo de cada artefacto que debes revisar",
+  description: "Una guía práctica de todas las ubicaciones de Rat Lab — archivos dropeados, claves de registro, pestañas del sandbox y endpoints de C2 — con un mapa de progresión paso a paso.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+Si estás atascado a mitad de camino en Rat Lab y las respuestas parecen estar dispersas entre una docena de pestañas del navegador, el verdadero problema normalmente no son tus herramientas, sino que aún no sabes qué **ubicaciones de Rat Lab** debes revisar, ni en qué orden. Un laboratorio de RAT te sumerge en una investigación de intrusión en vivo con casi nada para empezar: típicamente un único hash de archivo y un escenario de un párrafo.
+
+La buena noticia es que estos laboratorios están diseñados para resolverse. Cada pregunta se corresponde con una ubicación específica de artefacto: una carpeta en el disco, una clave de registro, una pestaña dentro de un informe de sandbox o un endpoint de red saliente. Una vez que sabes qué **ubicaciones de Rat Lab** corresponden a cada etapa, la progresión pasa de horas de conjeturas a una lista de verificación ajustada y repetible.
+
+## Qué es Rat Lab y por qué las ubicaciones impulsan toda la investigación
+
+"Rat Lab" es la forma abreviada de designar un ejercicio práctico de inteligencia de amenazas cibernéticas (CTI) construido en torno a un Remote Access Trojan (troyano de acceso remoto). La premisa es siempre la misma: un RAT ya ha aterrizado dentro de una organización ficticia, se ha detectado tráfico anómalo y tú eres el analista que debe reconstruir lo ocurrido usando únicamente plataformas públicas de investigación.
+
+Como un RAT toca tantas partes de un sistema, el laboratorio es en realidad una búsqueda del tesoro a través de tres planos de evidencia:
+
+- **El plano del endpoint**: los archivos que dropea la muestra, las carpetas de preparación en las que se esconde y las entradas de registro o del programador de tareas que usa para sobrevivir a un reinicio.
+- **El plano de la red**: el dominio o la URL de command-and-control (C2) al que la muestra envía balizas, además de cualquier cadena de redirecciones que explique el tráfico sospechoso.
+- **El plano de la inteligencia**: los informes públicos donde otros analistas ya han documentado la misma muestra, sus nombres de archivo y su infraestructura.
+
+Las preguntas están secuenciadas de forma deliberada. Primero identificas la familia de malware, luego concretas el nombre del archivo, después la marca temporal de compilación, después la fecha de primera detección, luego los artefactos dropeados y, por último, el servidor C2. Cada respuesta desbloquea la siguiente, y cada una vive en una ubicación concreta. Plataformas como [el entorno de laboratorio blue team de CyberDefenders](https://cyberdefenders.org/) siguen exactamente ese arco de identificar → persistir → comunicar, y por eso un mapa siempre gana a la fuerza bruta.
+
+## Las ubicaciones esenciales de Rat Lab de un vistazo
+
+Antes de tocar una sola caja de búsqueda, ayuda ver el tablero completo. La tabla siguiente enumera las ubicaciones que responden a casi cualquier pregunta que plantee un laboratorio de RAT.
+
+| # | Ubicación | Dónde se encuentra | Qué extraes |
+|---|---|---|---|
+| 1 | Archivo con el hash de la muestra | Descarga del reto (a menudo un `.txt` simple) | El SHA256 desde el que pivotas todo lo demás |
+| 2 | Archivo de informe del sandbox | Búsqueda de informes en un servicio público de análisis de malware | Análisis previos, puntuación del veredicto, resumen de comportamiento |
+| 3 | Información de versión y firma del archivo | La pestaña "Details" de la muestra | Nombre de archivo original usado en el mundo real |
+| 4 | Cabecera del ejecutable portátil | La misma pestaña "Details", sección de cabecera | Marca temporal de compilación |
+| 5 | Historial de envíos | La pestaña "Details", panel de historial | Fecha del primer envío |
+| 6 | Informe de inteligencia del proveedor vinculado | Referenciado dentro del informe del sandbox | Artefactos `.dat` dropeados y notas de persistencia |
+| 7 | Behavior → network communication | La pestaña "Behavior" de la muestra | URL o dominio de C2 como cadena en memoria |
+| 8 | Suspicious indicators → external systems | Informe del sandbox, sección de indicadores | Corroboración independiente del C2 |
+
+Fíjate en que seis de las ocho ubicaciones están dentro de dos páginas que ya tienes abiertas. La mayoría de los principiantes pierden tiempo buscando herramientas nuevas cuando la respuesta está a un scroll de distancia.
+
+## Ubicaciones de Rat Lab por etapa de progresión
+
+La dificultad en estos laboratorios rara vez proviene de la complejidad: proviene de hacer los pasos en el orden equivocado. Así se alinean las ubicaciones con la progresión.
+
+| Etapa | Tipo de pregunta | Ubicación principal | Fuente de respaldo |
+|---|---|---|---|
+| 1 | ¿Qué familia de malware es esta? | Archivo de informe del sandbox | Artículo del proveedor |
+| 2 | ¿Qué nombre de archivo usa? | Metadatos de firma / versión | Listado de archivos del sandbox |
+| 3 | ¿Cuándo se compiló? | Información de la cabecera PE | Herramientas de análisis estático |
+| 4 | ¿Cuándo se vio por primera vez? | Historial de envíos | Entradas de blogs de threat intel |
+| 5 | ¿Qué dropeó? | Informe del proveedor o lista de archivos dropeados | Listado de archivos del endpoint en la VM del laboratorio |
+| 6 | ¿A dónde llama a casa? | Sección de red de la pestaña Behavior | Indicadores de external systems |
+
+Tres hábitos mantienen limpia esta progresión:
+
+- **Responde en orden.** Los nombres de archivo y las marcas temporales de compilación parecen triviales, pero son los términos de búsqueda que abren las etapas posteriores.
+- **Anota cada respuesta.** Las preguntas posteriores reutilizan a menudo valores anteriores, y volver a deducirlos desperdicia minutos que no recuperarás.
+- **Verifica de forma cruzada antes de enviar.** Una sola fuente puede ser incompleta; que dos o tres fuentes coincidan es garantía de acierto.
+
+## Dentro de la máquina: ubicaciones de endpoint, registro y red
+
+### Dónde suelen aterrizar los archivos dropeados
+
+Casi todo RAT necesita algún lugar donde escribir su configuración, una carga útil de segunda etapa o una copia de trabajo de sí mismo. En entornos Windows esas ubicaciones son casi siempre escribibles por el usuario, porque es ahí donde un proceso sin privilegios puede escribir sin activar nada.
+
+| Tipo de artefacto | Ubicación típica (general) | Valor para la investigación |
+|---|---|---|
+| Archivo de configuración o datos dropeado | La carpeta AppData del perfil de usuario (Roaming o Local) | ID de campaña, ajustes de baliza, lista de C2 |
+| Ejecutable secundario | Carpetas escribibles por el usuario como AppData, Temp, Downloads o Public | Reejecución y evasión de defensas |
+| Persistencia por usuario | Clave Run bajo el hive de registro del usuario actual | Relanzamiento al iniciar sesión |
+| Tarea programada | Biblioteca del Programador de tareas | Ejecución recurrente, a menudo disfrazada de tarea del sistema |
+| Entrada de servicio | Clave de registro Services | Persistencia elevada a nivel SYSTEM |
+| Datos de secuestro del navegador | Carpeta del perfil del navegador | Explica el síntoma de búsquedas redirigidas |
+
+Las rutas exactas varían según la muestra y la versión del laboratorio, así que trata la tabla como una lista de verificación de búsqueda y no como una clave de respuestas fija. Lo que importa es el patrón: carpetas escribibles por el usuario para los archivos, claves de autoarranque y definiciones de tareas para la persistencia.
+
+### La pregunta del artefacto dropeado
+
+Esta es la etapa en la que muchos analistas se quedan encallados, porque la habitual pestaña "Details" sencillamente no tiene la respuesta. Los informes de la comunidad de quienes han trabajado en el reto Yellow RAT Lab describen el mismo giro: cuando la página de la muestra no lista los componentes dropeados, pasas al informe de inteligencia del proveedor enlazado desde el informe del sandbox. Ese artículo suele nombrar el archivo `.dat` y la carpeta donde se escribió, información que el sandbox simplemente nunca capturó.
+
+### Ubicaciones de red: encontrar el C2
+
+La etapa final es casi siempre la infraestructura de command-and-control, y es aquella en la que varias ubicaciones deben coincidir antes de que te comprometas con una respuesta.
+
+| Artefacto de red | Dónde encontrarlo | Qué confirma |
+|---|---|---|
+| URL o dominio de C2 | Pestaña Behavior → network communication | El callback principal |
+| Reputación del dominio | Consulta de ese dominio en la misma plataforma de inteligencia | Veredicto malicioso y fecha de primera detección |
+| Lista de external systems | Sección de suspicious indicators | Corroboración independiente |
+| Registro de peticiones DNS / HTTP | Registro de red del sandbox | Intervalo de baliza, user agent, cabeceras |
+| Cadena de redirecciones | Texto del escenario más evidencia del navegador | El síntoma de tráfico anómalo |
+| URLs de descarga de payloads | Lista de peticiones HTTP del sandbox | Entrega de segunda etapa |
+
+Una regla práctica útil: si el mismo dominio aparece en una lista de cadenas en memoria, en un registro de red y en una consulta de reputación, tienes una confirmación triple. Si solo lo señala una fuente, sigue cavando antes de enviar.
+
+## Consejos prácticos, errores comunes y atajos de la comunidad
+
+Trabajar las ubicaciones con eficiencia es una habilidad en sí misma. Estos hábitos separan una sesión de laboratorio de veinte minutos de una odisea de dos horas:
+
+1. **Lee el resumen del escenario dos veces.** El síntoma descrito en la introducción — búsquedas redirigidas, tráfico saliente inusual, una ralentización en estaciones de trabajo concretas — suele apuntar directamente al mecanismo que debes encontrar.
+2. **Mantén una ventana del navegador por fuente.** Tener el informe del sandbox, la plataforma de reputación y el artículo del proveedor en paralelo elimina la renavegación constante.
+3. **Recorta los valores antes de pegarlos.** Los espacios finales y las comillas tipográficas causan más envíos fallidos que las respuestas incorrectas.
+4. **Usa el hash de la muestra en todas partes.** Es el único identificador que ata cada ubicación de Rat Lab al mismo fragmento de código.
+5. **Revisa la pestaña "Behavior" al final.** Es la página más rica, y leerla después de las etapas anteriores hace que la sección de red sea mucho más fácil de interpretar.
+
+| Error común | Por qué te cuesta tiempo | La solución |
+|---|---|---|
+| Empezar por la pestaña de red | Te saltas las pistas de nombres y de cronología que necesitas después | Trabaja las etapas

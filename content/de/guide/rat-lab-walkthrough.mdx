@@ -1,0 +1,145 @@
+export const metadata = {
+  title: "Rat-Lab-Walkthrough: Lösen Sie die CyberDefenders Yellow RAT Challenge",
+  description: "Vollständiger Rat-Lab-Walkthrough für die Yellow-RAT-Challenge von CyberDefenders – nutzen Sie Hybrid Analysis, VirusTotal und Red Canary, um alle sechs Fragen zu beantworten.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## Warum der Rat-Lab-Walkthrough für Blue Teams wichtig ist
+
+Sie erhalten einen einzelnen Datei-Hash und sollen einen gesamten Angriff erklären. Das ist der Alltag in der Cyber-Threat-Intelligence-Arbeit (CTI), und der Rat-Lab-Walkthrough ist eine der schnellsten Möglichkeiten, genau das zu üben, bevor es um echte Einsätze geht.
+
+Wenn Sie einen verdächtigen Hash allein mithilfe öffentlicher Berichte auf eine Malware-Familie, eine abgelegte Payload und einen aktiven Command-and-Control-Server (C2) zurückverfolgen können, können Sie die Erkennungen schreiben, die den nächsten Vorfall stoppen. Dieser Rat-Lab-Walkthrough zerlegt die CyberDefenders Yellow RAT Challenge in wiederholbare Schritte, damit der Workflow sitzt, wenn das nächste echte Alert in Ihrer SOC-Warteschlange landet.
+
+## Was das Yellow-RAT-Lab-Szenario von Ihnen verlangt
+
+Im Szenario markiert eine routinemäßige IT-Sicherheitsprüfung bei GlobalTech Industries ungewöhnlichen Netzwerkverkehr von mehreren Workstations. Mitarbeiter berichten, dass ihre Suchanfragen auf unbekannte Websites umgeleitet werden. Sie erhalten ein einziges Artefakt – eine Textdatei namens `hash.txt` mit dem SHA256-Hash der verdächtigen Malware – plus sechs Fragen, die Sie beantworten müssen.
+
+Der Sinn besteht nicht darin, das Lab zu „gewinnen“. Es soll einen wiederholbaren Untersuchungspfad zeigen, den ein Junior-Analyst an einen Incident Responder übergeben könnte, ohne den Kontext zu verlieren.
+
+| Feld | Detail |
+|---|---|
+| Plattform | CyberDefenders (Blue-Team-CTI-Challenge) |
+| Lab-Name | Yellow RAT Lab |
+| Bereitgestelltes Artefakt | `hash.txt` mit einem SHA256-Hash |
+| Beispiel-Hash | 30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85 |
+| Betroffene Organisation | GlobalTech Industries |
+| Gemeldete Symptome | Ungewöhnlicher Netzwerkverkehr; umgeleitete Suchanfragen |
+| Anzahl der Fragen | 6 |
+| Getestete Kernkompetenz | Threat-Intelligence-Pivotierung über öffentliche Quellen |
+
+### Der erste Hinweis, den Sie erhalten
+
+Der Hash ist Ihr einziger Ausgangspunkt, und diese Einschränkung ist beabsichtigt. In einem echten Auftrag erhalten Sie selten am ersten Tag ein vollständiges forensisches Abbild – Sie bekommen einen Indikator und eine Deadline. Berichte von Analysten aus der Community, die das Lab abgeschlossen haben, weisen darauf hin, dass für die Probe ein vorhandener Sandbox-Bericht aus Mitte 2022 existiert. Das bedeutet, dass ein Großteil Ihrer frühen Arbeit aus Lesen und nicht aus Reverse Engineering besteht.
+
+## Voraussetzungen und Tools für diesen Rat-Lab-Walkthrough
+
+Sie benötigen keine Malware-Analyse-Erfahrung, keinen Disassembler und kein kostenpflichtiges Abonnement. Sie brauchen drei Browser-Tabs, eine Notizendatei und die Disziplin, festzuhalten, woher jede Antwort stammt.
+
+| Tool | Am besten geeignet für | Wo sich Antworten verbergen |
+|---|---|---|
+| Hybrid Analysis | Sandbox-Verhaltensberichte und Dropper-Aktivität | Falcon-Sandbox-Berichte; Verdächtige Indikatoren → Externe Systeme |
+| VirusTotal | Datei-Metadaten, PE-Header, Community-Erkennungen, URL-Reputation | Tab „Details“; Tab „Behavior“ → Netzwerkkommunikation |
+| Red Canary Intelligence | Kuratierte Berichte zu bekannten Malware-Familien | Veröffentlichte Threat-Reports mit beobachteten Indikatoren |
+| Google / Open-Source-Recherche | Lücken füllen und Vendor-Benennungen bestätigen | Vendor-Blogs, Research-Beiträge, Community-Write-ups |
+
+Ein paar Gewohnheiten beim Einrichten zahlen sich sofort aus:
+
+- Erstellen Sie kostenlose Konten auf den Analyseplattformen, damit Sie historische Berichte durchsuchen können.
+- Führen Sie eine laufende Tabelle mit Spalten für Frage, Quelle und Beleg.
+- Reichen Sie denselben Hash niemals bei einer öffentlichen Sandbox ein, wenn Ihre Lab-Regeln das Teilen verbieten – bei den meisten CTI-Challenges ist das in Ordnung, aber prüfen Sie es zuerst.
+- Nutzen Sie die Suchfunktion des Browsers intensiv; lange Sandbox-Berichte verbergen Indikatoren tief in verschachtelten Abschnitten.
+
+Sobald diese Tabs geöffnet sind, wird der Rat-Lab-Walkthrough eher eine Leseverständnisübung als eine technische.
+
+## Phase 1: Die Malware identifizieren (Fragen 1–4)
+
+Beginnen Sie mit Hybrid Analysis. Fügen Sie den Hash in die Berichtssuche ein und öffnen Sie einen vorhandenen Sandbox-Bericht für die Probe – der Windows-7-32-Bit-Lauf mit einer Threat-Score im mittleren 90er-Bereich ist derjenige, auf den die meisten Community-Berichte verweisen. In diesem Bericht finden Sie die Malware-Familie, die dem Lab seinen Namen gibt, sowie einen verlinkten Third-Party-Intelligence-Bericht, den Sie sich für spätere Fragen als Lesezeichen speichern sollten.
+
+Wechseln Sie von dort zu VirusTotal und suchen Sie nach demselben Hash. Der Tab „Details“ wird für die nächsten drei Fragen Ihr primärer Arbeitsbereich.
+
+| Frage | Was Sie benötigen | Wo es zu finden ist |
+|---|---|---|
+| 1. Malware-Familie | Der Familienname hinter dem ungewöhnlichen Datenverkehr | Hybrid-Analysis-Sandbox-Bericht und verlinkte Vendor-Berichte |
+| 2. Häufiger Dateiname | Der Name, unter dem die Probe typischerweise ausgeliefert wird | VirusTotal → Details → Signature info → Original Name |
+| 3. Kompilierungszeitstempel | Build-Zeit der ausführbaren Datei | VirusTotal → Details → Portable Executable Info → Header |
+| 4. Datum der ersten Einreichung | Wann die Community die Probe erstmals gesehen hat | VirusTotal → Details → History → First Submission |
+
+Zwei dieser Antworten sind leicht zu übersehen. Der häufige Dateiname steht unter der Überschrift „File Version Information“ und nicht in der Erkennungsliste, und der Zeitstempel der ersten Einreichung befindet sich oben im Tab „Details“ im Block „History“ – nicht in den Verhaltensdaten. Scrollen Sie langsam und lesen Sie die Unterüberschriften.
+
+Zu verstehen, *warum* jede Antwort wichtig ist, macht sie einprägsamer. Ein Kompilierungszeitstempel deutet darauf hin, wie lange das Tooling schon existiert und ob Sie es mit einem frischen Build zu tun haben. Das Datum der ersten Einreichung sagt Ihnen, wie lange die Probe möglicherweise kursierte, bevor sie jemandem auffiel. Beide fließen direkt in eine Incident-Timeline ein.
+
+## Phase 2: Die abgelegte Payload und den C2-Server eingrenzen (Fragen 5–6)
+
+Die letzten beiden Fragen wechseln von statischen Metadaten dazu, was die Malware tatsächlich tut. VirusTotal enthält hier möglicherweise nicht die benötigten Artefaktdaten, wechseln Sie daher zu dem verlinkten Red-Canary-Intelligence-Bericht, den Sie in Phase 1 gefunden haben.
+
+Dieser Bericht listet die `.dat`-Datei auf, die die Probe in den `AppData`-Ordner des Benutzers schreibt – das persistenznahe Artefakt, nach dem Sie auf allen anderen Workstations im Netzwerk suchen würden. Derselbe Abschnitt nennt typischerweise die C2-URL, die die Probe kontaktiert, was Frage 6 beantwortet.
+
+| Frage | Was Sie benötigen | Wo es zu finden ist |
+|---|---|---|
+| 5. Abgelegte `.dat`-Datei | Dateiname der in AppData geschriebenen Payload | Red-Canary-Bericht (nicht immer auf VirusTotal vorhanden) |
+| 6. C2-Server | Die URL oder Domain, die die Probe anfunkt | Red-Canary-Bericht, anschließend bestätigt auf VirusTotal und Hybrid Analysis |
+
+Bleiben Sie bei der Antwort zum C2 nicht bei einer einzigen Quelle stehen. Die beste Gewohnheit, die dieser Rat-Lab-Walkthrough vermittelt, ist die Dreifachbestätigung.
+
+## Die Gewohnheit der Dreifachbestätigung
+
+Jede einzelne Quelle kann falsch, veraltet oder falsch etikettiert sein. Wenn drei unabhängige Plattformen denselben Indikator bestätigen, steigt Ihr Vertrauen in diesen Indikator – und in die daraus erstellte Erkennungsregel – stark.
+
+| Quelle | Belegtyp | Was sie bestätigt |
+|---|---|---|
+| Red Canary | Von Analysten verfasster Incident-Bericht | Genannte C2-URL und das abgelegte Artefakt |
+| VirusTotal | Statische Strings plus URL-Reputationsprüfung | Dieselbe URL als Memory-Pattern-Domain, mit Vendor-Erkennungen |
+| Hybrid Analysis | Sandbox-Telemetrie | Die URL, aufgeführt unter External Systems mit Reputationskontext |
+
+Community-Berichte heben diese Triangulation durchgängig als die am besten übertragbare Fähigkeit im Lab hervor. In der Praxis werden Sie selten drei Quellen haben – aber der Instinkt, nach einer zweiten Meinung zu suchen, ist es, was einen soliden Indicator of Compromise (IOC) von einer Vermutung unterscheidet.
+
+## Antwortübersicht zum Rat-Lab-Walkthrough
+
+Verwenden Sie diese Tabelle als Checkliste. Sie ordnet jeder Frage den Antworttyp und die Quelle zu, die sie auflöst, damit Sie Ihren Fortschritt überprüfen können, ohne sich selbst die Untersuchung zu verderben.
+
+| # | Antworttyp | Primärquelle | Backup-Quelle |
+|---|---|---|---|
+| 1 | Name der Malware-Familie | Hybrid-Analysis-Sandbox-Bericht | Verlinkter Vendor-Bericht |
+| 2 | Häufiger/originaler Dateiname | VirusTotal → Signature info | Dateilisten der Sandbox |
+| 3 | Kompilierungszeitstempel | VirusTotal → PE Header | Statische Daten der Sandbox |
+| 4 | Datum der ersten Einreichung | VirusTotal → History | Community-Berichte |
+| 5 | Dateiname der abgelegten `.dat`-Datei | Red-Canary-Bericht | Liste abgelegter Dateien der Sandbox |
+| 6 | C2-URL | Red-Canary-Bericht | VirusTotal Behavior + Hybrid Analysis External Systems |
+
+Ein realistischer Zeitplan für einen ersten Versuch sieht so aus:
+
+| Phase | Typische Zeit | Ergebnis |
+|---|---|---|
+| Einrichtung und Hash-Suche | 5–10 Minuten | Malware-Familie identifiziert |
+| Statische Metadaten | 10–15 Minuten | Dateiname, Zeitstempel, erste Einreichung |
+| Verhalten und IOC-Pivot | 15–20 Minuten | Abgelegte Datei, C2-Server |
+| Write-up und Verifizierung | 10 Minuten | Bestätigte, belegte Antworten |
+
+Die meisten Analysten schließen einen ersten Durchlauf in etwa 40 bis 60 Minuten ab und einen Wiederholungsversuch mit derselben Methodik eher in 20 Minuten.
+
+## Häufige Fehler, die Sie vermeiden sollten
+
+- **Aus dem Gedächtnis statt anhand von Belegen antworten.** Jede Antwort sollte auf einen bestimmten Tab oder Berichtsabschnitt zurückführbar sein.
+- **Den Red-Canary-Bericht überspringen.** Ohne ihn ist die abgelegte `.dat`-Datei nahezu unmöglich aufzulösen.
+- **Den Kompilierungszeitstempel mit dem Datum der ersten Einreichung verwechseln.** Es sind unterschiedliche Felder in unterschiedlichen Abschnitten von VirusTotal, und sie erzählen unterschiedliche Geschichten.
+- **URL-Reputation ignorieren.** Die Prüfung der C2-Domain gegen VirusTotal liefert Kontext, der Ihren Abschlussbericht stärkt.
+- **Das Write-up überstürzen.** Ein Walkthrough wird genauso an der Argumentation wie an den Antworten gemessen.
+
+Wenn Sie das offizielle Challenge-Set und die Bewertungsregeln möchten, ist die [CyberDefenders-Trainingsplattform](https://cyberdefenders.org/) die maßgebliche Quelle; andere Labs auf der Website verwenden dasselbe Hash-First-Format und stärken dieselben Pivot-Fähigkeiten.
+
+## FAQ
+
+**Ist der Rat-Lab-Walkthrough anfängerfreundlich?**
+Ja. Wenn Sie einen Datei-Hash suchen und einen Bericht lesen können, können Sie ihn abschließen. Die Challenge belohnt sorgfältiges Lesen weit mehr als Reverse-Engineering-Kenntnisse, weshalb sie oft als Einstieg in die CTI-Arbeit empfohlen wird.
+
+**Brauche ich kostenpflichtige Konten für die in diesem Rat-Lab-Walkthrough verwendeten Tools?**
+Nein. Die kostenlosen Tarife von Hybrid Analysis und VirusTotal decken alles ab, was die sechs Fragen erfordern. Der im Lab referenzierte Third-Party-Intelligence-Bericht ist öffentlich verfügbar.
+
+**Wie lange dauert das Yellow RAT Lab?**
+Community-Berichte legen 40–60 Minuten für einen ersten Versuch nahe, inklusive Lesezeit. Sobald Sie die Pivot-Reihenfolge kennen, dauert ein zweiter Durchlauf ungefähr 20 Minuten.
+
+**Welche Fähigkeiten vermittelt der Rat-Lab-Walkthrough tatsächlich?**
+Hash-Pivotierung, Interpretation statischer Metadaten, Lesen von Sandbox-Berichten, IOC-Extraktion und die Gewohnheit der Quellenkorrelation, die einen einzelnen Indikator in einen verteidigungsfähigen Incident-Befund verwandelt. Das sind SOC- und CTI-Fähigkeiten ab dem ersten Tag.
+
+Schließen Sie das Lab ab und schreiben Sie dann Ihre eigene Zusammenfassung, als müsste ein Teammitglied danach handeln. Dieser letzte Schritt ist der Punkt, an dem der Rat-Lab-Walkthrough von einer Übung zu einer Gewohnheit wird.

@@ -1,0 +1,143 @@
+export const metadata = {
+  title: "Rat Lab Quests Leitfaden: Jede Threat-Intel-Challenge Schritt für Schritt lösen",
+  description: "Ein praktischer Walkthrough durch jede Rat Lab Quests Challenge, vom Start-Hash bis zur C2-Bestätigung, mit genau den Quellen, die Analysten verwenden.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+Die Rat Lab Quests wirken auf den ersten Blick täuschend einfach: Du öffnest ein Challenge-Archiv, liest einen einzigen SHA256-Hash und beantwortest eine kurze Liste von Fragen. Genau dieser winzige Ausgangspunkt ist das Entscheidende. Wer die Rat Lab Quests abschließt, wird durch den gesamten Threat-Intelligence-Workflow gezwungen — mit ständigem Wechsel zwischen Sandbox-Reports, Reputation-Diensten und Vendor-Writeups, bis jede Aussage durch mehr als eine Quelle bestätigt ist.
+
+Wenn du auf Incident Response, Threat Hunting oder CTI-Arbeit abzielst, ist dieses Lab eine der effizientesten Möglichkeiten, dir an einem Nachmittag echte investigative Muskelmasse aufzubauen. Dieser Leitfaden schlüsselt auf, was jede Quest verlangt, welches Tool sie beantwortet und welche Fehler Erstanalysten die meiste Zeit kosten.
+
+## Was sind die Rat Lab Quests?
+
+Das Rat Lab ist eine praktische Cyber-Threat-Intelligence-Challenge, die um einen realistischen Vorfall herum aufgebaut ist. Du erhältst eine Challenge-Datei mit einem Hash, und dieser Hash ist deine einzige Spur. Von dort aus führt dich eine Abfolge von Quests von „Was ist diese Datei?“ bis hin zu „Mit wem kommuniziert sie?“
+
+Community-Walkthroughs beschreiben das zugrunde liegende Szenario als routinemäßige IT-Sicherheitsprüfung in einem mittelständischen Unternehmen, bei der auf mehreren Workstations abnormaler Netzwerkverkehr auftritt und Suchanfragen von Mitarbeitern beginnen, auf unbekannte Websites umgeleitet zu werden. Diese Rahmung ist bewusst gewählt. Echte Untersuchungen beginnen selten mit einem sauberen Indicator — sie beginnen mit einem vagen Symptom und viel Rätselraten.
+
+| Quest | Was gefragt wird | Wo die Antwort üblicherweise liegt |
+|---|---|---|
+| 1 | Malware-Familie, die den abnormalen Verkehr verursacht | Sandbox-Report, gefunden per Hash-Suche |
+| 2 | Häufig verwendeter Dateiname der Probe | Dateiversions- / Signaturinformationen auf einem Reputation-Dienst |
+| 3 | Kompilierungszeitstempel der Binärdatei | Header-Daten der Portable Executable |
+| 4 | Datum, an dem die Probe erstmals öffentlich eingereicht wurde | Zeitlinie der Einreichungshistorie |
+| 5 | Name der in AppData abgelegten `.dat`-Datei | Vendor-Detection-Writeup |
+| 6 | Command-and-Control-(C2-)Server | Vendor-Writeup, Behavior-Tab, externe Systeme der Sandbox |
+
+Jede Quest baut auf der vorherigen auf. Wenn du vorgreifst, fehlt dir der Kontext, um das Gelesene einzuordnen.
+
+## Tools, die du vor dem Start der Rat Lab Quests brauchst
+
+Du brauchst keine kostenpflichtige Toolchain und keine eigene Lab-VM. Jede Plattform, auf die sich die Rat Lab Quests stützen, bietet einen kostenlosen Tarif, der für die Bewältigung der Challenge mehr als ausreicht.
+
+| Tool | Rolle in der Quest-Kette | Wo du nachsehen musst |
+|---|---|---|
+| Hybrid Analysis | Sandbox-Ausführungsberichte und Listen externer Systeme | Reportsuche per Datei-Hash |
+| VirusTotal | Dateiidentität, PE-Metadaten, Verhalten, Domain-Reputation | Details-Tab und Behavior-Tab |
+| Red Canary Intelligence | Vendor-Detection-Writeup zu abgelegten Dateien und C2 | Detection-Report für die Familie |
+| Offene Websuche | Gegenprüfung von Familiennamen anhand öffentlicher Berichterstattung | Vendor-Blogs, Analystenbeiträge |
+| Eine Notizdatei | Antworten, URLs und Zeitstempel laufend festhalten | Egal wo — nutze einfach eine |
+
+Das dokumentierte Startartefakt ist ein SHA256-Hash, der in einer Textdatei im Challenge-Archiv gespeichert ist. Analysten, die Community-Walkthroughs veröffentlicht haben, weisen darauf hin, dass mehrere Reports für denselben Hash existieren. Es funktioniert also, irgendeinen Report auszuwählen, der zu deinem Hash passt — du brauchst nicht genau den, den jemand anderes verwendet hat.
+
+Eine Registrierung auf der [CyberDefenders-Challenge-Plattform](https://cyberdefenders.org/) gibt dir Zugang zu diesem Lab plus einer großen Bibliothek ähnlicher Untersuchungen, falls du danach weitermachen möchtest.
+
+## Rat Lab Quests Walkthrough, Quest für Quest
+
+### Quest 1: Die Malware-Familie identifizieren
+
+Kopiere den Hash aus der Challenge-Datei und füge ihn in die Reportsuche einer Sandbox ein. Du suchst einen Report, der einen tatsächlichen Ausführungsnachweis zeigt, nicht nur eine Anzahl von Erkennungen. Community-Berichte empfehlen, nach Reports mit hohem Threat-Score und vollständig angehängter Sandbox-Ausführung zu filtern.
+
+Sobald du im Report bist, erscheint der Familienname neben der Bedrohungsklassifizierung. Schreibe ihn genau so auf, wie er angezeigt wird — spätere Quests hängen davon ab, dass du auf anderen Plattformen nach der richtigen Familie suchst.
+
+### Quests 2–4: Zu VirusTotal wechseln
+
+Nachdem die Familie identifiziert ist, wechselst du zu einem Reputation-Dienst und suchst denselben Hash. Drei der Quests lassen sich auf einer einzigen Seite beantworten, wenn du weißt, welche Felder du lesen musst.
+
+| Quest | Zu lesendes Feld | Navigationspfad |
+|---|---|---|
+| 2 | Original Name (der gängige Dateiname) | Details → File Version Information → Signature info |
+| 3 | Compilation Timestamp | Details → PE Info → Header |
+| 4 | First Submission date | Details → History |
+
+Ein häufiger Punkt der Verwirrung: Der *gängige Dateiname* ist der Originalname, der in den Versionsinformationen der Datei erfasst ist — nicht der interne Malware-Name und nicht das Detection-Label. Das sind drei verschiedene Strings, und das Lab fragt nach einem ganz bestimmten.
+
+Kompilierungszeit und Erst-Einreichungszeit hängen ebenfalls nicht zusammen. Eine Probe kann Monate vor dem Upload kompiliert worden sein, und genau diese Lücke ist wertvolle Intelligenz darüber, wie lange die Malware möglicherweise unentdeckt im Wilden war.
+
+### Quest 5: Die abgelegte .dat-Datei aufspüren
+
+Dies ist die erste Quest, bei der der Reputation-Dienst nicht mehr ausreicht. Die Liste der abgelegten Dateien ist dort nicht verfügbar, also musst du die Quellen wechseln und stattdessen einen Vendor-Detection-Writeup lesen.
+
+Vendor-Intelligence-Reports listen Persistenz-Artefakte, abgelegte Dateien und Registry-Schlüssel üblicherweise in einem Aufzählungsabschnitt nahe dem Anfang auf. Suche nach einer `.dat`-Datei, die in den AppData-Ordner des Nutzers geschrieben wird. Dieses Detail ist operativ relevant — es gibt Respondern eine konkrete Datei, nach der sie im restlichen Umfeld suchen können.
+
+### Quest 6: Den C2-Server bestätigen
+
+Die letzte Quest fragt nach dem Command-and-Control-Server, mit dem die Probe kommuniziert. Hier belohnen die Rat Lab Quests Geduld statt Geschwindigkeit, denn die Antwort sollte aus mindestens drei Blickwinkeln bestätigt werden.
+
+| Quelle | Zu prüfender Abschnitt | Was es belegt |
+|---|---|---|
+| Vendor-Detection-Writeup | Liste beobachteter Indicators | Das C2 wurde in einer realen Umgebung gesehen |
+| Reputation-Dienst | Behavior → Network Communication | Der String existiert innerhalb der Probe selbst |
+| Sandbox-Report | Suspicious Indicators → External Systems | Die Probe hat diese Verbindung zur Laufzeit versucht |
+
+Sobald du die URL hast, prüfe die Reputation der Domain beim Reputation-Dienst. Eine Domain, die von mehreren Engines geflaggt wird, schließt den Kreis und gibt dir die Sicherheit, sie in eine Blockliste aufzunehmen.
+
+## Wie die Rat Lab Quests Triangulation vermitteln
+
+Die eigentliche Lektion dieses Labs ist keine einzelne Antwort. Es ist die Gewohnheit, niemals einer einzigen Quelle zu vertrauen. Jede Quest schubst dich genau deshalb auf eine neue Plattform, weil keine einzelne Plattform das vollständige Bild liefert.
+
+| Erkenntnis | Primärquelle | Bestätigende Quelle | Warum Gegenprüfung wichtig ist |
+|---|---|---|---|
+| Malware-Familie | Sandbox-Report | Detection-Label der Anti-Malware-Engines | Familien werden umbenannt und neu gebrandet |
+| Abgelegte Datei | Vendor-Writeup | Dateisystem-Artefakte der Sandbox | Abgelegte Dateien können je nach Konfiguration variieren |
+| C2-Server | Vendor-Writeup | Behavior-Tab plus externe Systeme der Sandbox | Strings in einer Binärdatei werden nicht immer kontaktiert |
+
+Diese Triangulationsgewohnheit überträgt sich direkt auf echte Incident Response. Dieselbe Logik gilt, wenn du einen Indicator bestätigst, bevor du ihn blockierst, oder wenn du die Aussage eines Vendors gegen deine eigene Telemetrie prüfst, bevor du eskalierst.
+
+## Häufige Fehler, die Menschen ausbremsen
+
+| Fehler | Warum er passiert | Wie du ihn vermeidest |
+|---|---|---|
+| Den falschen Report öffnen | Viele Reports teilen denselben Hash | Prüfe vor dem Lesen, ob der Hash übereinstimmt |
+| Das falsche Dateinamen-Feld lesen | Mehrere Namensfelder liegen nahe beieinander | Stelle sicher, dass du in Signature info bist, nicht bei den Detections |
+| Zeitstempel verwechseln | Kompilierungs- und Einreichungsdaten sehen ähnlich aus | Lies die Feldbezeichnung sorgfältig, nicht das Werteformat |
+| Annehmen, dass eine Site alles hat | Die Liste der abgelegten Dateien liegt nicht beim Reputation-Dienst | Wechsle für Artefakte zur Vendor-Intelligence |
+| Bei einer C2-Quelle stehenbleiben | Der erste Treffer fühlt sich schlüssig an | Mindestens über drei Quellen hinweg bestätigen |
+| Notizen überspringen | Antworten bauen aufeinander auf | Halte jede Erkenntnis laufend fest |
+
+## Tipps, um die Rat Lab Quests schneller abzuschließen
+
+- **Halte den Hash in der Zwischenablage.** Du wirst ihn in drei oder vier Plattformen einfügen, bevor du fertig bist.
+- **Öffne Tabs parallel.** Lade den Sandbox-Report, die Reputation-Seite und den Vendor-Writeup nebeneinander, damit du Felder vergleichen kannst, statt erneut zu suchen.
+- **Prüfe den History-Abschnitt früh.** Zu wissen, wann die Probe erstmals öffentlich auftauchte, rahmt alles andere ein, was du liest.
+- **Schreibe den Familiennamen genau so, wie er angezeigt wird.** Tippfehler schicken spätere Suchen in Sackgassen.
+- **Lies den gesamten Vendor-Report, nicht nur die Indicators.** Kontext zu Delivery und Persistenz erklärt oft die Artefakte, die du findest.
+- **Protokolliere deine Quellen.** Wenn du deinen eigenen Writeup veröffentlichen willst, ist die Angabe, woher jede Antwort stammt, die halbe Miete.
+
+## Warum sich dieses Lab lohnt
+
+Die Rat Lab Quests komprimieren eine realistische Untersuchung in eine kurze, strukturierte Übung. Du trainierst Hash-Pivoting, das Lesen von Metadaten, die Jagd nach Artefakten und die Bestätigung von Infrastruktur — dieselben Fähigkeiten, die in Einstiegsinterviews für CTI- und SOC-Analysten abgefragt werden.
+
+Die Spielerfahrung aus Community-Walkthroughs läuft immer wieder auf dieselbe Erkenntnis hinaus: Der Wert liegt im Workflow, nicht in den Antworten. Jeder kann eine Endergebnis nachschlagen. Erklären zu können, wie du dorthin gekommen bist und welche Quelle es bestätigt hat, ist das, was auffällt.
+
+## FAQ
+
+**Was genau sind die Rat Lab Quests?**
+
+Es ist ein strukturierter Satz von Challenge-Fragen innerhalb eines Threat-Intelligence-Labs. Du startest mit einem einzigen Datei-Hash und beantwortest sechs Fragen zu Malware-Identifikation, Datei-Metadaten, Zeitlinie, abgelegten Artefakten und Command-and-Control-Infrastruktur.
+
+**Brauche ich Malware-Analyse-Erfahrung, um die Rat Lab Quests abzuschließen?**
+
+Nein, Reverse Engineering ist nicht erforderlich. Jede Antwort lässt sich durch Lesen von Sandbox-Reports, Seiten von Reputation-Diensten und Vendor-Intelligence-Writeups finden. Grundlegende Vertrautheit mit Windows-Dateipfaden und PE-Metadaten hilft, aber das Lab vermittelt dir das im Verlauf.
+
+**Sind die Rat Lab Quests kostenlos?**
+
+Das Lab wird auf einer Community-Challenge-Plattform gehostet, die kostenlosen Zugang zu ihrer Challenge-Bibliothek bietet. Prüfe vor dem Start die aktuelle Website des Anbieters für Kontodetails und Zugangsbedingungen.
+
+**Wie lange dauern die Rat Lab Quests?**
+
+Die meisten Analysten berichten, dass sie beim ersten Versuch in ein bis zwei Stunden fertig sind. Der Engpass ist meist nicht die Analyse, sondern sich zu merken, welcher Tab welches Feld enthält — sobald du die Navigationspfade kennst, kommen die Antworten schnell.
+
+**Kann ich danach meinen eigenen Walkthrough veröffentlichen?**
+
+Ja, und das wird ausdrücklich ermutigt. Wenn du deine Methodik aufschreibst, musst du jede Schlussfolgerung begründen — und genau diese Fähigkeit sollen die Rat Lab Quests aufbauen.

@@ -1,0 +1,104 @@
+export const metadata = {
+  title: "Rat-Lab-Test-Leitfaden: Eine Schritt-für-Schritt-Anleitung zum Yellow RAT für CTF-Spieler",
+  description: "Meistere den Rat-Lab-Test mit dieser Anleitung: Threat-Intel-Tools, sechs Ziele und Profi-Tipps für den Fortschritt in der Yellow-RAT-Challenge.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+Threat-Intelligence-Arbeit belohnt Menschen, die schnell zwischen Plattformen wechseln können, und der **Rat-Lab-Test** ist eine der saubersten Möglichkeiten, diese Fähigkeit unter Beweis zu stellen. Statt dir einen vollständigen Paketmitschnitt oder einen Live-Endpunkt in die Hand zu geben, liefert diese Challenge nur einen einzigen Datei-Hash und verlangt von dir, die gesamte Eindringlingsgeschichte aus öffentlichen Berichten zu rekonstruieren. Das ist wichtig, weil echte Incident Response selten mit einem vollständigen Bild beginnt — sie beginnt mit einem einzigen Indikator, und deine Aufgabe ist es, diesen Indikator in Kontext zu verwandeln. Den Rat-Lab-Test zu absolvieren bedeutet, dass du eine Malware-Familie identifizieren, die von ihr abgelegten Artefakte nachverfolgen und die Infrastruktur festnageln kannst, mit der sie kommuniziert — und das alles, ohne jemals die Opfermaschine zu berühren.
+
+Nachfolgend findest du einen praktischen Fortschrittsleitfaden: Was die Challenge tatsächlich verlangt, welche Tools welche Frage beantworten und wie du die Sackgassen vermeidest, in denen die meisten Erstanwender hängen bleiben.
+
+## Was der Rat-Lab-Test tatsächlich von dir verlangt
+
+Der Rat-Lab-Test ist eine Threat-Intelligence-Challenge, die um ein realistisches Szenario herum aufgebaut ist. Ein Unternehmen bemerkt anomalen Netzwerkverkehr auf mehreren Workstations, und Mitarbeiter melden, dass ihre Suchanfragen auf unbekannte Websites umgeleitet werden. Dein Einstiegspunkt ist eine Hash-Datei — typischerweise eine Textdatei mit dem SHA-256-Wert der verdächtigen Probe — und sonst nichts.
+
+Von dort aus sollst du die Probe mithilfe von Open-Source-Intelligence-Plattformen recherchieren und eine kurze Reihe investigativer Fragen beantworten. Die Challenge ist bewusst so aufgebaut, dass keine einzelne Plattform alle Antworten liefert. Dieses Design zwingt dich, Befunde über mehrere Quellen hinweg zu bestätigen — genau so funktioniert professionelle CTI-Arbeit.
+
+| Challenge-Element | Was dich erwartet |
+|---|---|
+| Startartefakt | Ein einzelner SHA-256-Hash in einer Textdatei |
+| Untersuchungsstil | Passive OSINT- und Sandbox-Berichte |
+| Kompetenzfokus | Threat-Intel-Pivoting, Malware-Triage |
+| Kernplattformen | Hybrid Analysis, VirusTotal, Hersteller-CTI |
+| Antwortformat | Kurze Zeichenketten, Dateinamen, Zeitstempel, Domains |
+| Schwierigkeit | Einsteigerfreundlich, mittlere Tiefe |
+| Typische Bearbeitungszeit | Etwa 30–60 Minuten beim ersten Versuch |
+
+## Die sechs Ziele und wo jede Antwort zu finden ist
+
+Die meisten Varianten des Rat-Lab-Tests folgen demselben Untersuchungsbogen: die Familie identifizieren, die Binärdatei charakterisieren, die abgelegte Payload finden und schließlich die Command-and-Control-(C2-)Infrastruktur lokalisieren. Wenn du die Reihenfolge im Voraus kennst, musst du dieselben Berichte nicht viermal lesen.
+
+| # | Ziel | Beste Quelle |
+|---|---|---|
+| 1 | Die Malware-Familie identifizieren, die den Verkehr verursacht | Sandbox-Berichtssuche auf Hybrid Analysis |
+| 2 | Den verwendeten gebräuchlichen/originalen Dateinamen finden | VirusTotal-Dateidetails, Abschnitt mit Signaturinformationen |
+| 3 | Den Kompilierungszeitstempel bestimmen | VirusTotal-Daten des Portable-Executable-Headers |
+| 4 | Herausfinden, wann die Probe erstmals eingereicht wurde | VirusTotal-Einreichungsverlauf |
+| 5 | Die in AppData abgelegte `.dat`-Datei identifizieren | Hersteller-CTI-Bericht, der abgelegte Dateien beschreibt |
+| 6 | Den C2-Server oder die URL identifizieren | Hersteller-CTI-Bericht, abgeglichen mit dem Sandbox-Verhalten |
+
+Der Ablauf ist bewusst gewählt. Frage 1 liefert dir das Vokabular, das du für alles Weitere brauchst — sobald du den Namen der Familie kennst, werden die übrigen Fragen zu stichwortbasierten Nachschlagevorgängen statt zu offener Recherche.
+
+## Tools, die du vor dem Start geöffnet haben solltest
+
+Für diese Aufgabe brauchst du kein Labor voller virtueller Maschinen. Du brauchst drei Browser-Tabs und eine Notizendatei. Der gesamte Rat-Lab-Test ist eine Übung im guten Lesen von Intelligence, nicht im Aufbau einer Analyseumgebung.
+
+| Tool | Was es dir liefert | Wie es im Rat-Lab-Test hilft |
+|---|---|---|
+| Hybrid Analysis | Sandbox-Detonierungsberichte, Threat-Scores, Auflistungen externer Systeme | Bestätigt die Familie und validiert den C2-Endpunkt |
+| VirusTotal | Multi-Engine-Erkennungen, PE-Metadaten, Einreichungsverlauf, Verhaltens-Tab | Liefert Dateinamen, Zeitstempel und URL-Reputation |
+| Hersteller-CTI-Berichte | Von Analysten verfasste Malware-Profile mit Observables-Listen | Deckt abgelegte Artefakte auf, die Metadaten allein übersehen |
+| Suchmaschinen | Bestätigende Blogbeiträge und Community-Walkthroughs | Füllt Lücken, wenn einer Plattform ein Feld fehlt |
+
+Für ein breiteres Verständnis davon, wie diese Challenges aufgebaut sind, ist die [CyberDefenders-Challenge-Plattform](https://cyberdefenders.org/) das offizielle Zuhause des Yellow RAT Lab und beherbergt die Szenario-Briefings und Antwortübermittlungen.
+
+## Schritt-für-Schritt-Durchlauf durch den Rat-Lab-Test
+
+### Schritt 1: Verankere dich am Hash
+
+Füge den SHA-256-Wert zuerst in eine Berichtssuche ein, nicht in eine allgemeine Websuche. Sandbox-Datenbanken indexieren Hashes und liefern frühere Analysen nahezu augenblicklich zurück, was dir mit einem einzigen Klick einen Familiennamen und eine Verhaltenszusammenfassung liefert. Wähle den Bericht mit der höchsten Bewertung — Deep-Dive-Sandbox-Läufe bringen weit mehr Netzwerk- und Dateisystemaktivität zutage als Schnellscans.
+
+### Schritt 2: Wechsle zu statischen Metadaten
+
+Wenn die Familie bekannt ist, wechsle zu einer Multi-Engine-Dateiintelligenz-Plattform und öffne die Detailansicht der Datei. Zwei Felder beantworten zwei verschiedene Fragen: der ursprüngliche Dateiname, der in den Versionsinformationen der Datei erfasst ist, und der Kompilierungszeitstempel, der im Portable-Executable-Header eingebettet ist. Kopiere beide genau so, wie sie angezeigt werden — diese Antworten sind groß-/kleinschreibungssensitiv und werden oft wegen eines einzelnen fehlplatzierten Zeichens abgelehnt.
+
+### Schritt 3: Verfolge das abgelegte Artefakt
+
+Die abgelegte `.dat`-Datei ist die Frage, die die meisten Analysten beim ersten Durchlauf übersehen, weil Multi-Engine-Plattformen sie oft nicht erfassen. Community-Berichte und Hersteller-Intelligence-Analysen führen abgelegte Dateien in ihren Verhaltensnarrativen auf, meist in einer nummerierten Liste beobachteter Indikatoren. Lies den Fließtext, nicht nur die Tabellen.
+
+### Schritt 4: Bestätige das C2 dreifach
+
+Das letzte Ziel ist der C2-Endpunkt, und der Rat-Lab-Test belohnt bewusst Verifikation statt Geschwindigkeit. Die Erfahrung von Spielern legt nahe, dass der sicherste Ansatz darin besteht, die URL im Herstellerbericht zu finden, sie als Speichermuster oder Netzwerkkommunikation auf der Multi-Engine-Plattform zu bestätigen und dann den Reputationswert der Domain zu prüfen. Drei unabhängige Bestätigungen machen eine falsche Antwort praktisch unmöglich.
+
+| Schritt | Beantwortete Frage | Bestätigungsmethode |
+|---|---|---|
+| 1 | Malware-Familie | Übereinstimmung des Sandbox-Berichts mit dem Hash |
+| 2 | Gebräuchlicher Dateiname | Feld für Dateiversionsinformationen |
+| 3 | Kompilierungszeitstempel | PE-Header, nicht Dateisystem-Metadaten |
+| 4 | Datum der ersten Einreichung | Verlaufsbereich der Plattform |
+| 5 | Abgelegte `.dat`-Datei | Verhaltensnarrativ des Hersteller-CTI |
+| 6 | C2-Server | Bericht + Verhaltens-Tab + Domain-Reputation |
+
+## Häufige Fehler, die deinen Durchlauf verlangsamen
+
+Die meisten fehlgeschlagenen Versuche sind auf den Prozess zurückzuführen, nicht auf mangelndes Wissen. Der Rat-Lab-Test ist für jeden lösbar, der sich beim Lesen technischer Berichte wohlfühlt, daher sind die Fehler meist klein und behebbar.
+
+- **Den Hash zuerst im offenen Web suchen.** Du verbrennst zehn Minuten mit irrelevanten Ergebnissen, während eine Berichtsdatenbank sofort antwortet.
+- **Antworten mit angehängtem Satzzeichen kopieren.** Ein Punkt am Ende einer Domain führt zum Validierungsfehler.
+- **Kompilierungszeit mit Erstfundzeit verwechseln.** Das sind unterschiedliche Felder in unterschiedlichen Bereichen und oft Monate auseinander.
+- **Bei der C2 auf eine einzige Quelle vertrauen.** Die Challenge ist auf Bestätigung ausgelegt; Antworten aus einer einzigen Quelle sind riskanter, als sie aussehen.
+- **Die Frage nach der abgelegten Datei überspringen.** Sie steckt im Fließtext des Berichts statt in einem strukturierten Feld und wird daher leicht übersehen.
+- **Das Zeitstempelformat überstürzen.** Triff das Format, das die Challenge erwartet, sei es ein vollständiges Datum oder eine Datum-Zeit-Zeichenkette.
+
+| Fehler | Warum er dich kostet | Lösung |
+|---|---|---|
+| Den Hash im Web suchen | Rauschen, keine direkte Übereinstimmung | Eine Berichtsdatenbank-Suche verwenden |
+| Zusätzliche Zeichen in Antworten | Validierungsfehler | Leerraum und Satzzeichen entfernen |
+| Zeitstempel verwechseln | Ganz falsches Feld | Die Beschriftungen der Bereiche sorgfältig lesen |
+| C2-Antwort aus einer einzigen Quelle | Höhere Fehlerquote | Über drei Plattformen hinweg bestätigen |
+| Den Fließtext des Berichts ignorieren | Übersehene abgelegte Artefakte | Narrative lesen, nicht nur Tabellen |
+
+## Was du lernst, das sich auf die reale Arbeit übertragen lässt
+
+Der Wert des Rat-Lab-Tests liegt nicht im Ergebnis — er liegt im Muskelgedächtnis. Das Pivotieren von einem Hash zu einer Familie,

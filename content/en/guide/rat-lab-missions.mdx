@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Rat Lab Missions: A Complete Walkthrough Guide for Threat Intel RAT Challenges",
+  description: "Learn how to solve Rat Lab missions step by step: malware hash triage, VirusTotal and Hybrid Analysis pivots, dropped files, and C2 discovery.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## What Are Rat Lab Missions?
+
+If you've ever stared at a single file hash and wondered where to begin, Rat Lab missions are the fastest way to turn that blank stare into a repeatable workflow. Each of these Rat Lab missions drops you into a simulated intrusion and asks you to reconstruct the whole story from one or two clues. That matters because threat intelligence hiring managers care less about what you've memorized and more about how you pivot when all you have is an artifact and a question.
+
+The format is deliberately thin on purpose. A fictional company detects something unusual — abnormal outbound network traffic, employee search queries getting redirected to unfamiliar websites, an endpoint flagging a suspicious binary. You get a text file with a sample hash and a scenario briefing. Everything else has to be earned through research.
+
+The "lab" label describes the exercise, not the difficulty. The malware class at the center of these challenges is a remote access trojan (RAT) — code that gives an operator interactive control over an infected host. Solving the challenge means answering a fixed set of questions about that sample with evidence you can point to.
+
+### Why This Format Trains Real Analysts
+
+RAT challenges compress the first hour of a real incident into a self-contained puzzle. You triage an unknown binary, identify its family, map its infrastructure, and report findings — the same loop a tier-one analyst runs every shift. The difference is that in a lab, the answers are known, so you can verify whether your method worked instead of guessing.
+
+## Core Skills Every Rat Lab Mission Tests
+
+| Skill tested | What it looks like in practice | Why it matters on the job |
+|---|---|---|
+| Hash triage | Running a sample hash through multi-engine analysis services | The first move in nearly every real malware investigation |
+| Sample profiling | Pulling original filename, compiler metadata, and first-seen dates | Builds a timeline and helps scope how far an infection spread |
+| Artifact discovery | Finding dropped files, staging paths, and persistence locations | Tells responders exactly what to hunt for on other hosts |
+| Infrastructure mapping | Identifying command-and-control (C2) endpoints | Enables blocking, sinkholing, and containment |
+| Source correlation | Confirming one answer across multiple platforms | Prevents confident wrong answers |
+| Reporting | Writing short, precise, correctly formatted responses | Mirrors ticket writing and handoff notes in a SOC |
+
+Notice that none of these skills require you to reverse-engineer assembly by hand. These challenges are about research discipline, not heroics. That's what makes them approachable for beginners and still useful for experienced analysts who want a structured drill.
+
+## The Threat Intelligence Toolkit You Need
+
+Rat Lab missions rarely require anything exotic. A browser, a free account or two on public analysis platforms, and a willingness to read long reports will carry you through most of them. The [CyberDefenders platform](https://cyberdefenders.org/) that popularized this challenge style is built around exactly that assumption — free tooling, realistic scenarios.
+
+| Tool | What it gives you | Typical question it answers |
+|---|---|---|
+| Hybrid Analysis | Falcon Sandbox reports, behavioral summaries, external systems lists | Which sandbox run matches my sample, and what did it contact? |
+| [VirusTotal](https://www.virustotal.com/) | Multi-engine detections, file details, behavior, relations, submission history | Family name, original filename, compile timestamp, first submission |
+| Vendor intelligence reports | Human-written analysis of a specific malware family | Dropped files and observed C2 infrastructure |
+| Search engines and CTI blogs | Campaign context and family naming conventions | "What is this family, and who has written about it before?" |
+| MITRE ATT&CK | Standard technique and tactic naming | Turning raw findings into defensible terminology |
+
+A quick note on each. Sandbox services are your fastest route from a bare hash to a behavior narrative. Multi-engine scanners are your best source for static file metadata. Vendor reports fill the gaps that automation misses. Search engines tie it together.
+
+Community reports from walkthrough authors are genuinely useful as a sanity check after you've solved a problem, but they should never be your first stop. Solve first, compare second — otherwise you learn nothing and the next challenge humbles you.
+
+## A Step-by-Step Workflow for Rat Lab Missions
+
+The order in which you work through Rat Lab missions matters more than raw speed. Analysts who jump straight to a search engine for answers usually stall on the follow-up questions. Follow this sequence instead.
+
+| Step | Action | Where to look |
+|---|---|---|
+| 1 | Read the scenario twice and list the victim's reported symptoms | Challenge briefing |
+| 2 | Copy the hash exactly — no leading or trailing whitespace | Provided artifact file |
+| 3 | Search the hash on a sandbox service and open the richest report | Sandbox report search |
+| 4 | Pull static file details from a multi-engine scanner | File details panel |
+| 5 | Hunt for dropped artifacts in vendor and community analysis | Family-specific reports |
+| 6 | Confirm the C2 endpoint from at least three sources | Sandbox external systems, scanner network behavior, vendor report |
+| 7 | Format each answer exactly as the submission form expects | Submission page |
+
+### Start With the Hash, Not With Guessing
+
+Paste the hash into your analysis platform of choice before you do anything else. Any whitespace, a dropped character, or a case error will return "not found" and send you chasing a sample that doesn't exist. Copy from a plain text editor, never from a formatted document.
+
+### Read the Report, Don't Just Skim the Score
+
+Sandbox search results often return several runs of the same sample. Pick the one with the highest threat score and the most complete behavioral data, usually the Windows desktop snapshot rather than an older or mobile environment. Depth beats convenience here.
+
+### Confirm the C2 From Three Angles
+
+A single mention of an IP address or URL proves nothing — it could be a false positive from a sandbox's own telemetry. The strongest answers appear in the sandbox report's external systems list, in the scanner's network communication behavior section, and in a vendor writeup. When three independent sources agree, submit with confidence.
+
+## Question Archetypes You Should Expect
+
+Across the challenge family, the same six questions keep resurfacing in slightly different clothing. Learning the archetypes lets you move faster on unfamiliar samples.
+
+| Question archetype | Where the answer usually lives | Common gotcha |
+|---|---|---|
+| Malware family name | Sandbox report header, multi-engine verdict labels | Engines disagree; use the name the primary report uses |
+| Common or original filename | File version / signature info panel | Original name is not the filename seen on disk |
+| Compilation timestamp | Portable executable header metadata | Format and time zone must match the form exactly |
+| First submission date | Submission history panel | Don't confuse first submission with first detection |
+| Dropped `.dat` file | Vendor analysis report | Scanner telemetry may lack it — pivot to human writeups |
+| C2 server or URL | Network behavior and external systems sections | Verify reputation before answering |
+
+Rat Lab missions reward precision over speed on almost every one of these. A right answer entered in the wrong format still counts as wrong.
+
+## Common Mistakes That Cost Points
+
+Most Rat Lab missions are lost on process errors, not on analytical skill. Here are the failure modes worth guarding against.
+
+| Mistake | Better approach |
+|---|---|
+| Trusting one source | Cross-check every answer in at least two independent places |
+| Skipping vendor reports | Automation sometimes misses dropped artifacts entirely |
+| Pasting a hash with hidden whitespace | Clean it in a plain text editor first |
+| Rushing the timestamp | Match the requested format, including UTC if specified |
+| Mixing up sample and dropped-file hashes | Track which artifact each hash belongs to |
+| Answering the question you assumed was asked | Re-read the prompt immediately before submitting |
+
+A few habits separate people who finish cleanly from people who redo the challenge:
+
+- Keep a running scratch file with every hash, domain, and timestamp you encounter, plus which source it came from.
+- Screenshot the exact panel where you found each answer, so you can defend your reasoning later.
+- Record which sandbox snapshot and which report you used — you'll need it if a question references behavior you already saw.
+- Write a short methodology note at the end. It's excellent interview preparation and a useful public artifact if you publish walkthroughs.
+
+## FAQ
+
+**How long do Rat Lab missions usually take?**
+Community reports suggest most single-sample challenges take somewhere between thirty minutes and two hours, depending on how comfortable you are with the analysis platforms. The first one is always the slowest.
+
+**Do I need paid tools to complete Rat Lab missions?**
+No. Public sandbox services, free multi-engine scanners, and vendor blog posts cover the overwhelming majority of questions. If a challenge does require something specialized, the briefing usually says so.
+
+**What's the difference between a RAT and a Rat Lab?**
+A RAT is a class of malware that gives an attacker remote control of a victim machine. A Rat Lab is a training challenge built around analyzing one — the malware is the subject, the lab is the classroom.
+
+**Can solving Rat Lab missions help my career?**
+Yes, for two reasons. First, the workflow — hash triage, artifact discovery, infrastructure mapping, reporting — is exactly what entry-level threat intelligence and SOC roles ask for. Second, publishing a clear walkthrough gives you a portfolio piece that proves you can do the work, not just describe it.

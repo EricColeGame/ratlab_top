@@ -1,0 +1,129 @@
+export const metadata = {
+  title: "Rat-Lab-Aufgaben erklärt: Ein vollständiger Progression-Guide für die Yellow-RAT-CTI-Challenge",
+  description: "Rat-Lab-Aufgaben Schritt für Schritt aufgeschlüsselt – mit den Tools, Threat-Intel-Quellen und Fortschrittstipps, die Sie brauchen, um die Yellow-RAT-Challenge schnell zu meistern.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+## Warum Rat-Lab-Aufgaben für CTI-Einsteiger wichtig sind
+
+Wenn Ihnen jemals ein einzelner Dateihash übergeben und gesagt wurde, Sie sollen „herausfinden, was passiert ist“, dann ist das Yellow-RAT-Lab die Übung, die Ihnen zeigt, wie das geht. Wenn Sie **Rat-Lab-Aufgaben** durcharbeiten, müssen Sie zwischen Threat-Intelligence-Plattformen wechseln, Ihre erste Annahme hinterfragen und Beweise so dokumentieren, wie es ein echter Analyst tut. Das Beste daran ist, dass **Rat-Lab-Aufgaben** von einsteigerfreundlichen Lookups bis hin zu echter investigativer Schlussfolgerung reichen, sodass die Challenge sowohl Neulinge als auch erfahrene Responder belohnt.
+
+Das Lab basiert auf einem realistischen Szenario: ungewöhnlicher Netzwerkverkehr in einem fiktiven Unternehmen, umgeleitete Suchanfragen von Mitarbeitern und kein offensichtlicher Patient Zero. Sie erhalten eine Hashdatei und sonst nichts. Jede Antwort muss durch Recherche erarbeitet werden statt durch Raten – genau deshalb taucht die Challenge in so vielen Blue-Team-Lernlisten und Community-Walkthroughs auf.
+
+CyberDefenders hostet diese Art praktischer Challenge über [seine offizielle Challenge-Plattform](https://cyberdefenders.org/), wo Labs anhand der korrekt beantworteten Fragen bewertet werden. Dieses Bewertungsmodell ist wichtig dafür, wie Sie an die Arbeit herangehen, und darauf kommen wir gleich zurück.
+
+## Die Rat-Lab-Aufgaben auf einen Blick
+
+Die Challenge ist als kurze Abfolge investigativer Fragen organisiert. Jede baut auf der vorherigen auf, sodass Vorspringen meist mehr Zeit kostet, als es spart.
+
+| # | Aufgabenziel | Primäre Intel-Quelle | Artefakttyp |
+|---|---|---|---|
+| 1 | Die Malware-Familie identifizieren, die den seltsamen Traffic verursacht | Hybrid-Analysis-Sandbox-Berichte | Bedrohungs-/Familienlabel |
+| 2 | Den gebräuchlichen Dateinamen finden, den die Probe verwendet | VirusTotal, Details-Tab | Dateimetadaten |
+| 3 | Bestimmen, wann die Probe kompiliert wurde | VirusTotal, PE-Header-Infos | Zeitstempel |
+| 4 | Herausfinden, wann sie erstmals bei VirusTotal eingereicht wurde | VirusTotal, History-Bereich | Datum und Uhrzeit |
+| 5 | Die im AppData-Ordner abgelegte `.dat`-Datei benennen | Red-Canary-Bericht | Artefakt der abgelegten Datei |
+| 6 | Den Command-and-Control-(C2-)Server identifizieren | Alle drei Quellen | Netzwerkindikator |
+
+Zwei Dinge fallen an dieser Progression auf. Erstens sind die frühen Rat-Lab-Aufgaben reine Lookups – Sie lernen, wo Informationen liegen. Zweitens verlangen die späteren eine Synthese, denn die Antwort zur abgelegten Datei ist schlicht nicht auf der Plattform verfügbar, in der Sie sich während der vorherigen vier Fragen bewegt haben.
+
+Eine nützliche Denkweise: Betrachten Sie jede Frage als eine andere „Linse“ auf dieselbe Probe statt als separates Rätsel.
+
+## Ausrüstung: Die drei Plattformen, die bei jeder Rat-Lab-Aufgabe zum Einsatz kommen
+
+Sie können das gesamte Lab mit kostenlosen, browserbasierten Tools abschließen. Keine virtuelle Maschine, keine kostenpflichtige Lizenz, kein Disassembler erforderlich – obwohl eine Malware-Analyse-Sandbox mit gutem Reputationssystem sicherlich hilft.
+
+| Plattform | Was sie am besten kann | Was Sie ausbremst |
+|---|---|---|
+| Hybrid Analysis | Sandbox-Verhalten, Threat-Scoring, kontaktierte externe Systeme | Berichtslisten sind lang; die falsche Sandbox auszuwählen kostet Zeit |
+| VirusTotal | Dateimetadaten, PE-Header, Einreichungsverlauf, Community-Erkennungen | Der Details-Tab ist riesig und Antworten sind verstreut |
+| Red Canary Intel | Kuratierte Incident-Notizen zu abgelegten Dateien und beobachtetem C2 | Es ist möglicherweise die einzige Quelle für ein bestimmtes Artefakt, also sorgfältig lesen |
+
+Da die Challenge auf öffentlicher Berichterstattung statt auf Live-Malware-Ausführung auf Ihrem eigenen Rechner basiert, können Sie Befunde auch mit allgemeinem Referenzmaterial von [der öffentlichen Analyse-Website von VirusTotal](https://www.virustotal.com/) abgleichen, ohne etwas Riskantes herunterzuladen.
+
+Hier ist die Schnellreferenz-Karte, die am meisten Zeit spart. Drucken Sie sie aus oder behalten Sie sie in einem zweiten Tab.
+
+| Sie brauchen … | Gehen Sie zu … | Suchen Sie unter … |
+|---|---|---|
+| Name der Malware-Familie | Hybrid Analysis | Zusammenfassung des Falcon-Sandbox-Berichts |
+| Gebräuchlicher/originaler Dateiname | VirusTotal | Details → File Version Information |
+| Kompilierungszeitstempel | VirusTotal | Portable Executable Info → Header |
+| Datum der Ersteinreichung | VirusTotal | Details → History |
+| Abgelegte `.dat`-Datei | Red-Canary-Bericht | Notizen zur beobachteten Dateiaktivität |
+| C2-URL | Alle drei | Network Communication / External Systems |
+
+## Die Rat-Lab-Aufgaben Schritt für Schritt durcharbeiten
+
+Der folgende Walkthrough beschreibt den Workflow, statt die Antworten vorwegzunehmen. Community-Berichte beschreiben durchgängig denselben Weg, und ihn in der richtigen Reihenfolge zu befolgen, hält Ihre Untersuchung sauber.
+
+### Aufgaben 1 und 2: Die Familie identifizieren, dann den Dateinamen
+
+Beginnen Sie mit dem im Challenge-Archiv bereitgestellten Hash. Fügen Sie ihn in Hybrid Analysis ein und arbeiten Sie die Suchergebnisse der Berichte durch. Sie suchen einen Sandbox-Lauf mit hohem Threat-Score – die höher bewerteten Berichte zeigen tendenziell die meisten Verhaltensdetails. Der gesuchte Familienname erscheint in der Zusammenfassung des Berichts und im Erkennungskontext.
+
+Sobald Sie die Familie haben, wechseln Sie zu VirusTotal und öffnen Sie den Details-Tab. Der Originaldateiname befindet sich im Bereich der Dateiversionsinformationen. Kopieren Sie ihn exakt; falsch getippte Satzzeichen sind der häufigste Grund für eine fehlgeschlagene Einreichung.
+
+### Aufgaben 3 und 4: Die Timeline erstellen
+
+Bleiben Sie bei VirusTotal und scrollen Sie unter die Signaturdaten in den Bereich des Portable-Executable-Headers. Dort befindet sich der Kompilierungszeitstempel. Prüfen Sie dann den History-Bereich nahe oben im Details-Tab für das Datum der Ersteinreichung.
+
+Warum ist das in der realen Welt wichtig? Eine Probe, die lange vor ihrer ersten Einreichung kompiliert wurde, erzählt eine andere Geschichte als eine, die nur wenige Tage zuvor kompiliert wurde. Community-Walkthroughs merken an, dass es bei diesem Paar von Rat-Lab-Aufgaben eigentlich um die Bestimmung der Verweildauer geht – also darum, wie lange die Malware unentdeckt geblieben sein könnte.
+
+| Frage | Datenpunkt | Warum ein Analyst darauf achtet |
+|---|---|---|
+| Kompilierungszeit | Build-Zeitstempel im PE-Header | Deutet auf die Entwicklungs-Timeline hin |
+| Ersteinreichung | VirusTotal-Verlauf | Zeigt, wann die Community sie erstmals gesehen hat |
+
+### Aufgabe 5: Die abgelegte Datei verfolgen
+
+Hier hört das Lab auf, eine Lookup-Übung zu sein. VirusTotal liefert Ihnen nicht den Namen der `.dat`-Datei, die die Malware in den AppData-Ordner schreibt, also wechseln Sie zu kuratierter Threat-Berichterstattung. Lesen Sie den Abschnitt zur beobachteten Dateiaktivität sorgfältig und notieren Sie jeden genannten Dateinamen; gleichen Sie ihn dann mit den spezifischen Kriterien der Frage ab – `.dat`-Erweiterung, AppData-Speicherort.
+
+### Aufgabe 6: Das C2 aus mehreren Blickwinkeln bestätigen
+
+Die letzte Rat-Lab-Aufgabe ist der Payoff. Sammeln Sie die C2-URL und bestätigen Sie sie dann auf drei verschiedene Arten. Diese Gewohnheit der Dreifachbestätigung ist die eigentliche Fähigkeit, die das Lab vermittelt.
+
+| Quelle | Was sie bestätigt | Rolle bei der Verifizierung |
+|---|---|---|
+| Kuratierter Threat-Bericht | Beobachtete C2-URL in Incident-Notizen | Erster Hinweis |
+| VirusTotal-Verhaltens-Tab | Domäne oder URL in Speichermustern gefunden | Zweite Bestätigung |
+| Hybrid-Analysis-Indikatoren | Während des Sandbox-Laufs kontaktiertes externes System | Dritte Bestätigung |
+
+Wenn alle drei Quellen übereinstimmen, reichen Sie die Antwort mit Zuversicht ein. Sie haben außerdem gerade Korrelation geübt – die wertvollste Gewohnheit in der Threat-Intelligence-Arbeit.
+
+## Häufige Fehler, die Rat-Lab-Aufgaben verlangsamen
+
+Den meisten, die mit diesen Rat-Lab-Aufgaben kämpfen, fehlt es nicht an Wissen; ihnen fehlt es am Prozess.
+
+| Fehler | Warum er schadet | Besserer Ansatz |
+|---|---|---|
+| Aus einer einzigen Quelle antworten | Gelegentliche Fehlspuren kosten mehr Zeit als das Verifizieren | Antworten mit hohem Einsatz mit zwei oder mehr Quellen bestätigen |
+| Den History-Bereich überspringen | Erzwingt später einen Rückschritt | Einreichungsverlauf früh im selben Durchgang prüfen |
+| Nur einen Sandbox-Bericht lesen | Niedriger bewertete Läufe zeigen weniger Verhaltensweisen | Den Bericht mit dem höchsten Threat-Score bevorzugen |
+| Dateinamen und URLs neu eintippen | Tippfehler scheitern stillschweigend an exaktem Scoring | Jede eingereichte Zeichenkette kopieren und einfügen |
+
+Ein paar zusätzliche Gewohnheiten helfen:
+
+- **Pivots verfolgen.** Notieren Sie, welche Plattform welches Artefakt geliefert hat, damit Sie Schritte zurückverfolgen können, falls eine Antwort abgelehnt wird.
+- **Die Frage zweimal lesen.** Aufgabe 5 fragt speziell nach einer `.dat`-Datei; andere Artefakte werden im selben Bericht erwähnt.
+- **Nicht überkonstruieren.** Dies sind Recherchefragen, keine Reverse-Engineering-Übungen. Tools jenseits eines Browsers sind optional.
+- **Zeit einplanen.** Die meisten Rat-Lab-Aufgaben lösen sich in wenigen Minuten pro Aufgabe, sobald Sie die Karte kennen; die Schwierigkeit konzentriert sich auf die Aufgaben 5 und 6.
+
+Wenn eine Frage Sie blockiert, treten Sie einen Schritt zurück und fragen Sie sich, welche Plattform Sie noch nicht konsultiert haben. Da nur drei Quellen im Spiel sind, ist es meist die, die Sie vernachlässigt haben.
+
+## FAQ
+
+**Was genau ist das Yellow-RAT-Lab, und was vermitteln die Rat-Lab-Aufgaben?**
+
+Es ist eine Threat-Intelligence-Challenge von CyberDefenders rund um eine vermutete Infektion mit einem Remote-Access-Trojaner. Die Rat-Lab-Aufgaben führen Sie durch die Identifizierung der Malware-Familie, ihres Dateinamens, ihrer Build- und Einreichungs-Timeline, ihrer abgelegten Dateien und des C2-Servers, den sie kontaktiert. Die Fähigkeiten lassen sich direkt auf die reale Incident-Response-Triage übertragen.
+
+**Wie lange dauert es, die Rat-Lab-Aufgaben abzuschließen?**
+
+Die Erfahrung von Spielern legt nahe, dass die frühen Lookups jeweils ein paar Minuten dauern, während die Fragen zur abgelegten Datei und zum C2 erheblich länger dauern können, wenn Sie die Quellen nicht zugeordnet haben. Rechnen Sie bei einem ersten Versuch ohne Walkthrough mit ungefähr einer Stunde.
+
+**Brauche ich für diese Rat-Lab-Aufgaben kostenpflichtige Tools oder eine Lab-Maschine?**
+
+Nein. Alle drei im Challenge verwendeten Intelligence-Quellen können kostenlos in einem Browser abgefragt werden. Sie müssen die Probe nie lokal ausführen, was dies zu einer sicheren Übung für Einsteiger macht.
+
+**Was sollte ich nach Abschluss der Rat-Lab-Aufgaben tun?**
+
+Versuchen Sie die Challenge erneut mit einer leeren Notizendatei und prüfen Sie, ob Sie dieselben Antworten reproduzieren können, ohne auf einen Walkthrough zurückzugreifen. Gehen Sie dann zu anderen CTI-fokussierten Labs über, um denselben Pivot-and-Confirm-Workflow an unbekannten Proben zu üben.

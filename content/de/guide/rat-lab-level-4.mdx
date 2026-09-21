@@ -1,0 +1,125 @@
+export const metadata = {
+  title: "Rat Lab Level 4 Walkthrough: Schritte der Threat Intelligence und Analysten-Tipps",
+  description: "Rat-Lab-Level-4-Leitfaden: die Tool-Pivots, Artefakt-Felder und der Verifikations-Workflow, mit denen Analysten die RAT-Untersuchung abschließen.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## Was Rat Lab Level 4 wirklich testet
+
+Wenn du eine Malware-Familie aus einem Hash benennen kannst, aber erstarrst, sobald jemand fragt, welche Datei sie abgelegt hat oder wohin sie nach Hause telefoniert, dann ist **Rat Lab Level 4** die Stufe, die für dich gebaut wurde. Die Rat-Lab-Challenge — ein Threat-Intelligence-Lab, das als „Yellow RAT Lab" auf der CyberDefenders-Plattform veröffentlicht wurde — gibt dir fast nichts in die Hand und erwartet, dass du einen Angriff aus öffentlichen Berichten rekonstruierst. Level 4 ist das tiefe Ende dieser Übung: der Punkt, an dem ein einziges Tool nicht mehr ausreicht und jede Antwort eine Gegenprüfung überstehen muss.
+
+Dieser Unterschied zählt in der realen Arbeit. Incident Response scheitert selten an der Erkennung; sie scheitert am Umfang und an der Zuordnung. Den Familiennamen der Malware zu kennen, sagt dir fast nichts darüber, wie weit sie sich ausgebreitet hat, welche Persistenz sie hinterlassen hat oder welche Firewall-Regel die Blutung tatsächlich stoppt. **Rat Lab Level 4** ist darauf ausgelegt, genau diese schwierigeren Fragen offenzulegen — mit denselben kostenlosen, öffentlichen Plattformen, zu denen berufstätige Analysten zuerst greifen.
+
+Dieser Leitfaden führt durch das Szenario, den Tool-Stack, die sechs Pivots, die den größten Teil der Arbeit tragen, und die Verifikationsgewohnheit, die eine Vermutung von einem belastbaren Befund unterscheidet.
+
+## Wie Community-Berichte die Rat-Lab-Progression darstellen
+
+Walkthroughs dieses Labs beschreiben die Fragen etwas unterschiedlich, aber die folgende Progression entspricht dem, was die meisten Community-Berichte abdecken. Betrachte sie als mentale Landkarte, nicht als offiziellen Lehrplan.
+
+| Phase | Kernfrage | Erste Anlaufstelle |
+|---|---|---|
+| Level 1 | Welche Familie ist diese Probe? | Sandbox-Berichtssuche nach Hash |
+| Level 2 | Welchen Dateinamen imitiert oder verwendet sie? | Multi-Engine-Dateidetails |
+| Level 3 | Was hat sie abgelegt, und wann wurde sie erstellt? | Metadaten der Portable Executable plus Hersteller-Writeups |
+| Level 4 | Wohin telefoniert sie nach Hause, und können wir es beweisen? | Drei unabhängige, gegengeprüfte Quellen |
+
+Der Sprung von Level 3 zu **Rat Lab Level 4** ist qualitativ, nicht nur quantitativ. Frühere Phasen sind Nachschlageaufgaben — du findest ein Feld, du kopierst einen Wert. Die letzte Phase ist eine Schlussfolgerungsaufgabe: Du sammelst Teilbelege aus mehreren Quellen und entscheidest, ob sie übereinstimmen.
+
+## Das Szenario von Rat Lab Level 4 und das Ausgangsartefakt
+
+Das Szenario ist bewusst alltäglich gehalten, und genau das macht es realistisch. Während einer routinemäßigen Sicherheitsüberprüfung bei einem fiktiven Industrieunternehmen bemerken Analysten ungewöhnlichen Netzwerkverkehr von mehreren Workstations. Mitarbeiter melden, dass ihre Suchanfragen auf unbekannte Seiten umgeleitet werden. Dir wird eine einzige Datei übergeben, und du sollst den Rest herausfinden.
+
+| Element | Detail | Analysten-Notizen |
+|---|---|---|
+| Bereitgestellte Datei | `hash.txt` | Klartext, im Challenge-Archiv mitgeliefert |
+| Enthaltener Wert | Ein SHA256-Hash der Probe | 64 hexadezimale Zeichen |
+| Hash-Typ | SHA256 | Nicht MD5 oder SHA1 — vor dem Einfügen prüfen |
+| Beispiel-IOC aus diesem Lab | `30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85` | Als aktiven Indikator behandeln; vor dem Teilen entschärfen |
+| Was dir NICHT gegeben wird | Die Binärdatei selbst | Die gesamte Analyse ist Open-Source-Intelligence |
+
+Das Fehlen der Probe ist der ganze Punkt. Du kannst nicht disassemblieren, was du nicht hast, also wird die Untersuchung zu einer Rechercheübung: Finde heraus, wo andere bereits genau diese Probe analysiert haben, und lies ihre Arbeit kritisch.
+
+## Der Tool-Stack von Rat Lab Level 4
+
+Vier Quellen tragen in dieser Challenge fast das gesamte Gewicht. Jede beantwortet eine andere Art von Frage, und keine ist für sich allein zuverlässig.
+
+| Tool | Primäre Stärke | Erste Prüfung |
+|---|---|---|
+| Hybrid Analysis | Sandbox-Verhalten und eine numerische Bedrohungsbewertung | Berichtssuchergebnisse für den Hash |
+| VirusTotal | Dateimetadaten, PE-Header, Erkennungsrate, Domain-Reputation | Der Details-Tab |
+| Hersteller-Threat-Intelligence (zum Beispiel Red-Canary-Writeups) | Abgelegte Dateien und beobachtete Command-and-Control-Infrastruktur | Verhaltens- und IOC-Abschnitte des Berichts |
+| Allgemeine Websuche | Unabhängige Writeups und IOC-Feeds, die das Obige bestätigen | Familienname plus Dateiname |
+
+Zwei dieser Plattformen sind in der Basisversion kostenlos nutzbar: [VirusTotals offizielle Website](https://www.virustotal.com/) und die [CyberDefenders-Challenge-Plattform](https://cyberdefenders.org/), auf der das Lab selbst lebt. Herstellerberichte werden üblicherweise als öffentliche Blogbeiträge veröffentlicht. Du brauchst kein kommerzielles Abonnement, um diese Übung abzuschließen — du brauchst Geduld und die Disziplin, dieselbe Tatsache zweimal zu prüfen.
+
+## Walkthrough: Die sechs Pivots von Rat Lab Level 4
+
+Die Fragen des Labs lassen sich sauber auf die folgenden Artefakt-Felder abbilden. Lerne das Ziel, nicht eine auswendig gelernte Antwort, denn Challenge-Instanzen und öffentliche Berichte werden im Laufe der Zeit aktualisiert.
+
+| # | Ziel | Beste Quelle | Zu lesendes Feld |
+|---|---|---|---|
+| 1 | Die Malware-Familie identifizieren | Sandbox-Berichtsliste | Verdict und Familien-Tag im höchstbewerteten Bericht |
+| 2 | Den verbreiteten Dateinamen finden | Multi-Engine-Dateidetails | Original Name unter den Signatur-Informationen |
+| 3 | Den Kompilierungszeitpunkt bestimmen | Metadaten der Portable Executable | Kompilierungs-Zeitstempel im Header-Block |
+| 4 | Herausfinden, wann die Community sie zum ersten Mal gesehen hat | Übermittlungsverlauf | Zeitstempel der ersten Übermittlung |
+| 5 | Die abgelegte `.dat`-Datei identifizieren | Hersteller-Threat-Bericht | Liste der abgelegten Dateien im AppData-Pfad |
+| 6 | Den C2-Server identifizieren | Herstellerbericht, Verhaltens-Tab, Sandbox-Indikatoren | Externe Systeme und Memory-Pattern-Domains |
+
+### Pivots 1–3: Das Profil erstellen
+
+Beginne mit dem Hash. Sortiere auf der Sandbox-Plattform die Berichtsliste oder durchsuche sie nach dem Eintrag mit der höchsten Bedrohungsbewertung, und öffne den Windows-Sandbox-Bericht — eine Bewertung im niedrigen 90er-Bereich von 100 signalisiert eine Probe, die es verdient, genau gelesen zu werden. In diesem Bericht findest du den Familiennamen, der zu deinem Suchbegriff für alles Weitere wird.
+
+Wechsle dann zur Multi-Engine-Dateiansicht. Das Feld „Original Name" unter den Signatur-Informationen ist der Dateiname, mit dem die Binärdatei kompiliert wurde, und er ist für die Suche weitaus nützlicher als ein generischer ausführbarer Name. Direkt darunter enthält der Header-Block den Kompilierungs-Zeitstempel — ein starkes Signal für den Aufbau einer Zeitachse, wann die Tooling zusammengestellt wurde.
+
+### Pivots 4–6: Die schwierigen Fragen beantworten
+
+Der Übermittlungsverlauf wird leicht übersehen. Der Zeitstempel der ersten Übermittlung verrät dir, wie lange diese Probe bereits öffentlich zirkuliert, was ein grober Anhaltspunkt dafür ist, wie lange sie möglicherweise in einer Umgebung war, bevor jemand sie bemerkte.
+
+Die Frage nach den abgelegten Dateien lässt sich in der Regel nicht allein aus Dateimetadaten beantworten, wechsle also zu Hersteller-Threat-Berichten. Suche nach einem `.dat`-Artefakt, das in ein AppData-Verzeichnis geschrieben wurde; dieser Pfad ist eine häufige Wahl, weil er selten erhöhte Rechte erfordert.
+
+Für die Command-and-Control-Antwort folge dem Muster der Dreifachbestätigung im nächsten Abschnitt. Eine einzelne Erwähnung einer URL ist ein Hinweis, kein Befund.
+
+## Verifikation: Die Dreifachbestätigung des C2
+
+Das ist die Gewohnheit, die **Rat Lab Level 4** die Mühe wert macht. Jede einzelne Quelle kann falsch, veraltet oder eine Paraphrase einer anderen Quelle sein. Übereinstimmung über unabhängige Belegtypen hinweg ist das, was eine URL in einen Blocklist-Eintrag verwandelt.
+
+| Quelle | Belegtyp | Vertrauenssignal |
+|---|---|---|
+| Herstellerbericht | Beobachtete C2-URL in einer Incident-Erzählung | Direkt im Writeup genannt |
+| Multi-Engine-Verhaltens-Tab | Memory-Pattern-Domain oder URL | String, der in der Probe selbst gefunden wurde |
+| URL-Reputationsabfrage | Community- und Hersteller-Verdicts | Domain von mehreren Engines markiert |
+| Sandbox-Bericht | Indikator für externe Systeme | Verbindung während der Detonation erfasst |
+
+Wenn alle vier auf denselben Hostnamen zeigen, kannst du die Antwort ohne Absicherung formulieren. Wenn nur zwei dies tun, gehe zurück und lies die Rohfelder statt der Zusammenfassungen — Zusammenfassungen komprimieren und driften gelegentlich ab.
+
+## Häufige Fehler, die dich in Rat Lab Level 4 Zeit kosten
+
+| Fehler | Warum er schadet | Lösung |
+|---|---|---|
+| Einer Plattform vertrauen | Zusammenfassungen lassen Felder weg und können hinter Herstellerberichten zurückliegen | Bestätige jede Antwort in einer zweiten Quelle |
+| Den falschen Hash-Typ einfügen | SHA1 und MD5 sehen auf den ersten Blick ähnlich aus | Zähle die Zeichen — 64 bedeutet SHA256 |
+| Den Sandbox-Bericht überspringen | Er ist oft der schnellste Weg zum Familiennamen | Öffne zuerst den höchstbewerteten Bericht |
+| Abgelegte Dateien in Dateimetadaten suchen | Abgelegte Artefakte erscheinen in Verhaltensdaten | Prüfe Herstellerberichte und Sandbox-Verhalten |
+| Den C2 als reine Domain schreiben | Verliert Pfad- und Protokollkontext | Erfasse die vollständige URL wie beobachtet |
+| Zeitstempel völlig ignorieren | Zeitachsen sind der schnellste Weg zum Umfang | Protokolliere jedes Datum, auf das du stößt |
+
+Eine kleine Analysten-Gewohnheit zahlt sich hier aus: Führe eine fortlaufende Notizdatei mit einer Zeile pro Fakt und zitiere die Quelle neben jeder Zeile. Wenn du die letzte Frage erreichst, sind deine Notizen bereits die Antwort.
+
+## FAQ
+
+**Wie lange dauert es, Rat Lab Level 4 abzuschließen?**
+Die meisten Analysten, die mit Sandbox-Plattformen vertraut sind, schließen die gesamte Übung in einer Sitzung ab, typischerweise in unter einer Stunde. **Rat Lab Level 4** ist nicht schwierig, weil die Tools obskur sind — es ist beim ersten Mal langsam, weil du dich daran erinnern musst, welcher Tab welches Feld verbirgt. Behalte deine Notizen vom ersten Durchlauf; der zweite Durchlauf dauert nur einen Bruchteil der Zeit.
+
+**Brauche ich bezahlte Konten oder ein kommerzielles Threat-Intelligence-Abonnement?**
+Nein. Die Untersuchung lässt sich mit den kostenlosen Tarifen öffentlicher Malware-Analyse-Plattformen plus veröffentlichter Herstellerforschung abschließen. Bezahlte Tarife kaufen hauptsächlich schnellere Abfragen und höhere API-Limits, von denen keines das Ergebnis der Übung verändert.
+
+**Kann ich direkt zur Command-and-Control-Frage springen?**
+Du kannst es versuchen, aber du machst es dir selbst schwerer. **Rat Lab Level 4** baut auf den früheren Antworten auf: Der Familienname verengt deine Herstellerbericht-Suche, und der Dateiname hilft zu bestätigen, dass du einen Bericht über die richtige Probe liest und nicht über eine ähnliche Variante.
+
+**Was sollte ich mit den Indikatoren tun, sobald ich sie habe?**
+Erfasse jeden einzelnen mit seiner Quelle und dem Datum, an dem du ihn beobachtet hast, und nutze dann die fehlenden Teile — die C2-URL zum Blockieren, den Dateinamen und die abgelegte `.dat` für hostbasierte Suche und den Kompilierungs-Zeitstempel für die Rekonstruktion der Zeitachse. Diese Kombination ist es, die eine Lab-Antwort in eine echte defensive Maßnahme verwandelt.
+
+## Abschluss
+
+Bei der Rat-Lab-Challenge geht es weniger darum, sich zu merken, wo ein Feld liegt, als vielmehr darum, einer einzigen Quelle misstrauen zu lernen. Arbeite die Pivots der Reihe nach ab, verifiziere die Command-and-Control-Antwort über mindestens drei unabhängige Belegtypen hinweg und führe für jeden gesammelten Fakt eine belegte Notiz. Wenn du das tust, hört **Rat Lab Level 4** auf, die Stufe zu sein, die dich blockiert, und wird zu der, die dir zeigt, wie echte Threat-Intelligence-Arbeit tatsächlich erledigt wird.

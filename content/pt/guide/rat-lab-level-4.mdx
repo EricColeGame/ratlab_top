@@ -1,0 +1,107 @@
+export const metadata = {
+  title: "Passo a passo do Rat Lab Nível 4: etapas de threat intel e dicas para analistas",
+  description: "Guia do Rat Lab nível 4: os pivôs de ferramentas, campos de artefatos e fluxo de verificação que analistas usam para concluir a investigação do RAT.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## O que o Rat Lab Nível 4 realmente testa
+
+Se você consegue nomear uma família de malware a partir de um hash, mas trava no momento em que alguém pergunta qual arquivo ele deixou ou para onde se comunica, o **Rat Lab nível 4** é a etapa feita para você. O desafio Rat Lab — um laboratório de threat intelligence publicado como "Yellow RAT Lab" na plataforma CyberDefenders — não entrega quase nada e espera que você reconstrua uma intrusão a partir de relatórios públicos. O nível 4 é a parte mais profunda desse exercício: o ponto em que uma única ferramenta deixa de ser suficiente e toda resposta precisa resistir à verificação cruzada.
+
+Essa distinção importa no trabalho real. A resposta a incidentes raramente falha na detecção; ela falha no escopo e na atribuição. Saber o nome da família do malware quase não diz nada sobre até onde ele se espalhou, qual persistência deixou para trás ou qual regra de firewall realmente vai estancar o problema. O **Rat Lab nível 4** foi criado para forçar essas perguntas mais difíceis a virem à tona, usando as mesmas plataformas gratuitas e públicas que analistas de verdade procuram primeiro.
+
+Este guia percorre o cenário, o conjunto de ferramentas, os seis pivôs que carregam a maior parte do peso e o hábito de verificação que separa um chute de uma descoberta defensável.
+
+## Como relatos da comunidade enquadram a progressão do Rat Lab
+
+Os walkthroughs deste laboratório descrevem as perguntas de forma um pouco diferente entre si, mas a progressão abaixo corresponde ao que a maioria dos relatos da comunidade cobre. Trate-a como um mapa mental, não como um currículo oficial.
+
+| Fase | Pergunta central | Fonte preferida |
+|---|---|---|
+| Nível 1 | Qual é a família desta amostra? | Busca em relatórios de sandbox por hash |
+| Nível 2 | Qual nome de arquivo ele personifica ou usa? | Detalhes do arquivo em multimotor |
+| Nível 3 | O que ele deixou e quando foi compilado? | Metadados de executável portátil mais relatórios de fornecedores |
+| Nível 4 | Para onde ele se comunica e podemos provar isso? | Três fontes independentes, verificadas em cruzamento |
+
+O salto do nível 3 para o **Rat Lab nível 4** é qualitativo, não apenas quantitativo. As fases anteriores são tarefas de consulta — você encontra um campo, copia um valor. A fase final é uma tarefa de inferência: você reúne evidências parciais de vários lugares e decide se elas concordam.
+
+## O cenário do Rat Lab Nível 4 e o artefato inicial
+
+O cenário é deliberadamente banal, e é isso que o torna realista. Durante uma verificação de segurança de rotina em uma empresa industrial fictícia, analistas percebem tráfego de rede anormal vindo de várias estações de trabalho. Funcionários relatam que suas consultas de busca estão sendo redirecionadas para sites desconhecidos. Você recebe um único arquivo e precisa descobrir o resto.
+
+| Item | Detalhe | Notas do analista |
+|---|---|---|
+| Arquivo fornecido | `hash.txt` | Texto simples, fornecido dentro do arquivo compactado do desafio |
+| Valor contido | Um hash SHA256 da amostra | 64 caracteres hexadecimais |
+| Tipo de hash | SHA256 | Não é MD5 nem SHA1 — verifique antes de colar |
+| IOC de exemplo deste laboratório | `30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85` | Trate como um indicador ativo; descaracterize antes de compartilhar |
+| O que você NÃO recebe | O próprio binário | Toda a análise é feita com inteligência de fontes abertas |
+
+A ausência da amostra é o ponto central. Você não pode desmontar o que não tem, então a investigação se torna um exercício de pesquisa: encontre onde outras pessoas já analisaram exatamente esta amostra e leia o trabalho delas com senso crítico.
+
+## O conjunto de ferramentas do Rat Lab Nível 4
+
+Quatro fontes carregam quase todo o peso neste desafio. Cada uma responde a um tipo diferente de pergunta, e nenhuma delas é confiável sozinha.
+
+| Ferramenta | Principal ponto forte | Primeira coisa a verificar |
+|---|---|---|
+| Hybrid Analysis | Comportamento em sandbox e uma pontuação numérica de ameaça | Resultados da busca de relatórios pelo hash |
+| VirusTotal | Metadados de arquivo, cabeçalhos PE, taxa de detecção, reputação de domínio | A aba Detalhes |
+| Inteligência de ameaças de fornecedores (por exemplo, relatórios da Red Canary) | Arquivos deixados e infraestrutura de comando e controle observada | Seções de comportamento e IOC do relatório |
+| Pesquisa geral na web | Relatórios independentes e feeds de IOC que corroboram o acima | Nome da família mais nome do arquivo |
+
+Duas dessas plataformas têm uso gratuito em nível básico: o [site oficial do VirusTotal](https://www.virustotal.com/) e a [plataforma de desafios CyberDefenders](https://cyberdefenders.org/), onde o laboratório fica. Relatórios de fornecedores geralmente são publicados como posts públicos em blogs. Você não precisa de uma assinatura comercial para concluir este exercício — precisa de paciência e disciplina para verificar o mesmo fato duas vezes.
+
+## Passo a passo: os seis pivôs do Rat Lab Nível 4
+
+As perguntas do laboratório se mapeiam claramente nos campos de artefato abaixo. Aprenda o destino, não uma resposta memorizada, porque instâncias do desafio e relatórios públicos são atualizados com o tempo.
+
+| # | Objetivo | Melhor fonte | Campo a ler |
+|---|---|---|---|
+| 1 | Identificar a família do malware | Lista de relatórios de sandbox | Veredito e tag de família no relatório com maior pontuação |
+| 2 | Encontrar o nome de arquivo comum | Detalhes do arquivo em multimotor | Original Name em informações de assinatura |
+| 3 | Determinar o horário de compilação | Metadados do executável portátil (PE) | Carimbo de data/hora de compilação dentro do bloco de cabeçalho |
+| 4 | Descobrir quando a comunidade o viu pela primeira vez | Histórico de envio | Carimbo de data/hora do primeiro envio |
+| 5 | Identificar o arquivo `.dat` deixado | Relatório de ameaças do fornecedor | Lista de arquivos deixados no caminho AppData |
+| 6 | Identificar o servidor C2 | Relatório do fornecedor, aba de comportamento, indicadores de sandbox | Sistemas externos e domínios de padrão em memória |
+
+### Pivôs 1–3: Monte o perfil
+
+Comece pelo hash. Na plataforma de sandbox, ordene ou examine a lista de relatórios em busca da entrada com a maior pontuação de ameaça e abra o relatório de sandbox do Windows — uma pontuação no início dos 90, em 100, indica uma amostra que vale a pena ler com atenção. Dentro desse relatório, você encontrará o nome da família, que se torna seu termo de busca para tudo o que vem a seguir.
+
+Depois, vá para a visualização de arquivo multimotor. O campo "Original Name" em informações de assinatura é o nome de arquivo com o qual o binário foi compilado, e é muito mais útil para hunting do que um nome genérico de executável. Logo abaixo, o bloco de cabeçalho contém o carimbo de data/hora de compilação — um forte sinal para montar uma linha do tempo de quando o ferramental foi montado.
+
+### Pivôs 4–6: Responda às perguntas difíceis
+
+O histórico de envio é fácil de passar despercebido. O carimbo de data/hora do primeiro envio informa há quanto tempo essa amostra circula publicamente, o que é uma proxy aproximada de quanto tempo ela pode ter estado em um ambiente antes que alguém percebesse.
+
+A pergunta sobre o arquivo deixado geralmente não pode ser respondida apenas com metadados de arquivo, então mude para relatórios de ameaças de fornecedores. Procure um artefato `.dat` gravado em um diretório AppData; esse caminho é uma escolha comum porque raramente exige privilégios elevados.
+
+Para a resposta de comando e controle, siga o padrão de confirmação tripla na próxima seção. Uma única menção a uma URL é uma pista, não uma descoberta.
+
+## Verificação: confirmação tripla do C2
+
+Este é o hábito que faz o **Rat Lab nível 4** valer o esforço. Qualquer fonte isolada pode estar errada, desatualizada ou apenas parafrasear outra fonte. A concordância entre tipos independentes de evidência é o que transforma uma URL em uma entrada de blocklist.
+
+| Fonte | Tipo de evidência | Sinal de confiança |
+|---|---|---|
+| Relatório do fornecedor | URL de C2 observada em uma narrativa de incidente | Citada diretamente no relatório |
+| Aba de comportamento multimotor | Domínio ou URL de padrão em memória | String encontrada dentro da própria amostra |
+| Consulta de reputação de URL | Vereditos da comunidade e de fornecedores | Domínio sinalizado por vários mecanismos |
+| Relatório de sandbox | Indicador de sistemas externos | Conexão capturada durante a detonação |
+
+Quando todos os quatro apontam para o mesmo hostname, você pode afirmar a resposta sem hesitar. Quando apenas dois apontam, volte e leia os campos brutos em vez dos resumos — os resumos comprimem e ocasionalmente se desviam.
+
+## Erros comuns que custam tempo no Rat Lab Nível 4
+
+| Erro | Por que prejudica | Correção |
+|---|---|---|
+| Confiar em uma única plataforma | Resumos omitem campos e podem ficar atrás de relatórios de fornecedores | Confirme cada resposta em uma segunda fonte |
+| Colar o tipo de hash errado | SHA1 e MD5 parecem semelhantes à primeira vista | Conte os caracteres — 64 significa SHA256 |
+| Pular o relatório de sandbox | Muitas vezes é o caminho mais rápido para o nome da família | Abra primeiro o relatório com maior pontuação |
+| Procurar arquivos deixados nos metadados do arquivo | Artefatos deixados aparecem nos dados de comportamento | Verifique relatórios de fornecedores e comportamento em sandbox |
+| Escrever o C2 como um domínio puro | Perde o contexto de caminho e protocolo | Registre a URL completa conforme observada |
+| Ignorar completamente os carimbos de data/hora | Linhas do tempo são o caminho mais rápido para o escopo | Registre toda data que encontrar |
+
+Um pequeno hábito de analista compensa aqui

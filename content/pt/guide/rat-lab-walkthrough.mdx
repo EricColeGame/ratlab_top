@@ -1,0 +1,129 @@
+export const metadata = {
+  title: "Walkthrough do Rat Lab: Resolva o Desafio Yellow RAT do CyberDefenders",
+  description: "Walkthrough completo do Rat Lab para o desafio Yellow RAT do CyberDefenders — use Hybrid Analysis, VirusTotal e Red Canary para responder às seis perguntas.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## Por que o Walkthrough do Rat Lab Importa para Equipes de Defesa (Blue Teams)
+
+Você recebe um único hash de arquivo e espera-se que explique uma intrusão inteira. Essa é a realidade diária do trabalho de inteligência de ameaças cibernéticas (CTI), e o walkthrough do Rat Lab é uma das formas mais rápidas de ensaiar isso antes que os riscos sejam reais.
+
+Se você consegue rastrear um hash suspeito até uma família de malware, um payload dropado e um servidor de comando e controle (C2) ativo usando apenas relatórios públicos, você consegue escrever as detecções que impedem o próximo incidente. Este walkthrough do Rat Lab divide o desafio Yellow RAT do CyberDefenders em etapas repetíveis, para que o fluxo de trabalho fique na memória na próxima vez que um alerta real chegar à fila do seu SOC.
+
+## O Que o Cenário do Laboratório Yellow RAT Pede Que Você Resolva
+
+No cenário, uma verificação rotineira de segurança de TI na GlobalTech Industries sinaliza tráfego de rede anormal vindo de várias estações de trabalho. Funcionários relatam que suas consultas de busca estão sendo redirecionadas para sites desconhecidos. Você recebe um único artefato — um arquivo de texto chamado `hash.txt` contendo o hash SHA256 do suposto malware — além de seis perguntas para responder.
+
+O objetivo não é "vencer" o laboratório. É demonstrar um caminho de investigação repetível que um analista júnior poderia passar para um respondedor de incidentes sem perder contexto.
+
+| Campo | Detalhe |
+|---|---|
+| Plataforma | CyberDefenders (desafio de CTI para blue team) |
+| Nome do laboratório | Yellow RAT Lab |
+| Artefato fornecido | `hash.txt` contendo um hash SHA256 |
+| Hash da amostra | 30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85 |
+| Organização vítima | GlobalTech Industries |
+| Sintomas relatados | Tráfego de rede anormal; consultas de busca redirecionadas |
+| Número de perguntas | 6 |
+| Principal habilidade testada | Pivô de inteligência de ameaças entre fontes públicas |
+
+### A Pista Inicial Que Você Recebe
+
+O hash é seu único ponto de partida, e essa restrição é intencional. Em um engajamento real, você raramente recebe uma imagem forense completa no primeiro dia — você recebe um indicador e um prazo. Relatos da comunidade de analistas que concluíram o laboratório observam que a amostra tem um relatório de sandbox existente de meados de 2022, o que significa que boa parte do seu trabalho inicial é leitura, não engenharia reversa.
+
+## Pré-requisitos e Ferramentas para Este Walkthrough do Rat Lab
+
+Você não precisa de experiência em análise de malware, um disassembler ou uma assinatura paga. Você precisa de três abas do navegador, um arquivo de anotações e da disciplina de registrar de onde veio cada resposta.
+
+| Ferramenta | Melhor Para | Onde as Respostas se Escondem |
+|---|---|---|
+| Hybrid Analysis | Relatórios de comportamento em sandbox e atividade de dropper | Relatórios do Falcon Sandbox; Suspicious Indicators → External Systems |
+| VirusTotal | Metadados de arquivo, cabeçalhos PE, detecções da comunidade, reputação de URL | Aba Details; aba Behavior → Network Communication |
+| Red Canary Intelligence | Relatórios curados sobre famílias de malware conhecidas | Relatórios de ameaças publicados com indicadores observados |
+| Google / pesquisa open-source | Preencher lacunas e confirmar a nomenclatura do fornecedor | Blogs de fornecedores, posts de pesquisa, write-ups da comunidade |
+
+Alguns hábitos de configuração compensam imediatamente:
+
+- Crie contas gratuitas nas plataformas de análise para poder pesquisar relatórios históricos.
+- Mantenha uma tabela em andamento com colunas para pergunta, fonte e evidência.
+- Nunca envie o mesmo hash para um sandbox público se as regras do seu laboratório proibirem o compartilhamento — a maioria dos desafios de CTI permite, mas verifique primeiro.
+- Use a função de localizar do navegador agressivamente; relatórios de sandbox longos escondem indicadores em seções aninhadas profundas.
+
+Depois que essas abas estiverem abertas, o walkthrough do Rat Lab se torna mais um exercício de compreensão de leitura do que técnico.
+
+## Fase 1: Identificar o Malware (Perguntas 1–4)
+
+Comece pelo Hybrid Analysis. Cole o hash na busca de relatórios e abra um relatório de sandbox existente para a amostra — a execução Windows 7 32 bits com pontuação de ameaça na casa dos 90 é a que a maioria dos relatos da comunidade aponta. Dentro desse relatório, você encontrará a família de malware que dá nome ao laboratório, além de um relatório de inteligência de terceiros vinculado que vale a pena marcar para as perguntas posteriores.
+
+A partir daí, faça um pivô para o VirusTotal e pesquise o mesmo hash. A aba Details se torna seu principal espaço de trabalho para as próximas três perguntas.
+
+| Pergunta | O Que Você Precisa | Onde Está |
+|---|---|---|
+| 1. Família de malware | O nome da família por trás do tráfego anormal | Relatório de sandbox do Hybrid Analysis e relatório do fornecedor vinculado |
+| 2. Nome de arquivo comum | O nome com que a amostra normalmente é distribuída | VirusTotal → Details → Signature info → Original Name |
+| 3. Timestamp de compilação | Data/hora de compilação do executável | VirusTotal → Details → Portable Executable Info → Header |
+| 4. Data da primeira submissão | Quando a comunidade viu a amostra pela primeira vez | VirusTotal → Details → History → First Submission |
+
+Duas dessas respostas são fáceis de passar despercebidas. O nome de arquivo comum fica sob o cabeçalho File Version Information, e não na lista de detecções, e o timestamp da primeira submissão fica perto do topo da aba Details, no bloco History — não nos dados de comportamento. Role a página devagar e leia os subtítulos.
+
+Entender *por que* cada resposta importa faz com que ela fixe. Um timestamp de compilação indica há quanto tempo o ferramental existe e se você está lidando com um build novo. A data da primeira submissão mostra há quanto tempo a amostra pode estar circulando antes de alguém notar. Ambas alimentam diretamente uma linha do tempo do incidente.
+
+## Fase 2: Delimitar o Payload Dropado e o Servidor C2 (Perguntas 5–6)
+
+As duas últimas perguntas passam dos metadados estáticos para o que o malware realmente faz. O VirusTotal pode não conter os dados de artefato necessários aqui, então mude para o relatório de inteligência vinculado da Red Canary que você encontrou na Fase 1.
+
+Esse relatório lista o arquivo `.dat` que a amostra grava na pasta `AppData` do usuário — o artefato adjacente à persistência que você procuraria em todas as outras estações de trabalho da rede. A mesma seção normalmente nomeia a URL de C2 que a amostra acessa, o que responde à Pergunta 6.
+
+| Pergunta | O Que Você Precisa | Onde Está |
+|---|---|---|
+| 5. Arquivo `.dat` dropado | Nome do arquivo do payload gravado em AppData | Relatório da Red Canary (nem sempre presente no VirusTotal) |
+| 6. Servidor C2 | A URL ou domínio para o qual a amostra faz beacon | Relatório da Red Canary, depois confirmado no VirusTotal e no Hybrid Analysis |
+
+Não pare em uma única fonte para a resposta de C2. O melhor hábito que este walkthrough do Rat Lab ensina é a tripla confirmação.
+
+## O Hábito da Tripla Confirmação
+
+Qualquer fonte única pode estar errada, desatualizada ou mal rotulada. Quando três plataformas independentes concordam sobre o mesmo indicador, sua confiança nesse indicador — e na regra de detecção que você constrói a partir dele — aumenta acentuadamente.
+
+| Fonte | Tipo de Evidência | O Que Confirma |
+|---|---|---|
+| Red Canary | Relatório de incidente escrito por analista | URL de C2 nomeada e o artefato dropado |
+| VirusTotal | Strings estáticas mais consulta de reputação de URL | A mesma URL como domínio em padrão de memória, com detecções de fornecedores |
+| Hybrid Analysis | Telemetria de sandbox | A URL listada em External Systems com contexto de reputação |
+
+Relatos da comunidade destacam consistentemente essa triangulação como a habilidade mais transferível do laboratório. Em produção, você raramente terá três fontes — mas o instinto de buscar uma segunda opinião é o que separa um indicador de comprometimento (IOC) sólido de um palpite.
+
+## Mapa de Respostas do Walkthrough do Rat Lab
+
+Use esta tabela como checklist. Ela mapeia cada pergunta para o tipo de resposta e a fonte que a resolve, para que você possa verificar seu progresso sem estragar a investigação para si mesmo.
+
+| # | Tipo de Resposta | Fonte Primária | Fonte de Backup |
+|---|---|---|---|
+| 1 | Nome da família de malware | Relatório de sandbox do Hybrid Analysis | Relatório do fornecedor vinculado |
+| 2 | Nome de arquivo comum/original | VirusTotal → Signature info | Listagens de arquivos do sandbox |
+| 3 | Timestamp de compilação | VirusTotal → PE Header | Dados estáticos do sandbox |
+| 4 | Data da primeira submissão | VirusTotal → History | Relatos da comunidade |
+| 5 | Nome do arquivo `.dat` dropado | Relatório da Red Canary | Lista de arquivos dropados do sandbox |
+| 6 | URL de C2 | Relatório da Red Canary | VirusTotal Behavior + Hybrid Analysis External Systems |
+
+Um orçamento de tempo realista para uma primeira tentativa é assim:
+
+| Fase | Tempo Típico | Entregável |
+|---|---|---|
+| Configuração e consulta do hash | 5–10 minutos | Família de malware identificada |
+| Metadados estáticos | 10–15 minutos | Nome de arquivo, timestamp, primeira submissão |
+| Comportamento e pivô de IOC | 15–20 minutos | Arquivo dropado, servidor C2 |
+| Redação e verificação | 10 minutos | Respostas confirmadas e com fontes |
+
+A maioria dos analistas termina entre 40 e 60 minutos na primeira tentativa e perto de 20 minutos em uma tentativa repetida com a mesma metodologia.
+
+## Erros Comuns a Evitar
+
+- **Responder de memória em vez de evidências.** Toda resposta deve ser rastreável a uma aba ou seção específica de relatório.
+- **Pular o relatório da Red Canary.** Sem ele, o arquivo `.dat` dropado é quase impossível de resolver.
+- **Confundir o timestamp de compilação com a data da primeira submissão.** São campos diferentes em seções diferentes do VirusTotal e contam histórias diferentes.
+- **Ignorar a reputação da URL.** Verificar o domínio de C2 no VirusTotal adiciona contexto que fortalece seu relatório final.
+- **Apressar a redação.** Um walkthrough é julgado pelo raciocínio tanto quanto pelas respostas.
+
+Se você quer o conjunto oficial de desafios e as regras de pontuação, a [plataforma de treinamento CyberDefenders](https://

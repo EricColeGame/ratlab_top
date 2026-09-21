@@ -1,0 +1,87 @@
+export const metadata = {
+  title: "Recorrido en video de Rat Lab: domina el análisis de malware RAT paso a paso",
+  description: "Una guía completa en video sobre Rat Lab: qué abarca el desafío de análisis de RAT, cómo seguir los recorridos, qué herramientas usar y consejos para resolver cada pregunta.",
+  category: "media",
+  date: "2026-09-20",
+}
+
+Un único hash SHA256 es todo lo que recibes. Sin nombre de archivo, sin dominio, sin notas útiles del equipo de endpoints: solo 64 caracteres y una historia sobre empleados cuyas búsquedas empezaron a aterrizar en sitios web desconocidos. Esa es la premisa detrás del desafío Rat Lab, y es exactamente la razón por la que un video de Rat Lab bien hecho vale una hora de tu tiempo.
+
+Un video de Rat Lab comprime el ensayo y error de una investigación real en un flujo de trabajo repetible: hash → plataforma de reputación → informe de sandbox → pivotes de comportamiento → comando y control confirmado. Ya seas un analista de SOC en formación o un miembro del blue team repasando inteligencia de amenazas, ver a alguien navegar las mismas seis preguntas desarrolla un reconocimiento de patrones que ninguna hoja de respuestas logrará.
+
+Esta guía cubre qué pregunta realmente el laboratorio, qué plataformas hacen el trabajo pesado, cómo un video típico de Rat Lab divide la investigación en fases y cómo exprimir habilidad real del material en lugar de limitarte a copiar respuestas.
+
+## ¿Qué es el desafío en video Rat Lab?
+
+Rat Lab es un ejercicio de inteligencia de amenazas cibernéticas (CTI) construido alrededor de una única muestra de malware descubierta dentro de la red de una empresa ficticia. En el escenario, una auditoría de seguridad rutinaria señala tráfico anómalo en varias estaciones de trabajo, y los investigadores descubren que las consultas de búsqueda de los empleados están siendo redirigidas a sitios desconocidos. La única pista que te entregan es un hash de archivo SHA256.
+
+Esa restricción es precisamente el punto. No puedes adjuntar un depurador ni recorrer el binario paso a paso: tienes que investigarlo. Un video de Rat Lab documenta esa investigación de principio a fin: dónde pegar el hash, qué pestañas importan realmente y cómo confirmar un hallazgo antes de comprometerte con una respuesta.
+
+El desafío se organiza en seis preguntas que abarcan la familia de malware, el nombre de archivo común que usa la muestra, su marca temporal de compilación, su fecha de primera sumisión, un artefacto depositado en la carpeta AppData y el servidor de comando y control (C2) con el que se comunica. Los write-ups de la comunidad circulan ampliamente porque esas seis preguntas se corresponden casi uno a uno con las habilidades que un analista de nivel uno aplica a diario.
+
+## Qué aprendes realmente con un video de Rat Lab
+
+El valor de un video de Rat Lab no son las respuestas, sino la memoria muscular. Distintos creadores toman rutas ligeramente diferentes, pero el conjunto de habilidades subyacente es consistente.
+
+| Habilidad | Por qué importa | Dónde aparece en el laboratorio |
+|---|---|---|
+| Triaje que empieza por el hash | Las consultas de reputación son la ruta más rápida al contexto | El movimiento inicial de cada pregunta |
+| Lectura de metadatos estáticos | Las marcas de tiempo de compilación insinúan cronologías de desarrollo | Inspección de la cabecera del ejecutable portátil |
+| Caza de artefactos | Los archivos depositados revelan preparación y persistencia | El archivo `.dat` en AppData |
+| Pivoteo de red | La identificación del C2 impulsa el bloqueo y la contención | Pestañas de comportamiento e informes de inteligencia |
+| Triangulación de fuentes | Cualquier fuente única puede estar incompleta | La misma URL confirmada en tres lugares |
+| Disciplina de reporte | Las respuestas deben ser defendibles, no adivinadas | Cada respuesta enviada |
+
+Lo que separa un recorrido útil de uno olvidable es la narración. Un creador que explica *por qué* hizo clic en una pestaña concreta te enseña una regla de decisión. Un creador que simplemente lee las respuestas de la pantalla no te enseña nada que no pudieras haber buscado por tu cuenta.
+
+Los informes de la comunidad destacan de forma consistente el mismo punto de inflexión: el momento en que la investigación deja de ser una consulta de hash y se convierte en un incidente real, cuando un archivo depositado o un artefacto de red conecta la muestra con algo vivo.
+
+## Las herramientas detrás de cada recorrido en video de Rat Lab
+
+Casi todos los videos de Rat Lab pasan por el mismo pequeño conjunto de herramientas. Saber en qué destaca cada plataforma te permite seguir el ritmo sin pausar cada treinta segundos.
+
+| Herramienta | Qué revisas | Pregunta que responde |
+|---|---|---|
+| Hybrid Analysis (Falcon Sandbox) | Búsqueda de informes por hash, veredictos del sandbox, indicadores sospechosos, sistemas externos | Familia de malware; confirmación del C2 |
+| VirusTotal | Pestaña Details (información de firma, cabecera PE), History, Behavior | Nombre de archivo común; marca temporal de compilación; primera sumisión; C2 |
+| Informe de inteligencia de Red Canary | Comportamientos documentados y actividad de red observada | Archivo depositado; URL del C2 |
+| Plataforma CyberDefenders | Enunciado del desafío, archivos y envío de respuestas | Enmarcar toda la investigación |
+| MITRE ATT&CK | Mapeo de técnicas para los write-ups | Contexto y calidad del reporte |
+
+El informe del sandbox suele ser la primera parada porque hace más que nombrar la amenaza: te dice qué *hizo* la muestra. Los recorridos de la comunidad señalan que la sumisión al sandbox con la puntuación más alta suele ser la que vale la pena leer primero, ya que un veredicto sólido normalmente implica un detalle de comportamiento más rico.
+
+VirusTotal se convierte entonces en la bestia de carga de los metadatos. La pestaña Details expone cosas que un sandbox no: el nombre de archivo original enterrado en la información de firma, la marca temporal de compilación escondida en la cabecera del ejecutable portátil y la fecha de primera sumisión en el panel History. La pestaña Behavior es donde reside la comunicación de red, y a menudo es donde una cadena de dominio sospechosa emerge como patrón de memoria.
+
+La inteligencia de Red Canary añade la capa humana: un relato escrito por analistas sobre los archivos depositados y los endpoints contactados. Cuando las tres fuentes coinciden en un dominio, tienes lo que los analistas llaman triple confirmación: un hallazgo lo bastante sólido como para actuar sobre él.
+
+Si quieres explorar la plataforma que aloja este estilo de desafío, echa un vistazo a la [biblioteca oficial de desafíos de CyberDefenders](https://cyberdefenders.org/) para ver la oferta actual de laboratorios.
+
+## Fase por fase: cómo se desarrolla un recorrido en video de Rat Lab
+
+La mayoría de los recorridos avanzan por las preguntas en orden, porque cada respuesta alimenta la siguiente. Este es el esqueleto que verás una y otra vez.
+
+| Fase | Tema de la pregunta | Fuente principal | Artefacto que buscas |
+|---|---|---|---|
+| 1 | ¿Qué familia de malware está presente? | Hybrid Analysis | Nombre de la familia en el informe del sandbox |
+| 2 | ¿Qué nombre de archivo usa? | VirusTotal | Nombre original bajo la información de firma |
+| 3 | ¿Cuándo se compiló? | VirusTotal | Marca temporal de compilación en la cabecera PE |
+| 4 | ¿Cuándo se vio por primera vez? | VirusTotal | Fecha de primera sumisión en History |
+| 5 | ¿Qué depositó? | Informe de Red Canary | Archivo `.dat` en la carpeta AppData |
+| 6 | ¿A qué C2 contacta? | Las tres | URL del C2 y reputación del dominio |
+
+Las fases uno y dos establecen la identidad. El nombre de la familia te dice con qué clase de herramienta tratas, y el nombre de archivo común te da un pivote para cazar la misma muestra en otras máquinas. En un incidente real, ese nombre de archivo se convierte en una consulta de endpoints en toda la flota.
+
+Las fases tres y cuatro establecen la cronología. La hora de compilación te dice cuándo se construyó la herramienta; la primera sumisión te dice cuándo la vio por primera vez la comunidad de seguridad en general. La brecha entre esas dos fechas es realmente útil: una brecha larga puede significar que la muestra circuló en silencio antes de que alguien la notara.
+
+Las fases cinco y seis establecen el impacto. Los archivos depositados te muestran qué persiste en el disco, mientras que el dominio del C2 es lo que entregas al equipo de red para bloquearlo. Esta es la fase en la que un video de Rat Lab se gana su valor, porque ves a un analista negarse a aceptar una sola fuente y, en su lugar, confirmar el mismo dominio en un informe de proveedor, una pestaña de comportamiento y la lista de sistemas externos de un sandbox.
+
+## Consejos para aprovechar al máximo un video de Rat Lab
+
+Verlo de forma pasiva es la manera más rápida de olvidarlo todo para el jueves. Trata el video como un compañero de laboratorio en lugar de una clase magistral.
+
+- **Pausa antes de cada revelación.** Cuando el creador diga «vamos a revisar la pestaña Details», detén el video y hazlo tú primero.
+- **Lleva una hoja de borrador.** Anota cada hash, nombre de archivo, marca temporal, dominio y ruta de archivo que encuentres.
+- **Mira las partes desconocidas a velocidad normal.** Pasa a 1,5x solo en los segmentos que ya entiendes.
+- **Reconstruye la cadena al día siguiente.** Sin el video, intenta reconstruir cómo se obtuvo cada respuesta.
+- **Compara dos creadores.** Distintos recorridos a menudo toman pivotes diferentes hacia la misma respuesta, y las diferencias son la lección.
+- **Escribe el «por qué», no el «qué».** Una respuesta

@@ -6,7 +6,14 @@
     "description": "Rat Lab Wiki provides Roblox Rat Lab guides, mutation tips, gameplay information, role explanations, updates, and everything players need to explore the laboratory.",
     "legalNotice": "Non-official fan wiki. Made by players, for players."
   },
-  "nav": {},
+  "nav": {
+    "guide": "Guide",
+    "mechanics": "Mechanics",
+    "items": "Items",
+    "progression": "Progression",
+    "community": "Community",
+    "media": "Media"
+  },
   "home": {
     "meta": {
       "title": "Rat Lab Wiki - Codes, Guide & Mutations",
@@ -323,7 +330,30 @@
       "secondary": "Play on Roblox"
     }
   },
-  "bosses": {},
+  "guide": {
+    "overviewTitle": "Rat Lab Guides & Walkthroughs",
+    "overviewDescription": "Step-by-step walkthroughs, quest solutions, and achievement guides for the Rat Lab challenge."
+  },
+  "mechanics": {
+    "overviewTitle": "Rat Lab Game Mechanics & Systems",
+    "overviewDescription": "Comprehensive breakdown of Rat Lab experiment mechanics, escape puzzles, portals, and challenge rules."
+  },
+  "items": {
+    "overviewTitle": "Rat Lab Items, Badges & Rewards",
+    "overviewDescription": "Complete catalog of badges, headcovers, cosmetic outfits, trophy rewards, and equipment in Rat Lab."
+  },
+  "progression": {
+    "overviewTitle": "Rat Lab Levels & Progression",
+    "overviewDescription": "Guides covering Rat Lab levels, lab chamber locations, investigation tasks, and test milestones."
+  },
+  "community": {
+    "overviewTitle": "Rat Lab Community & Discussion",
+    "overviewDescription": "Connect with other Rat Lab analysts across Discord, Reddit, Steam hubs, and community channels."
+  },
+  "media": {
+    "overviewTitle": "Rat Lab Videos & Media",
+    "overviewDescription": "Explore gameplay recordings, walkthrough videos, game demos, and trailer showcases for Rat Lab."
+  },
   "shared": {
     "wikiNavigation": "Wiki Navigation",
     "activeCodes": "Active Codes",

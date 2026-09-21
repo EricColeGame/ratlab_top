@@ -1,0 +1,108 @@
+export const metadata = {
+  title: "Rat Lab locations: The Complete Map of Every Artifact to Check",
+  description: "A practical guide to every Rat Lab location — dropped files, registry keys, sandbox tabs, and C2 endpoints — with a step-by-step progression map.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+If you're stuck partway through Rat Lab and the answers feel scattered across a dozen browser tabs, the real problem usually isn't your tooling — it's that you don't yet know which **Rat Lab locations** to check, and in what order. A RAT lab drops you into a live intrusion investigation with almost nothing to start from: typically a single file hash and a one-paragraph scenario.
+
+The good news is that these labs are built to be solved. Every question maps to a specific artifact location — a folder on disk, a registry key, a tab inside a sandbox report, or an outbound network endpoint. Once you know which **Rat Lab locations** correspond to each stage, the progression collapses from hours of guessing into a tight, repeatable checklist.
+
+## What Is Rat Lab and Why Locations Drive the Whole Investigation
+
+"Rat Lab" is shorthand for a hands-on cyber threat intelligence (CTI) exercise built around a Remote Access Trojan. The premise is always the same: a RAT has already landed inside a fictional organization, abnormal traffic has been detected, and you are the analyst who has to reconstruct what happened using only public research platforms.
+
+Because a RAT touches so many parts of a system, the lab is really a scavenger hunt across three planes of evidence:
+
+- **The endpoint plane** — files the sample drops, staging folders it hides in, and the registry or scheduler entries it uses to survive a reboot.
+- **The network plane** — the command-and-control (C2) domain or URL the sample beacons to, plus any redirect chain that explains the suspicious traffic.
+- **The intelligence plane** — the public reports where other analysts have already documented the same sample, its filenames, and its infrastructure.
+
+The questions are sequenced deliberately. You identify the malware family first, then pin down the filename, then the compilation timestamp, then the first-seen date, then the dropped artifacts, and finally the C2 server. Each answer unlocks the next, and each one lives in a specific location. Platforms such as [CyberDefenders' blue team lab environment](https://cyberdefenders.org/) follow this exact identify → persist → communicate arc, which is why a map beats brute force every time.
+
+## The Essential Rat Lab Locations at a Glance
+
+Before you touch a single search box, it helps to see the whole board. The table below lists the locations that answer nearly every question a RAT lab asks.
+
+| # | Location | Where it lives | What you extract |
+|---|---|---|---|
+| 1 | Sample hash file | Challenge download (often a plain `.txt`) | The SHA256 you pivot everything from |
+| 2 | Sandbox report archive | Report search on a public malware analysis service | Prior analyses, verdict score, behavior summary |
+| 3 | File version & signature info | The sample's "Details" tab | Original filename used in the wild |
+| 4 | Portable executable header | The same "Details" tab, header section | Compilation timestamp |
+| 5 | Submission history | The "Details" tab, history panel | First submission date |
+| 6 | Linked vendor intelligence report | Referenced inside the sandbox report | Dropped `.dat` artifacts and persistence notes |
+| 7 | Behavior → network communication | The sample's "Behavior" tab | C2 URL or domain as a memory string |
+| 8 | Suspicious indicators → external systems | Sandbox report, indicators section | Independent corroboration of the C2 |
+
+Notice that six of the eight locations sit inside two pages you already have open. Most beginners lose time by hunting for new tools when the answer is one scroll away.
+
+## Rat Lab Locations by Progression Stage
+
+Difficulty in these labs rarely comes from complexity — it comes from doing the steps out of order. Here's how the locations line up with the progression.
+
+| Stage | Question type | Primary location | Backup source |
+|---|---|---|---|
+| 1 | Which malware family is this? | Sandbox report archive | Vendor write-up |
+| 2 | What filename does it use? | Signature / version metadata | Sandbox file listing |
+| 3 | When was it compiled? | PE header info | Static analysis tooling |
+| 4 | When was it first seen? | Submission history | Threat intel blog posts |
+| 5 | What did it drop? | Vendor report or dropped-files list | Endpoint file listing in the lab VM |
+| 6 | Where does it call home? | Behavior tab network section | External systems indicators |
+
+Three habits keep this progression clean:
+
+- **Answer in order.** Filenames and compilation timestamps look trivial, but they're the search terms that crack the later stages open.
+- **Write each answer down.** Later questions often reuse earlier values, and re-deriving them wastes minutes you don't get back.
+- **Cross-check before submitting.** A single source can be incomplete; two or three sources agreeing is a lock.
+
+## Inside the Machine: Endpoint, Registry, and Network Locations
+
+### Where dropped files usually land
+
+Almost every RAT needs somewhere to write its configuration, a second-stage payload, or a working copy of itself. In Windows environments those locations are almost always user-writable, because that's where a non-privileged process can write without tripping anything.
+
+| Artifact type | Typical location (general) | Investigation value |
+|---|---|---|
+| Dropped config or data file | The user profile's AppData folder (Roaming or Local) | Campaign ID, beacon settings, C2 list |
+| Secondary executable | User-writable folders such as AppData, Temp, Downloads, or Public | Re-execution and defense evasion |
+| Per-user persistence | Run key under the current user's registry hive | Relaunch at logon |
+| Scheduled task | Task Scheduler library | Recurring execution, often disguised as a system job |
+| Service entry | Services registry key | Elevated, SYSTEM-level persistence |
+| Browser hijack data | Browser profile folder | Explains the redirected-search symptom |
+
+Exact paths vary by sample and lab build, so treat the table as a search checklist rather than a fixed answer key. The pattern is what matters: user-writable folders for files, autostart keys and task definitions for persistence.
+
+### The dropped artifact question
+
+This is the stage where many analysts get stranded, because the usual "Details" tab simply doesn't have the answer. Community reports from people who have worked through the Yellow RAT Lab challenge describe the same pivot: when the sample page doesn't list dropped components, you move to the vendor intelligence report linked from the sandbox report. That write-up typically names the `.dat` file and the folder it was written to — information the sandbox simply never captured.
+
+### Network locations: finding the C2
+
+The final stage is almost always the command-and-control infrastructure, and it's the one where multiple locations should agree before you commit to an answer.
+
+| Network artifact | Where to find it | What it confirms |
+|---|---|---|
+| C2 URL or domain | Behavior tab → network communication | The primary callback |
+| Domain reputation | Lookup of that domain on the same intel platform | Malicious verdict and first-seen date |
+| External systems list | Suspicious indicators section | Independent corroboration |
+| DNS / HTTP request log | Sandbox network log | Beacon interval, user agent, headers |
+| Redirect chain | Scenario text plus browser evidence | The abnormal-traffic symptom |
+| Payload download URLs | Sandbox HTTP request list | Second-stage delivery |
+
+A useful rule of thumb: if the same domain shows up in a memory-string list, a network log, and a reputation lookup, you have a triple confirmation. If only one source flags it, keep digging before you submit.
+
+## Practical Tips, Common Mistakes, and Community Shortcuts
+
+Working the locations efficiently is a skill in itself. These habits separate a twenty-minute lab run from a two-hour slog:
+
+1. **Read the scenario brief twice.** The symptom described in the intro — redirected searches, unusual outbound traffic, a slowdown on specific workstations — usually points straight at the mechanism you're meant to find.
+2. **Keep one browser window per source.** Sandbox report, reputation platform, and vendor write-up side by side eliminates constant re-navigation.
+3. **Trim values before pasting.** Trailing spaces and smart quotes cause more failed submissions than wrong answers do.
+4. **Use the sample hash everywhere.** It's the one identifier that ties every Rat Lab location back to the same piece of code.
+5. **Revisit the "Behavior" tab last.** It's the richest page, and reading it after the earlier stages makes the network section far easier to interpret.
+
+| Common mistake | Why it costs you | The fix |
+|---|---|---|
+| Starting on the network tab | You skip the naming and timeline clues you need later | Work the stages

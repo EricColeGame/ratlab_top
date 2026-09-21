@@ -1,0 +1,129 @@
+export const metadata = {
+  title: "Rat Lab Tasks Explained: A Complete Progression Guide to the Yellow RAT CTI Challenge",
+  description: "Rat Lab tasks broken down step by step, with the tools, threat intel sources, and progression tips you need to clear the Yellow RAT challenge fast.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+## Why Rat Lab Tasks Matter for CTI Beginners
+
+If you have ever been handed a single file hash and told to "figure out what happened," the Yellow RAT lab is the exercise that teaches you how. Working through **Rat Lab tasks** forces you to pivot between threat intelligence platforms, question your first assumption, and document evidence the way a real analyst does. The best part is that **Rat Lab tasks** scale from beginner-friendly lookups into genuine investigative reasoning, so the challenge rewards first-timers and seasoned responders alike.
+
+The lab is built around a realistic scenario: abnormal network traffic at a fictional company, employees' search queries being redirected, and no obvious patient zero. You get a hash file and nothing else. Every answer has to be earned through research rather than guesswork, which is exactly why the challenge shows up on so many blue-team study lists and in community walkthroughs.
+
+CyberDefenders hosts this style of hands-on challenge through [its official challenge platform](https://cyberdefenders.org/), where labs are scored by the questions you answer correctly. That scoring model matters for how you approach the work, and we will get into that shortly.
+
+## The Rat Lab Tasks at a Glance
+
+The challenge is organized as a short sequence of investigative questions. Each one builds on the last, so skipping ahead usually costs more time than it saves.
+
+| # | Task Objective | Primary Intel Source | Artifact Type |
+|---|---|---|---|
+| 1 | Identify the malware family causing the odd traffic | Hybrid Analysis sandbox reports | Threat/family label |
+| 2 | Find the common filename the sample uses | VirusTotal, Details tab | File metadata |
+| 3 | Determine when the sample was compiled | VirusTotal, PE header info | Timestamp |
+| 4 | Find when it was first submitted to VirusTotal | VirusTotal, History section | Date and time |
+| 5 | Name the `.dat` file dropped in the AppData folder | Red Canary report | Dropped-file artifact |
+| 6 | Identify the command-and-control (C2) server | All three sources | Network indicator |
+
+Two things stand out about this progression. First, the early Rat Lab tasks are pure lookups — you are learning where information lives. Second, the later ones demand synthesis, because the dropped-file answer simply is not available on the platform you have been living in for the previous four questions.
+
+A useful mindset: treat each question as a different "lens" on the same sample rather than a separate puzzle.
+
+## Tooling Up: The Three Platforms Every Rat Lab Task Touches
+
+You can complete the entire lab with free, browser-based tooling. No virtual machine, no paid license, no disassembler required — though a malware analysis sandbox with a good reputation system certainly helps.
+
+| Platform | What It Does Best | What Slows You Down |
+|---|---|---|
+| Hybrid Analysis | Sandbox behavior, threat scoring, external systems contacted | Report lists are long; picking the wrong sandbox wastes time |
+| VirusTotal | File metadata, PE headers, submission history, community detections | The Details tab is enormous and answers are scattered |
+| Red Canary intel | Curated incident notes on dropped files and observed C2 | It may be the only source for a given artifact, so read carefully |
+
+Because the challenge leans on public reporting rather than live malware execution on your own machine, you can also cross-check findings against general reference material from [VirusTotal's public analysis site](https://www.virustotal.com/) without downloading anything risky.
+
+Here is the quick-reference map that saves the most time. Print it, or keep it in a second tab.
+
+| You Need… | Go To… | Look Under… |
+|---|---|---|
+| Malware family name | Hybrid Analysis | Falcon Sandbox report summary |
+| Common/original filename | VirusTotal | Details → File Version Information |
+| Compilation timestamp | VirusTotal | Portable Executable Info → Header |
+| First submission date | VirusTotal | Details → History |
+| Dropped `.dat` file | Red Canary report | Observed file activity notes |
+| C2 URL | All three | Network Communication / External Systems |
+
+## Working Through the Rat Lab Tasks Step by Step
+
+The walkthrough below describes the workflow rather than spoiling the answers. Community reports consistently describe the same route, and following it in order keeps your investigation clean.
+
+### Tasks 1 and 2: Identify the Family, Then the Filename
+
+Start with the hash provided in the challenge archive. Paste it into Hybrid Analysis and work through the report search results. You are looking for a sandbox run with a high threat score — the higher-scoring reports tend to surface the most behavioral detail. The family name you are after will appear in the report's summary and detection context.
+
+Once you have the family, pivot to VirusTotal and open the Details tab. The original filename sits in the file version information area. Copy it exactly; mis-typed punctuation is the single most common reason for a failed submission.
+
+### Tasks 3 and 4: Build the Timeline
+
+Staying on VirusTotal, scroll below the signature data into the portable executable header section. The compilation timestamp lives there. Then check the History section near the top of the Details tab for the first submission date.
+
+Why does this matter in the real world? A sample compiled long before it was first submitted tells a different story than one compiled days earlier. Community walkthroughs note that this pair of Rat Lab tasks is really about establishing dwell time — how long the malware might have sat undetected.
+
+| Question | Data Point | Why an Analyst Cares |
+|---|---|---|
+| Compilation time | Build timestamp in PE header | Suggests development timeline |
+| First submission | VirusTotal history | Indicates when the community first saw it |
+
+### Task 5: Chase the Dropped File
+
+This is where the lab stops being a lookup exercise. VirusTotal will not hand you the name of the `.dat` file the malware writes into the AppData folder, so you switch to curated threat reporting. Read the observed file activity section carefully and note every filename mentioned, then match it against the question's specific criteria — `.dat` extension, AppData location.
+
+### Task 6: Confirm the C2 From Multiple Angles
+
+The final Rat Lab task is the payoff. Gather the C2 URL, then confirm it three separate ways. This triple-confirmation habit is the real skill the lab teaches.
+
+| Source | What It Confirms | Role in Verification |
+|---|---|---|
+| Curated threat report | Observed C2 URL in incident notes | First lead |
+| VirusTotal behavior tab | Domain or URL found in memory patterns | Second confirmation |
+| Hybrid Analysis indicators | External system contacted during sandbox run | Third confirmation |
+
+When all three sources agree, submit the answer with confidence. You have also just practiced correlation — the single most valuable habit in threat intelligence work.
+
+## Common Mistakes That Slow Down Rat Lab Tasks
+
+Most people who struggle with these Rat Lab tasks are not missing knowledge; they are missing process.
+
+| Mistake | Why It Hurts | Better Approach |
+|---|---|---|
+| Answering from a single source | Occasional false leads cost more time than verifying | Confirm high-stakes answers with two or more sources |
+| Skipping the History section | Forces a backtrack later | Check submission history early, in the same pass |
+| Reading only one sandbox report | Lower-scoring runs show fewer behaviors | Prefer the highest-threat-score report available |
+| Retyping filenames and URLs | Typos fail silently against exact-match scoring | Copy and paste every submitted string |
+
+A few additional habits help:
+
+- **Track your pivots.** Note which platform gave you which artifact so you can retrace steps if an answer is rejected.
+- **Read the question twice.** Task 5 asks for a `.dat` file specifically; other artifacts are mentioned in the same report.
+- **Do not over-engineer.** These are research questions, not reverse-engineering exercises. Tooling beyond a browser is optional.
+- **Budget your time.** Most of the Rat Lab tasks resolve in a few minutes each once you know the map; the difficulty is concentrated in tasks 5 and 6.
+
+If a question stalls you, step back and ask which platform you have not consulted yet. With only three sources in play, the answer is usually the one you have neglected.
+
+## FAQ
+
+**What exactly is the Yellow RAT lab, and what do the Rat Lab tasks teach?**
+
+It is a CyberDefenders threat-intelligence challenge built around a suspected remote access trojan infection. The Rat Lab tasks walk you through identifying the malware family, its filename, its build and submission timeline, its dropped files, and the C2 server it contacts. The skills transfer directly to real incident response triage.
+
+**How long does it take to finish the Rat Lab tasks?**
+
+Player experience suggests the early lookups take a few minutes each, while the dropped-file and C2 questions can take considerably longer if you have not mapped the sources. Expect roughly an hour for a first attempt with no walkthrough.
+
+**Do I need paid tools or a lab machine for these Rat Lab tasks?**
+
+No. All three intelligence sources used in the challenge are free to query in a browser. You never need to execute the sample locally, which makes this a safe exercise for beginners.
+
+**What should I do after completing the Rat Lab tasks?**
+
+Retry the challenge from a blank notes file and see whether you can reproduce the same answers without referencing a walkthrough. Then move on to other CTI-focused labs to practice the same pivot-and-confirm workflow on unfamiliar samples.

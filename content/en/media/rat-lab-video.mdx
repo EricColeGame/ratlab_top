@@ -1,0 +1,113 @@
+export const metadata = {
+  title: "Rat Lab Video Walkthrough: Master RAT Malware Analysis Step by Step",
+  description: "A complete Rat Lab video guide — what the RAT analysis challenge covers, how to follow walkthroughs, which tools to use, and tips for solving every question.",
+  category: "media",
+  date: "2026-09-20",
+}
+
+A single SHA256 hash is all you get. No filename, no domain, no helpful notes from the endpoint team — just 64 characters and a story about employees whose search queries started landing on unfamiliar websites. That is the premise behind the Rat Lab challenge, and it is exactly why a well-made Rat Lab video is worth an hour of your time.
+
+A Rat Lab video compresses the trial and error of a live investigation into a repeatable workflow: hash → reputation platform → sandbox report → behavior pivots → confirmed command-and-control. Whether you are a SOC analyst in training or a blue teamer brushing up on threat intelligence, watching someone navigate the same six questions builds pattern recognition that an answer key never will.
+
+This guide covers what the lab actually asks, which platforms do the heavy lifting, how a typical Rat Lab video breaks the investigation into phases, and how to squeeze real skill out of the footage instead of just copying answers.
+
+## What Is the Rat Lab Video Challenge?
+
+Rat Lab is a cyber threat intelligence (CTI) exercise built around one malware sample discovered inside a fictional company's network. In the scenario, a routine security audit flags abnormal traffic across several workstations, and investigators discover that employee search queries are being redirected to unknown sites. The only lead you are handed is a SHA256 file hash.
+
+That constraint is the entire point. You cannot attach a debugger or step through the binary — you have to research it. A Rat Lab video documents that research from start to finish: where to paste the hash, which tabs actually matter, and how to confirm a finding before committing to an answer.
+
+The challenge is organized as six questions covering the malware family, the common filename the sample uses, its compilation timestamp, its first submission date, an artifact dropped into the AppData folder, and the command-and-control (C2) server it talks to. Community write-ups circulate widely because those six questions map almost one-to-one onto the skills a tier-one analyst applies every day.
+
+## What You Actually Learn From a Rat Lab Video
+
+The value of a Rat Lab video is not the answers — it is the muscle memory. Different creators take slightly different routes, but the underlying skill set is consistent.
+
+| Skill | Why it matters | Where it shows up in the lab |
+|---|---|---|
+| Hash-first triage | Reputation lookups are the fastest route to context | The opening move for every question |
+| Static metadata reading | Build timestamps hint at development timelines | Portable executable header inspection |
+| Artifact hunting | Dropped files reveal staging and persistence | The AppData `.dat` file |
+| Network pivoting | C2 identification drives blocking and containment | Behavior tabs and intel reports |
+| Source triangulation | Any single source can be incomplete | The same URL confirmed in three places |
+| Reporting discipline | Answers must be defensible, not guessed | Every submitted answer |
+
+What separates a useful walkthrough from a forgettable one is narration. A creator who explains *why* they clicked a particular tab teaches you a decision rule. A creator who simply reads answers off the screen teaches you nothing you could not have looked up.
+
+Community reports consistently highlight the same turning point: the moment the investigation stops being a hash lookup and becomes an actual incident, when a dropped file or a network artifact connects the sample to something living.
+
+## The Tools Behind Every Rat Lab Video Walkthrough
+
+Almost every Rat Lab video rotates through the same small toolkit. Knowing what each platform is good at lets you follow along without pausing every thirty seconds.
+
+| Tool | What you check | Question it answers |
+|---|---|---|
+| Hybrid Analysis (Falcon Sandbox) | Report search by hash, sandbox verdicts, suspicious indicators, external systems | Malware family; C2 confirmation |
+| VirusTotal | Details tab (signature info, PE header), History, Behavior | Common filename; compile timestamp; first submission; C2 |
+| Red Canary intelligence report | Documented behaviors and observed network activity | Dropped file; C2 URL |
+| CyberDefenders platform | Challenge brief, files, and answer submission | Framing the whole investigation |
+| MITRE ATT&CK | Technique mapping for write-ups | Context and reporting quality |
+
+The sandbox report is usually the first stop because it does more than name the threat — it tells you what the sample *did*. Community walkthroughs point out that the highest-scoring sandbox submission is typically the one worth reading first, since a strong verdict usually means richer behavioral detail.
+
+VirusTotal then becomes the metadata workhorse. The Details tab exposes things a sandbox will not: the original filename buried in signature information, the compilation timestamp hiding in the portable executable header, and the first submission date in the History panel. The Behavior tab is where network communication lives, and it is often where a suspicious domain string surfaces as a memory pattern.
+
+Red Canary's intelligence adds the human layer — an analyst-written account of files dropped and endpoints contacted. When all three sources agree on a domain, you have what analysts call triple confirmation: a finding solid enough to act on.
+
+If you want to explore the platform that hosts this style of challenge, browse the [official CyberDefenders challenge library](https://cyberdefenders.org/) for the current lab lineup.
+
+## Phase-by-Phase: How a Rat Lab Video Walkthrough Unfolds
+
+Most walkthroughs move through the questions in order, because each answer feeds the next. Here is the skeleton you will see repeatedly.
+
+| Phase | Question theme | Primary source | Artifact you're hunting |
+|---|---|---|---|
+| 1 | Which malware family is present? | Hybrid Analysis | Family name in the sandbox report |
+| 2 | What filename does it use? | VirusTotal | Original name under signature info |
+| 3 | When was it compiled? | VirusTotal | Compilation timestamp in the PE header |
+| 4 | When was it first seen? | VirusTotal | First submission date in History |
+| 5 | What did it drop? | Red Canary report | `.dat` file in the AppData folder |
+| 6 | What C2 does it contact? | All three | C2 URL and domain reputation |
+
+Phases one and two establish identity. The family name tells you what class of tool you are dealing with, and the common filename gives you a pivot for hunting the same sample on other machines. In a real incident, that filename becomes an endpoint query across the fleet.
+
+Phases three and four establish timeline. Compilation time tells you when the tool was built; first submission tells you when the wider security community first saw it. The gap between those two dates is genuinely useful — a long gap can mean the sample circulated quietly before anyone noticed.
+
+Phases five and six establish impact. Dropped files show you what persists on disk, while the C2 domain is what you hand to the network team for blocking. This is the phase where a Rat Lab video earns its keep, because you see an analyst refuse to accept one source and instead confirm the same domain across a vendor report, a behavior tab, and a sandbox's external systems list.
+
+## Tips for Getting the Most Out of a Rat Lab Video
+
+Watching passively is the fastest way to forget everything by Thursday. Treat the video like a lab partner rather than a lecture.
+
+- **Pause before each reveal.** When the creator says "let's check the Details tab," stop the video and do it yourself first.
+- **Keep a scratch sheet.** Log every hash, filename, timestamp, domain, and file path you encounter.
+- **Watch the unfamiliar parts at normal speed.** Skip to 1.5x only on segments you already understand.
+- **Rebuild the chain the next day.** Without the video, try to reconstruct how each answer was derived.
+- **Compare two creators.** Different walkthroughs often take different pivots to the same answer, and the differences are the lesson.
+- **Write the "why," not the "what."** An answer you can justify survives an interview; a memorized string does not.
+
+Here are the missteps that show up most often in comments and community discussions.
+
+| Mistake | Why it hurts | Better approach |
+|---|---|---|
+| Skipping the sandbox report | You miss both family naming and external systems | Read the top-scoring report first |
+| Trusting one source for the C2 | Single-source findings can be stale or partial | Confirm across three independent sources |
+| Ignoring PE metadata | Compile time is easy points and real context | Check header details early |
+| Watching at double speed throughout | Nothing sticks | Slow down on unfamiliar pivots |
+| Copying answers verbatim | Fails practical assessments | Explain the reasoning in your notes |
+
+None of this requires paid tooling. The platforms involved offer enough free visibility to complete the investigation, which is a large part of why this lab is such a common recommendation for people moving into threat intelligence work.
+
+## Rat Lab Video FAQ
+
+**How long does a Rat Lab video walkthrough usually take?**
+Most run between ten and thirty minutes, depending on how much narration the creator adds. A Rat Lab video that spends extra time explaining tool navigation is usually more valuable than a fast one, even if it takes twice as long to finish.
+
+**Do I need accounts on the analysis platforms to follow along?**
+You can view a great deal of report data without signing in, but free accounts unlock additional detail such as full behavioral reports and historical submission data. If you plan to retrace the steps yourself, registering is worth the two minutes.
+
+**Is a Rat Lab video useful for complete beginners?**
+Yes, provided you pick one aimed at newcomers. The lab assumes you know what a file hash is but not much beyond that. Following along with a walkthrough is an efficient way to learn the interfaces of VirusTotal and Hybrid Analysis without wandering through tabs blindly.
+
+**Can I apply what I learn from a Rat Lab video at work?**
+The workflow transfers directly. Hash triage, metadata review, artifact hunting, and C2 confirmation are everyday tasks in incident response and threat intelligence. The specific answers change with every sample; the Rat Lab video process does not.

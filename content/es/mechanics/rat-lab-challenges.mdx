@@ -1,0 +1,124 @@
+export const metadata = {
+  title: "Los desafíos de Rat Lab explicados: cómo resolver cada investigación de RAT",
+  description: "Una guía práctica para los desafíos de Rat Lab: las herramientas, los tipos de preguntas y la mecánica de investigación que necesitas para resolver cada laboratorio de análisis de RAT.",
+  category: "mechanics",
+  date: "2026-09-20",
+}
+
+## ¿Qué son los desafíos de Rat Lab?
+
+Los desafíos de Rat Lab son ejercicios prácticos de inteligencia de amenazas cibernéticas en los que recibes un único artefacto —a menudo no más que un hash de archivo— y se espera que reconstruyas toda la historia de una intrusión a partir de él. Importan porque la habilidad que se evalúa es la misma que decide el resultado de un incidente real: la capacidad de convertir un binario desconocido en un adversario identificado, una línea de tiempo y un plan de contención. Si alguna vez te has quedado mirando una alerta sin contexto y te has preguntado por dónde empezar, los desafíos de Rat Lab son el campo de entrenamiento que te enseña a construir ese contexto rápidamente.
+
+La configuración típica es sencilla a propósito. Abres un paquete de desafíos y encuentras un archivo de texto que contiene un hash SHA256. Eso es todo. No hay muestra, no hay sandbox en tu máquina, no hay pistas más allá de una breve narrativa del incidente. A partir de ese hash, se espera que identifiques la familia de malware, rastrees cómo se comporta en un host infectado y determines la infraestructura con la que se comunica.
+
+Un escenario representativo —extraído de un walkthrough de Yellow RAT Lab ampliamente compartido— describe tráfico de red anómalo en una empresa ficticia después de que las consultas de búsqueda de varios empleados empiezan a redirigirse a sitios web desconocidos. Tu trabajo como analista es delimitar el incidente y responder un conjunto fijo de preguntas de investigación.
+
+## La anatomía de un desafío de Rat Lab
+
+Cada laboratorio sigue más o menos la misma forma: un informe inicial, un artefacto, una fase de enriquecimiento y un veredicto. Entender ese ritmo es la mitad de la batalla, porque te dice qué estás buscando antes de abrir una sola pestaña del navegador.
+
+| Etapa | Lo que se te entrega | Lo que debes producir |
+|---|---|---|
+| Informe inicial | Una breve narrativa del incidente | Un modelo mental de la intrusión |
+| Artefacto | Un archivo de hash (normalmente SHA256) | Identificación de la familia de malware |
+| Enriquecimiento | Acceso a plataformas públicas de inteligencia de amenazas | Nombres de archivo, marcas de tiempo, archivos soltados, IOC de red |
+| Correlación | Múltiples informes superpuestos | Respuestas confirmadas más guía de remediación |
+
+La mecánica importante aquí es la **triangulación**. Una única fuente rara vez es suficiente. Las soluciones sólidas confirman cada respuesta en al menos dos o tres plataformas independientes, que es exactamente también como los analistas profesionales evitan presentar un falso positivo.
+
+Si quieres ver la plataforma que popularizó este formato, [CyberDefenders aloja un catálogo rotativo de laboratorios de desafíos de equipo azul](https://cyberdefenders.org/) organizados por dificultad y tipo de ataque.
+
+## Los seis arquetipos de preguntas que encontrarás
+
+La mayoría de los desafíos de Rat Lab plantean entre cinco y ocho preguntas, y reciclan los mismos arquetipos. Aprende el patrón una vez y podrás entrar en cualquier laboratorio codificado por colores con un plan.
+
+| Arquetipo de pregunta | Habilidad evaluada | Dónde suele encontrarse la respuesta |
+|---|---|---|
+| Nombre de la familia de malware | Identificación del adversario | Clasificación y etiquetas del informe del sandbox |
+| Nombre de archivo común | Búsqueda de IOC basada en host | Metadatos de versión del archivo ("nombre original") |
+| Marca de tiempo de compilación | Análisis forense de línea de tiempo | Datos del encabezado Portable Executable |
+| Fecha del primer envío | Historial de detección de la comunidad | Historial de envío de muestras |
+| Archivos soltados | Persistencia y erradicación | Informe de comportamiento de escrituras de archivos |
+| Servidor C2 | Contención de red | Sección de red del comportamiento más reputación del dominio |
+
+Dos de estas merecen atención adicional. La **marca de tiempo de compilación** a menudo se confunde con la fecha de primera observación; responden preguntas diferentes. La compilación indica cuándo el autor construyó el binario, mientras que el primer envío indica cuándo la comunidad defensiva lo vio por primera vez. La diferencia entre ambas puede sugerir cuánto tiempo pudo pasar desapercibida una amenaza.
+
+La pregunta sobre el **servidor C2** es la que separa una buena respuesta de una excelente. No te limites a copiar una URL de un informe. Úsala como pivote, verifica la reputación del dominio y comprueba si varias fuentes coinciden. Los desafíos de Rat Lab recompensan ese paso extra de verificación.
+
+## Herramientas: tu kit para los desafíos de Rat Lab
+
+No necesitas un presupuesto empresarial. El conjunto de herramientas que resuelve casi todos los laboratorios es gratuito, basado en navegador y rápido de aprender.
+
+| Herramienta | Uso principal | Respuesta típica que desbloquea |
+|---|---|---|
+| Hybrid Analysis | Informes de sandbox e indicadores de comportamiento | Familia de malware, archivos soltados, sistemas externos |
+| VirusTotal | Detección multi-motor y metadatos de archivos | Nombre de archivo original, hora de compilación, primer envío |
+| Informes de inteligencia de amenazas de proveedores | Contexto de incidentes del mundo real | Rutas de archivos y URL de C2 observadas |
+| Motores de búsqueda | Pivotar sobre hashes y dominios | Artículos de corroboración y reputación |
+| [MITRE ATT&CK](https://attack.mitre.org/) | Asignar comportamiento observado a técnicas | Contexto explicativo para tu informe |
+
+**Hybrid Analysis** suele ser el mejor punto de partida porque sus informes de sandbox muestran la puntuación de amenaza, el entorno utilizado y una lista limpia de indicadores sospechosos. **VirusTotal** es la mejor segunda parada: su pestaña de detalles expone información de versión del archivo y encabezados Portable Executable, que es donde se esconden los nombres de archivo y las marcas de tiempo de compilación. Los informes de inteligencia de proveedores cubren las lagunas cuando un sandbox no puede observar un comportamiento —los archivos `.dat` soltados en la carpeta AppData de un usuario son un ejemplo clásico de algo que un motor estático nunca te mostrará.
+
+Una breve lista de hábitos que dan resultado:
+
+- Trabaja siempre a partir del hash, no de un nombre de archivo que alguien mencionó en el informe inicial.
+- Mantén una nota temporal con cada IOC que encuentres; los reutilizarás.
+- Verifica la reputación de cualquier dominio antes de reportarlo como malicioso.
+- Registra *dónde* encontraste cada respuesta —hace que tu informe sea creíble.
+
+## Resolver un desafío de Rat Lab paso a paso
+
+Este es el flujo de trabajo que lleva consistentemente a un conjunto completo de respuestas sin retroceder.
+
+| Paso | Acción | Error común que debes evitar |
+|---|---|---|
+| 1 | Lee el escenario dos veces y anota el sector y los síntomas | Saltar directamente al hash |
+| 2 | Pega el hash en una plataforma de sandbox | Buscar un nombre de archivo en su lugar |
+| 3 | Identifica la familia y anota la puntuación de detección | Asumir que una puntuación baja significa limpio |
+| 4 | Pasa a una segunda plataforma para obtener metadatos del archivo | Detenerse en una sola fuente |
+| 5 | Rastrea el archivo soltado y su ruta completa | Reportar solo la extensión |
+| 6 | Extrae el C2 y luego verifica su reputación | Tratar una cadena de memoria como confirmada |
+| 7 | Verifica el C2 con una tercera fuente | Enviar después de dos coincidencias |
+| 8 | Escribe la respuesta más una nota de remediación de una línea | Ignorar el "¿y qué?" |
+
+Los informes de la comunidad destacan sistemáticamente el paso siete como el diferenciador. En el Yellow RAT Lab, por ejemplo, la misma URL de comando y control apareció en un informe de comportamiento de un proveedor, en la sección de patrones de memoria de un escáner multi-motor y de nuevo en la lista de sistemas externos de un informe de sandbox. Tres confirmaciones independientes convierten una conjetura en un hallazgo defendible.
+
+Los desafíos de Rat Lab también enseñan una lección más sutil: no todas las respuestas están disponibles en todas las herramientas. Cuando a una plataforma le falta un archivo soltado, la respuesta suele estar en un informe de inteligencia de amenazas escrito por un proveedor de endpoint. Saber cuándo cambiar de herramienta es una habilidad que solo se desarrolla con repetición.
+
+## Errores comunes y consejos profesionales
+
+| Error | Por qué te perjudica | Solución |
+|---|---|---|
+| Confundir la hora de compilación con la de primera observación | Las respuestas caen en el campo equivocado | Verifica qué sección estás leyendo |
+| Reportar una ruta de archivo truncada | El escaneo de rutas omite el archivo | Copia la ruta completa de AppData |
+| Ignorar las puntuaciones de detección | Juzgas mal la gravedad de la muestra | Lee la valoración de amenaza del sandbox |
+| Omitir el "porqué" | Informes débiles y aprendizaje más débil | Añade una frase de impacto por respuesta |
+| Trabajar solo y en silencio | Más lento y menos preciso | Compara notas con otros jugadores |
+
+Tres hábitos separan a los analistas que superan los desafíos de Rat Lab sin esfuerzo de los que se estancan:
+
+1. **Crea una plantilla personal de IOC.** Una tabla simple de hash, familia, nombre de archivo, hora de compilación, primera observación, archivos soltados y C2 hace que cada laboratorio sea más rápido.
+2. **Explica cada respuesta en voz alta.** Si no puedes justificar un hallazgo en una frase, probablemente lo encontraste por suerte.
+3. **Revisa el informe inicial al final.** Los escenarios a menudo implican el paso de remediación que deberías recomendar, y es fácil olvidarlo una vez que estás inmerso en las herramientas.
+
+## Puntuación, dificultad y cómo medir el progreso
+
+La dificultad varía mucho más según la familiaridad con las herramientas que según la sofisticación del malware.
+
+| Nivel de experiencia | Tiempo típico de finalización | Enfoque recomendado |
+|---|---|---|
+| Principiante | 60–120 minutos | Sigue una guía publicada y luego repítelo sin ayuda |
+| Intermedio | 30–60 minutos | Trabaja desde la lista de preguntas sin pistas |
+| Analista con confianza | 15–30 minutos | Cronométrate y escribe un informe completo |
+
+Una referencia útil: si puedes responder la familia, el nombre de archivo y la hora de compilación en los primeros diez minutos, vas al ritmo adecuado. El tiempo restante pertenece a los archivos soltados y a los indicadores de red, que exigen un pivote más cuidadoso.
+
+El valor real de los desafíos de Rat Lab es la transferibilidad. Cada mecánica —pivote de hash, extracción de metadatos, correlación de comportamiento, verificaciones de reputación— se corresponde directamente con el trabajo de triaje que ocurre en un centro de operaciones de seguridad a las 2 a. m. El formato de laboratorio simplemente elimina la presión y añade un marcador.
+
+## Preguntas frecuentes
+
+**¿Los desafíos de Rat Lab requieren herramientas de pago o una suscripción?**
+No. Todas las fuentes esenciales —informes de sandbox, escáneres multi-motor, blogs de inteligencia de proveedores y referencias de técnicas de ATT&CK— son accesibles gratis a través de un navegador. Las plataformas de pago añaden comodidad y profundidad, pero no son necesarias para completar un desafío con precisión.
+
+**¿Cuánto tiempo toma un solo desafío de Rat Lab?**
+Los informes de la comunidad sugieren que la mayoría de la gente termina en 30 a 90 minutos una vez que conoce el flujo de trabajo. Los principiantes a menudo dedican dos horas o más en su primer intento, sobre todo a aprender dónde esconde cada plataforma sus metadatos.

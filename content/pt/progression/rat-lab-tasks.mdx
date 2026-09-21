@@ -1,0 +1,129 @@
+export const metadata = {
+  title: "Tarefas do Rat Lab Explicadas: Guia Completo de Progressão para o Desafio de CTI Yellow RAT",
+  description: "Tarefas do Rat Lab detalhadas passo a passo, com as ferramentas, fontes de threat intel e dicas de progressão necessárias para concluir o desafio Yellow RAT rapidamente.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+## Por Que as Tarefas do Rat Lab Importam para Iniciantes em CTI
+
+Se você já recebeu um único hash de arquivo e ouviu "descubra o que aconteceu", o laboratório Yellow RAT é o exercício que ensina como fazer isso. Trabalhar nas **tarefas do Rat Lab** força você a alternar entre plataformas de threat intelligence, questionar sua primeira suposição e documentar evidências como um analista de verdade faz. A melhor parte é que as **tarefas do Rat Lab** evoluem de consultas amigáveis para iniciantes até raciocínio investigativo genuíno, então o desafio recompensa tanto novatos quanto respondedores experientes.
+
+O laboratório é construído em torno de um cenário realista: tráfego de rede anormal em uma empresa fictícia, consultas de busca de funcionários sendo redirecionadas e nenhum paciente zero óbvio. Você recebe um arquivo de hash e nada mais. Cada resposta precisa ser conquistada por meio de pesquisa, não de suposição, e é exatamente por isso que o desafio aparece em tantas listas de estudo de blue team e em walkthroughs da comunidade.
+
+O CyberDefenders hospeda esse estilo de desafio prático por meio de [sua plataforma oficial de desafios](https://cyberdefenders.org/), onde os laboratórios são pontuados pelas perguntas que você responde corretamente. Esse modelo de pontuação importa para como você aborda o trabalho, e falaremos sobre isso em breve.
+
+## As Tarefas do Rat Lab em Resumo
+
+O desafio é organizado em uma curta sequência de perguntas investigativas. Cada uma se baseia na anterior, então pular etapas geralmente custa mais tempo do que economiza.
+
+| # | Objetivo da Tarefa | Fonte Principal de Inteligência | Tipo de Artefato |
+|---|---|---|---|
+| 1 | Identificar a família de malware que causa o tráfego estranho | Relatórios de sandbox do Hybrid Analysis | Rótulo de ameaça/família |
+| 2 | Encontrar o nome de arquivo comum usado pela amostra | VirusTotal, aba Detalhes | Metadados do arquivo |
+| 3 | Determinar quando a amostra foi compilada | VirusTotal, informações do cabeçalho PE | Carimbo de data/hora |
+| 4 | Descobrir quando ela foi enviada pela primeira vez ao VirusTotal | VirusTotal, seção Histórico | Data e hora |
+| 5 | Nomear o arquivo `.dat` dropado na pasta AppData | Relatório da Red Canary | Artefato de arquivo dropado |
+| 6 | Identificar o servidor de comando e controle (C2) | Todas as três fontes | Indicador de rede |
+
+Duas coisas se destacam nessa progressão. Primeiro, as primeiras tarefas do Rat Lab são consultas puras — você está aprendendo onde as informações ficam. Segundo, as últimas exigem síntese, porque a resposta sobre o arquivo dropado simplesmente não está disponível na plataforma em que você esteve durante as quatro perguntas anteriores.
+
+Uma mentalidade útil: trate cada pergunta como uma "lente" diferente sobre a mesma amostra, em vez de um quebra-cabeça separado.
+
+## Preparando as Ferramentas: As Três Plataformas que Todas as Tarefas do Rat Lab Utilizam
+
+Você pode concluir o laboratório inteiro com ferramentas gratuitas baseadas em navegador. Nenhuma máquina virtual, nenhuma licença paga, nenhum disassembler necessário — embora um sandbox de análise de malware com um bom sistema de reputação certamente ajude.
+
+| Plataforma | Onde Ela É Melhor | O Que Atrasa Você |
+|---|---|---|
+| Hybrid Analysis | Comportamento em sandbox, pontuação de ameaça, sistemas externos contatados | As listas de relatórios são longas; escolher o sandbox errado desperdiça tempo |
+| VirusTotal | Metadados de arquivo, cabeçalhos PE, histórico de envios, detecções da comunidade | A aba Detalhes é enorme e as respostas estão espalhadas |
+| Inteligência da Red Canary | Notas de incidentes curadas sobre arquivos dropados e C2 observado | Pode ser a única fonte para um determinado artefato, então leia com atenção |
+
+Como o desafio se apoia em relatórios públicos em vez de execução de malware ao vivo na sua própria máquina, você também pode cruzar descobertas com material de referência geral do [site público de análise do VirusTotal](https://www.virustotal.com/) sem baixar nada arriscado.
+
+Aqui está o mapa de referência rápida que economiza mais tempo. Imprima-o ou mantenha-o em uma segunda aba.
+
+| Você Precisa de… | Vá Para… | Procure Em… |
+|---|---|---|
+| Nome da família de malware | Hybrid Analysis | Resumo do relatório do Falcon Sandbox |
+| Nome de arquivo comum/original | VirusTotal | Detalhes → Informações de Versão do Arquivo |
+| Carimbo de data/hora de compilação | VirusTotal | Informações do Portable Executable → Cabeçalho |
+| Data do primeiro envio | VirusTotal | Detalhes → Histórico |
+| Arquivo `.dat` dropado | Relatório da Red Canary | Notas de atividade de arquivo observada |
+| URL de C2 | Todas as três | Comunicação de Rede / Sistemas Externos |
+
+## Executando as Tarefas do Rat Lab Passo a Passo
+
+O walkthrough abaixo descreve o fluxo de trabalho em vez de estragar as respostas. Relatos da comunidade descrevem consistentemente a mesma rota, e segui-la em ordem mantém sua investigação limpa.
+
+### Tarefas 1 e 2: Identifique a Família, Depois o Nome do Arquivo
+
+Comece com o hash fornecido no arquivo do desafio. Cole-o no Hybrid Analysis e percorra os resultados de busca de relatórios. Você está procurando uma execução em sandbox com pontuação de ameaça alta — os relatórios com pontuação mais alta tendem a revelar o maior detalhe comportamental. O nome da família que você procura aparecerá no resumo e no contexto de detecção do relatório.
+
+Depois de ter a família, vá para o VirusTotal e abra a aba Detalhes. O nome de arquivo original fica na área de informações de versão do arquivo. Copie exatamente; pontuação digitada incorretamente é o motivo mais comum de uma submissão reprovada.
+
+### Tarefas 3 e 4: Construa a Linha do Tempo
+
+Continuando no VirusTotal, role abaixo dos dados de assinatura até a seção de cabeçalho do portable executable. O carimbo de data/hora de compilação fica lá. Depois, verifique a seção Histórico perto do topo da aba Detalhes para encontrar a data do primeiro envio.
+
+Por que isso importa no mundo real? Uma amostra compilada muito antes de ser enviada pela primeira vez conta uma história diferente de uma compilada dias antes. Walkthroughs da comunidade observam que este par de tarefas do Rat Lab é realmente sobre estabelecer o tempo de permanência — por quanto tempo o malware pode ter ficado sem ser detectado.
+
+| Pergunta | Ponto de Dados | Por Que um Analista se Importa |
+|---|---|---|
+| Horário de compilação | Carimbo de build no cabeçalho PE | Sugere a linha do tempo de desenvolvimento |
+| Primeiro envio | Histórico do VirusTotal | Indica quando a comunidade o viu pela primeira vez |
+
+### Tarefa 5: Persiga o Arquivo Dropado
+
+É aqui que o laboratório deixa de ser um exercício de consulta. O VirusTotal não vai entregar o nome do arquivo `.dat` que o malware grava na pasta AppData, então você muda para relatórios de ameaças curados. Leia atentamente a seção de atividade de arquivo observada e anote todos os nomes de arquivo mencionados, depois compare-os com os critérios específicos da pergunta — extensão `.dat`, localização AppData.
+
+### Tarefa 6: Confirme o C2 de Múltiplos Ângulos
+
+A tarefa final do Rat Lab é a recompensa. Reúna a URL de C2 e confirme-a de três formas separadas. Esse hábito de tripla confirmação é a verdadeira habilidade que o laboratório ensina.
+
+| Fonte | O Que Ela Confirma | Papel na Verificação |
+|---|---|---|
+| Relatório de ameaça curado | URL de C2 observada nas notas de incidente | Primeira pista |
+| Aba de comportamento do VirusTotal | Domínio ou URL encontrado em padrões de memória | Segunda confirmação |
+| Indicadores do Hybrid Analysis | Sistema externo contatado durante a execução em sandbox | Terceira confirmação |
+
+Quando todas as três fontes concordam, envie a resposta com confiança. Você também acabou de praticar correlação — o hábito mais valioso no trabalho de threat intelligence.
+
+## Erros Comuns Que Atrasam as Tarefas do Rat Lab
+
+A maioria das pessoas que tem dificuldade com essas tarefas do Rat Lab não está sem conhecimento; está sem processo.
+
+| Erro | Por Que Prejudica | Abordagem Melhor |
+|---|---|---|
+| Responder a partir de uma única fonte | Pistas falsas ocasionais custam mais tempo do que verificar | Confirme respostas de alto risco com duas ou mais fontes |
+| Pular a seção Histórico | Força a voltar atrás depois | Verifique o histórico de envios cedo, na mesma passagem |
+| Ler apenas um relatório de sandbox | Execuções com pontuação mais baixa mostram menos comportamentos | Prefira o relatório com maior pontuação de ameaça disponível |
+| Redigitar nomes de arquivo e URLs | Erros de digitação falham silenciosamente contra pontuação por correspondência exata | Copie e cole cada string enviada |
+
+Alguns hábitos adicionais ajudam:
+
+- **Rastreie seus pivôs.** Anote qual plataforma forneceu qual artefato para que você possa refazer os passos se uma resposta for rejeitada.
+- **Leia a pergunta duas vezes.** A Tarefa 5 pede especificamente um arquivo `.dat`; outros artefatos são mencionados no mesmo relatório.
+- **Não complique demais.** Estas são perguntas de pesquisa, não exercícios de engenharia reversa. Ferramentas além de um navegador são opcionais.
+- **Administre seu tempo.** A maioria das tarefas do Rat Lab se resolve em poucos minutos cada uma depois que você conhece o mapa; a dificuldade concentra-se nas tarefas 5 e 6.
+
+Se uma pergunta travar você, dê um passo atrás e pergunte qual plataforma você ainda não consultou. Com apenas três fontes em jogo, a resposta geralmente é a que você negligenciou.
+
+## FAQ
+
+**O que exatamente é o laboratório Yellow RAT, e o que as tarefas do Rat Lab ensinam?**
+
+É um desafio de threat intelligence do CyberDefenders construído em torno de uma suspeita de infecção por remote access trojan. As tarefas do Rat Lab guiam você pela identificação da família de malware, seu nome de arquivo, sua linha do tempo de build e envio, seus arquivos dropados e o servidor C2 que ele contata. As habilidades transferem-se diretamente para a triagem real de resposta a incidentes.
+
+**Quanto tempo leva para concluir as tarefas do Rat Lab?**
+
+A experiência dos jogadores sugere que as primeiras consultas levam alguns minutos cada, enquanto as perguntas sobre arquivo dropado e C2 podem levar consideravelmente mais tempo se você não mapeou as fontes. Espere cerca de uma hora para uma primeira tentativa sem walkthrough.
+
+**Preciso de ferramentas pagas ou uma máquina de laboratório para essas tarefas do Rat Lab?**
+
+Não. Todas as três fontes de inteligência usadas no desafio são gratuitas para consulta em um navegador. Você nunca precisa executar a amostra localmente, o que torna este um exercício seguro para iniciantes.
+
+**O que devo fazer depois de concluir as tarefas do Rat Lab?**
+
+Tente o desafio novamente a partir de um arquivo de anotações em branco e veja se consegue reproduzir as mesmas respostas sem consultar um walkthrough. Depois, passe para outros laboratórios focados em CTI para praticar o mesmo fluxo de trabalho de pivotar e confirmar em amostras desconhecidas.

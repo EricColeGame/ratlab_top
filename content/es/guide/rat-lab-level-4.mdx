@@ -1,0 +1,125 @@
+export const metadata = {
+  title: "Rat Lab nivel 4: guía paso a paso, threat intel y consejos para analistas",
+  description: "Guía de Rat Lab nivel 4: los pivotes de herramientas, los campos de los artefactos y el flujo de verificación que usan los analistas para cerrar la investigación del RAT.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## Qué evalúa realmente Rat Lab nivel 4
+
+Si puedes nombrar una familia de malware a partir de un hash, pero te bloqueas en el momento en que alguien pregunta qué archivo dejó caer o a dónde se conecta para reportarse, **Rat Lab nivel 4** es la etapa diseñada para ti. El reto Rat Lab — un laboratorio de threat intelligence publicado como "Yellow RAT Lab" en la plataforma CyberDefenders — no te entrega casi nada y espera que reconstruyas una intrusión a partir de información pública. El nivel 4 es la parte más profunda del ejercicio: el punto en el que una sola herramienta deja de ser suficiente y cada respuesta tiene que sobrevivir a una verificación cruzada.
+
+Esa distinción importa en el trabajo real. La respuesta a incidentes rara vez falla en la detección; falla en el alcance y la atribución. Conocer el nombre de la familia de malware no te dice casi nada sobre hasta dónde se propagó, qué persistencia dejó atrás o qué regla de firewall detendrá de verdad la hemorragia. **Rat Lab nivel 4** está diseñado para forzar esas preguntas más difíciles, usando las mismas plataformas públicas y gratuitas a las que los analistas en activo recurren primero.
+
+Esta guía recorre el escenario, el conjunto de herramientas, los seis pivotes que soportan casi todo el peso y el hábito de verificación que separa una suposición de un hallazgo defendible.
+
+## Cómo enmarcan los informes de la comunidad la progresión de Rat Lab
+
+Las guías de este laboratorio describen las preguntas con ligeras diferencias entre sí, pero la progresión que aparece a continuación coincide con lo que cubren la mayoría de los informes de la comunidad. Trátala como un mapa mental, no como un temario oficial.
+
+| Fase | Pregunta central | Fuente habitual |
+|---|---|---|
+| Nivel 1 | ¿A qué familia pertenece esta muestra? | Búsqueda de informes de sandbox por hash |
+| Nivel 2 | ¿Qué nombre de archivo suplanta o utiliza? | Detalles del archivo en múltiples motores |
+| Nivel 3 | ¿Qué dejó caer y cuándo se compiló? | Metadatos del ejecutable portátil más informes de proveedores |
+| Nivel 4 | ¿A dónde se conecta para reportarse y podemos demostrarlo? | Tres fuentes independientes, verificadas de forma cruzada |
+
+El salto del nivel 3 a **Rat Lab nivel 4** es cualitativo, no solo cuantitativo. Las fases anteriores son tareas de consulta: encuentras un campo y copias un valor. La fase final es una tarea de inferencia: reúnes pruebas parciales de varios sitios y decides si concuerdan.
+
+## El escenario de Rat Lab nivel 4 y el artefacto de partida
+
+El escenario es deliberadamente mundano, y eso es precisamente lo que lo hace realista. Durante una revisión de seguridad rutinaria en una empresa industrial ficticia, los analistas detectan tráfico de red anómalo desde varias estaciones de trabajo. Los empleados informan de que sus búsquedas se redirigen a sitios desconocidos. Te entregan un único archivo y te piden que averigües el resto.
+
+| Elemento | Detalle | Notas del analista |
+|---|---|---|
+| Archivo proporcionado | `hash.txt` | Texto plano, incluido dentro del archivo comprimido del reto |
+| Valor que contiene | Un hash SHA256 de la muestra | 64 caracteres hexadecimales |
+| Tipo de hash | SHA256 | No es MD5 ni SHA1: compruébalo antes de pegarlo |
+| IOC de ejemplo de este laboratorio | `30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85` | Trátalo como un indicador activo; desactívalo (defang) antes de compartirlo |
+| Lo que NO se te entrega | El binario en sí | Todo el análisis se basa en inteligencia de fuentes abiertas |
+
+La ausencia de la muestra es justamente el punto clave. No puedes desensamblar lo que no tienes, así que la investigación se convierte en un ejercicio de documentación: encuentra dónde otras personas ya han analizado esta misma muestra y lee su trabajo con sentido crítico.
+
+## El conjunto de herramientas de Rat Lab nivel 4
+
+Cuatro fuentes soportan casi todo el peso de este reto. Cada una responde a un tipo distinto de pregunta, y ninguna es fiable por sí sola.
+
+| Herramienta | Fortaleza principal | Lo primero que hay que revisar |
+|---|---|---|
+| Hybrid Analysis | Comportamiento en sandbox y una puntuación numérica de amenaza | Los resultados de búsqueda de informes para el hash |
+| VirusTotal | Metadatos del archivo, cabeceras PE, ratio de detección, reputación del dominio | La pestaña Details |
+| Inteligencia de amenazas de proveedores (por ejemplo, informes de Red Canary) | Archivos dejados caer e infraestructura de mando y control observada | Las secciones de comportamiento e IOC del informe |
+| Búsqueda web general | Informes independientes y feeds de IOC que corroboran lo anterior | Nombre de la familia más nombre del archivo |
+
+Dos de estas plataformas son gratuitas a nivel básico: [el sitio oficial de VirusTotal](https://www.virustotal.com/) y la [plataforma de retos CyberDefenders](https://cyberdefenders.org/) donde vive el propio laboratorio. Los informes de proveedores suelen publicarse como entradas de blog abiertas. No necesitas una suscripción comercial para terminar este ejercicio: necesitas paciencia y la disciplina de comprobar dos veces el mismo dato.
+
+## Paso a paso: los seis pivotes de Rat Lab nivel 4
+
+Las preguntas del laboratorio se corresponden limpiamente con los campos de artefactos que aparecen a continuación. Aprende el destino, no una respuesta memorizada, porque las instancias del reto y los informes públicos se actualizan con el tiempo.
+
+| # | Objetivo | Mejor fuente | Campo que hay que leer |
+|---|---|---|---|
+| 1 | Identificar la familia de malware | Lista de informes de sandbox | Veredicto y etiqueta de familia en el informe con mayor puntuación |
+| 2 | Encontrar el nombre de archivo común | Detalles del archivo en múltiples motores | Original Name en la información de firma |
+| 3 | Determinar la hora de compilación | Metadatos del ejecutable portátil | Marca temporal de compilación dentro del bloque de cabecera |
+| 4 | Averiguar cuándo la vio por primera vez la comunidad | Historial de envíos | Marca temporal del primer envío |
+| 5 | Identificar el archivo `.dat` dejado caer | Informe de amenazas del proveedor | Lista de archivos dejados caer en la ruta AppData |
+| 6 | Identificar el servidor C2 | Informe del proveedor, pestaña de comportamiento, indicadores del sandbox | Sistemas externos y dominios con patrones en memoria |
+
+### Pivotes 1–3: construir el perfil
+
+Empieza por el hash. En la plataforma de sandbox, ordena o revisa la lista de informes buscando la entrada con la puntuación de amenaza más alta y abre el informe del sandbox de Windows: una puntuación cercana a los 90 sobre 100 indica una muestra que merece una lectura atenta. Dentro de ese informe encontrarás el nombre de la familia, que se convierte en tu término de búsqueda para todo lo que venga después.
+
+Después pasa a la vista de archivo multi-motor. El campo "Original Name" dentro de la información de firma es el nombre con el que se compiló el binario, y resulta mucho más útil para la caza que un nombre de ejecutable genérico. Justo debajo, el bloque de cabecera contiene la marca temporal de compilación: una señal sólida para construir una línea de tiempo de cuándo se ensambló la herramienta.
+
+### Pivotes 4–6: responder a las preguntas difíciles
+
+El historial de envíos es fácil de pasar por alto. La marca temporal del primer envío te dice cuánto tiempo lleva esta muestra circulando públicamente, lo que sirve como aproximación de cuánto tiempo pudo haber estado en un entorno antes de que alguien la detectara.
+
+La pregunta sobre el archivo dejado caer normalmente no se puede responder solo con los metadatos del archivo, así que cambia a los informes de amenazas de proveedores. Busca un artefacto `.dat` escrito en un directorio AppData; esa ruta es una elección habitual porque rara vez requiere privilegios elevados.
+
+Para la respuesta sobre mando y control, sigue el patrón de triple confirmación de la siguiente sección. Una sola mención de una URL es una pista, no un hallazgo.
+
+## Verificación: triple confirmación del C2
+
+Este es el hábito que hace que **Rat Lab nivel 4** merezca el esfuerzo. Cualquier fuente individual puede estar equivocada, desactualizada o parafrasear a otra fuente. La coincidencia entre tipos de evidencia independientes es lo que convierte una URL en una entrada de lista de bloqueo.
+
+| Fuente | Tipo de evidencia | Señal de confianza |
+|---|---|---|
+| Informe del proveedor | URL de C2 observada en la narrativa de un incidente | Nombrada directamente en el informe |
+| Pestaña de comportamiento multi-motor | Dominio o URL con patrón en memoria | Cadena encontrada dentro de la propia muestra |
+| Consulta de reputación de URL | Veredictos de la comunidad y de proveedores | Dominio marcado por varios motores |
+| Informe de sandbox | Indicador de sistemas externos | Conexión capturada durante la detonación |
+
+Cuando las cuatro apuntan al mismo hostname, puedes afirmar la respuesta sin matices. Cuando solo lo hacen dos, vuelve atrás y lee los campos en bruto en lugar de los resúmenes: los resúmenes comprimen la información y a veces se desvían.
+
+## Errores comunes que te cuestan tiempo en Rat Lab nivel 4
+
+| Error | Por qué perjudica | Solución |
+|---|---|---|
+| Confiar en una sola plataforma | Los resúmenes omiten campos y pueden ir por detrás de los informes de proveedores | Confirma cada respuesta en una segunda fuente |
+| Pegar el tipo de hash equivocado | SHA1 y MD5 se parecen a simple vista | Cuenta los caracteres: 64 significa SHA256 |
+| Saltarse el informe del sandbox | Suele ser la vía más rápida al nombre de la familia | Abre primero el informe con mayor puntuación |
+| Buscar archivos dejados caer en los metadatos del archivo | Los artefactos dejados caer aparecen en los datos de comportamiento | Revisa los informes de proveedores y el comportamiento del sandbox |
+| Escribir el C2 como un dominio desnudo | Se pierde el contexto de ruta y protocolo | Registra la URL completa tal como se observó |
+| Ignorar por completo las marcas temporales | Las líneas de tiempo son la vía más rápida al alcance | Anota cada fecha que encuentres |
+
+Aquí da sus frutos un pequeño hábito de analista: mantén un archivo de notas con una línea por dato y cita la fuente junto a cada línea. Cuando llegues a la última pregunta, tus notas ya serán la respuesta.
+
+## Preguntas frecuentes
+
+**¿Cuánto se tarda en completar Rat Lab nivel 4?**
+La mayoría de los analistas que se manejan con soltura en plataformas de sandbox terminan el ejercicio completo de una sentada, normalmente en menos de una hora. **Rat Lab nivel 4** no es difícil porque las herramientas sean oscuras: la primera vez es lento porque tienes que recordar qué pestaña esconde qué campo. Conserva tus notas de la primera pasada; la segunda lleva una fracción del tiempo.
+
+**¿Necesito cuentas de pago o una suscripción comercial de threat intelligence?**
+No. La investigación se puede completar con los niveles gratuitos de las plataformas públicas de análisis de malware y con la investigación publicada por los proveedores. Los niveles de pago compran principalmente búsquedas más rápidas y límites de API más altos, y ninguna de las dos cosas cambia el resultado del ejercicio.
+
+**¿Puedo saltar directamente a la pregunta sobre mando y control?**
+Puedes intentarlo, pero te lo pondrás más difícil. **Rat Lab nivel 4** se apoya en las respuestas anteriores: el nombre de la familia acota tu búsqueda en los informes de proveedores, y el nombre del archivo ayuda a confirmar que estás leyendo un informe sobre la muestra correcta y no sobre una variante similar.
+
+**¿Qué debo hacer con los indicadores una vez que los tengo?**
+Registra cada uno con su fuente y la fecha en que lo observaste, y después aprovecha las piezas que faltan: la URL del C2 para el bloqueo, el nombre del archivo y el `.dat` dejado caer para la caza en los hosts, y la marca temporal de compilación para reconstruir la línea de tiempo. Esa combinación es lo que convierte una respuesta de laboratorio en una acción defensiva real.
+
+## Para terminar
+
+El reto Rat Lab tiene menos que ver con memorizar dónde vive un campo y más con aprender a desconfiar de una única fuente. Trabaja los pivotes en orden, verifica la respuesta de mando y control con al menos tres tipos de evidencia independientes y guarda una nota con fuente para cada dato que recojas. Si lo haces, **Rat Lab nivel 4** deja de ser la etapa que te bloquea y se convierte en la que te muestra cómo se hace de verdad el trabajo de threat intelligence.

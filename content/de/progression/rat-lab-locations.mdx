@@ -1,0 +1,108 @@
+export const metadata = {
+  title: "Rat-Lab-Speicherorte: Die vollständige Karte aller zu prüfenden Artefakte",
+  description: "Ein praktischer Leitfaden zu jedem Rat-Lab-Speicherort — abgelegte Dateien, Registrierungsschlüssel, Sandbox-Tabs und C2-Endpunkte — mit einer schrittweisen Fortschrittskarte.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+Wenn Sie mitten in Rat Lab feststecken und die Antworten über ein Dutzend Browser-Tabs verstreut wirken, ist das eigentliche Problem meist nicht Ihr Tooling — sondern dass Sie noch nicht wissen, welche **Rat-Lab-Speicherorte** Sie prüfen müssen und in welcher Reihenfolge. Ein RAT-Lab wirft Sie in eine laufende Intrusionsuntersuchung mit fast nichts zum Anfangen: typischerweise ein einziger Datei-Hash und ein Szenario aus einem Absatz.
+
+Die gute Nachricht: Diese Labs sind darauf ausgelegt, gelöst zu werden. Jede Frage lässt sich einem bestimmten Artefakt-Speicherort zuordnen — einem Ordner auf der Festplatte, einem Registrierungsschlüssel, einem Tab innerhalb eines Sandbox-Berichts oder einem ausgehenden Netzwerk-Endpunkt. Sobald Sie wissen, welche **Rat-Lab-Speicherorte** zu welcher Phase gehören, schrumpft der Fortschritt von stundenlangem Raten auf eine straffe, wiederholbare Checkliste.
+
+## Was ist Rat Lab und warum die Speicherorte die gesamte Untersuchung bestimmen
+
+„Rat Lab" ist die Kurzbezeichnung für eine praktische Übung zur Cyber Threat Intelligence (CTI) rund um einen Remote Access Trojan. Die Prämisse ist immer dieselbe: Ein RAT ist bereits in einer fiktiven Organisation gelandet, ungewöhnlicher Datenverkehr wurde erkannt, und Sie sind der Analyst, der rekonstruieren muss, was passiert ist — und zwar ausschließlich mit öffentlichen Rechercheplattformen.
+
+Da ein RAT so viele Teile eines Systems berührt, ist das Lab in Wahrheit eine Schnitzeljagd über drei Ebenen von Beweisen:
+
+- **Die Endpunkt-Ebene** — Dateien, die die Probe ablegt, Staging-Ordner, in denen sie sich versteckt, und Registrierungs- oder Scheduler-Einträge, mit denen sie einen Neustart übersteht.
+- **Die Netzwerk-Ebene** — die Command-and-Control-(C2-)Domain oder URL, die die Probe anfunkt, plus jede Weiterleitungskette, die den verdächtigen Datenverkehr erklärt.
+- **Die Intelligence-Ebene** — die öffentlichen Berichte, in denen andere Analysten dieselbe Probe, ihre Dateinamen und ihre Infrastruktur bereits dokumentiert haben.
+
+Die Fragen sind bewusst in eine Reihenfolge gebracht. Sie identifizieren zuerst die Malware-Familie, dann den Dateinamen, dann den Kompilierungszeitstempel, dann das Erstfunddatum, dann die abgelegten Artefakte und schließlich den C2-Server. Jede Antwort schaltet die nächste frei, und jede lebt an einem bestimmten Speicherort. Plattformen wie [CyberDefenders' blue team lab environment](https://cyberdefenders.org/) folgen genau diesem Bogen identifizieren → persistieren → kommunizieren, weshalb eine Karte jedes Mal besser ist als rohe Gewalt.
+
+## Die wesentlichen Rat-Lab-Speicherorte auf einen Blick
+
+Bevor Sie ein einziges Suchfeld anfassen, hilft es, das gesamte Spielfeld zu überblicken. Die folgende Tabelle listet die Speicherorte auf, die nahezu jede Frage beantworten, die ein RAT-Lab stellt.
+
+| # | Speicherort | Wo er liegt | Was Sie entnehmen |
+|---|---|---|---|
+| 1 | Beispiel-Hash-Datei | Challenge-Download (oft eine einfache `.txt`) | Der SHA256, von dem aus Sie alles aufschlüsseln |
+| 2 | Sandbox-Berichtsarchiv | Berichtssuche auf einem öffentlichen Malware-Analysedienst | Frühere Analysen, Verdict-Score, Verhaltenszusammenfassung |
+| 3 | Dateiversions- und Signaturinformationen | Der Tab „Details" der Probe | Ursprünglicher Dateiname, der in freier Wildbahn verwendet wurde |
+| 4 | Portable-Executable-Header | Derselbe Tab „Details", Header-Bereich | Kompilierungszeitstempel |
+| 5 | Übermittlungsverlauf | Der Tab „Details", Verlaufsbereich | Datum der ersten Übermittlung |
+| 6 | Verlinkter Hersteller-Intelligence-Bericht | Im Sandbox-Bericht referenziert | Abgelegte `.dat`-Artefakte und Persistenzhinweise |
+| 7 | Verhalten → Netzwerkkommunikation | Der Tab „Verhalten" der Probe | C2-URL oder -Domain als Speicher-String |
+| 8 | Verdächtige Indikatoren → externe Systeme | Sandbox-Bericht, Indikatorenbereich | Unabhängige Bestätigung des C2 |
+
+Beachten Sie, dass sechs der acht Speicherorte auf zwei Seiten liegen, die Sie ohnehin schon geöffnet haben. Die meisten Anfänger verlieren Zeit mit der Suche nach neuen Tools, obwohl die Antwort nur einen Scroll entfernt ist.
+
+## Rat-Lab-Speicherorte nach Fortschrittsphase
+
+Die Schwierigkeit in diesen Labs kommt selten aus der Komplexität — sie kommt daher, dass man die Schritte in der falschen Reihenfolge macht. So passen die Speicherorte zur Abfolge.
+
+| Phase | Fragetyp | Primärer Speicherort | Backup-Quelle |
+|---|---|---|---|
+| 1 | Um welche Malware-Familie handelt es sich? | Sandbox-Berichtsarchiv | Hersteller-Write-up |
+| 2 | Welchen Dateinamen verwendet sie? | Signatur-/Versionsmetadaten | Dateiliste der Sandbox |
+| 3 | Wann wurde sie kompiliert? | PE-Header-Informationen | Statische Analyse-Tools |
+| 4 | Wann wurde sie erstmals gesehen? | Übermittlungsverlauf | Threat-Intel-Blogbeiträge |
+| 5 | Was hat sie abgelegt? | Herstellerbericht oder Liste abgelegter Dateien | Dateiliste des Endpunkts in der Lab-VM |
+| 6 | Wohin funkt sie nach Hause? | Netzwerkbereich des Tabs „Verhalten" | Indikatoren externer Systeme |
+
+Drei Gewohnheiten halten diese Abfolge sauber:
+
+- **In der Reihenfolge antworten.** Dateinamen und Kompilierungszeitstempel wirken trivial, aber sie sind die Suchbegriffe, die die späteren Phasen aufschließen.
+- **Jede Antwort aufschreiben.** Spätere Fragen verwenden oft frühere Werte erneut, und sie neu herzuleiten kostet Minuten, die Sie nicht zurückbekommen.
+- **Vor dem Absenden gegenprüfen.** Eine einzelne Quelle kann unvollständig sein; wenn zwei oder drei Quellen übereinstimmen, sitzt es.
+
+## Im Inneren der Maschine: Endpunkt-, Registrierungs- und Netzwerkspeicherorte
+
+### Wohin abgelegte Dateien normalerweise gelangen
+
+Nahezu jeder RAT braucht einen Ort, um seine Konfiguration, eine Second-Stage-Payload oder eine Arbeitskopie von sich selbst zu schreiben. In Windows-Umgebungen sind diese Orte fast immer für Benutzer beschreibbar, weil ein nicht privilegierter Prozess genau dort schreiben kann, ohne etwas auszulösen.
+
+| Artefakttyp | Typischer Speicherort (allgemein) | Untersuchungswert |
+|---|---|---|
+| Abgelegte Konfigurations- oder Datendatei | Der AppData-Ordner des Benutzerprofils (Roaming oder Local) | Kampagnen-ID, Beacon-Einstellungen, C2-Liste |
+| Sekundäre ausführbare Datei | Für Benutzer beschreibbare Ordner wie AppData, Temp, Downloads oder Public | Erneute Ausführung und Verteidigungsumgehung |
+| Benutzerbezogene Persistenz | Run-Schlüssel unter dem Registrierungs-Hive des aktuellen Benutzers | Neustart bei Anmeldung |
+| Geplante Aufgabe | Bibliothek des Task Schedulers | Wiederkehrende Ausführung, oft als Systemauftrag getarnt |
+| Diensteintrag | Registrierungsschlüssel „Services" | Persistenz auf erhöhter, SYSTEM-Ebene |
+| Browser-Hijack-Daten | Browser-Profilordner | Erklärt das Symptom der umgeleiteten Suche |
+
+Exakte Pfade variieren je nach Probe und Lab-Build, daher sollten Sie die Tabelle als Suchcheckliste und nicht als festen Lösungsschlüssel behandeln. Das Muster ist entscheidend: für Benutzer beschreibbare Ordner für Dateien, Autostart-Schlüssel und Aufgabendefinitionen für Persistenz.
+
+### Die Frage nach dem abgelegten Artefakt
+
+Das ist die Phase, in der viele Analysten stranden, weil der übliche Tab „Details" die Antwort schlicht nicht enthält. Community-Berichte von Personen, die die Yellow-RAT-Lab-Challenge durchgearbeitet haben, beschreiben denselben Wendepunkt: Wenn die Probenseite keine abgelegten Komponenten auflistet, wechseln Sie zu dem im Sandbox-Bericht verlinkten Hersteller-Intelligence-Bericht. Dieser Bericht nennt üblicherweise die `.dat`-Datei und den Ordner, in den sie geschrieben wurde — Informationen, die die Sandbox einfach nie erfasst hat.
+
+### Netzwerkspeicherorte: den C2 finden
+
+Die letzte Phase ist fast immer die Command-and-Control-Infrastruktur, und hier sollten mehrere Speicherorte übereinstimmen, bevor Sie sich auf eine Antwort festlegen.
+
+| Netzwerk-Artefakt | Wo zu finden | Was es bestätigt |
+|---|---|---|
+| C2-URL oder -Domain | Tab „Verhalten" → Netzwerkkommunikation | Der primäre Callback |
+| Domain-Reputation | Lookup dieser Domain auf derselben Intel-Plattform | Schädliches Verdict und Erstfunddatum |
+| Liste externer Systeme | Bereich „Verdächtige Indikatoren" | Unabhängige Bestätigung |
+| DNS-/HTTP-Anfrageprotokoll | Netzwerkprotokoll der Sandbox | Beacon-Intervall, User-Agent, Header |
+| Weiterleitungskette | Szenario-Text plus Browser-Beweise | Das Symptom des anomalen Datenverkehrs |
+| Payload-Download-URLs | HTTP-Anfrageliste der Sandbox | Auslieferung der zweiten Stufe |
+
+Eine nützliche Faustregel: Wenn dieselbe Domain in einer Speicher-String-Liste, einem Netzwerkprotokoll und einem Reputations-Lookup auftaucht, haben Sie eine dreifache Bestätigung. Wenn nur eine Quelle sie markiert, graben Sie weiter, bevor Sie absenden.
+
+## Praktische Tipps, häufige Fehler und Community-Abkürzungen
+
+Die Speicherorte effizient abzuarbeiten ist selbst eine Fähigkeit. Diese Gewohnheiten unterscheiden einen Zwanzig-Minuten-Lab-Durchlauf von einer Zwei-Stunden-Schufterei:
+
+1. **Das Szenario-Briefing zweimal lesen.** Das in der Einleitung beschriebene Symptom — umgeleitete Suchen, ungewöhnlicher ausgehender Datenverkehr, eine Verlangsamung auf bestimmten Workstations — deutet meist direkt auf den Mechanismus hin, den Sie finden sollen.
+2. **Ein Browserfenster pro Quelle behalten.** Sandbox-Bericht, Reputationsplattform und Herstellerbericht nebeneinander ersparen ständiges Hin- und Hernavigieren.
+3. **Werte vor dem Einfügen trimmen.** Nachgestellte Leerzeichen und typografische Anführungszeichen verursachen mehr fehlgeschlagene Einsendungen als falsche Antworten.
+4. **Den Beispiel-Hash überall verwenden.** Er ist der eine Identifikator, der jeden Rat-Lab-Speicherort an dasselbe Stück Code bindet.
+5. **Den Tab „Verhalten" zuletzt erneut aufrufen.** Er ist die reichhaltigste Seite, und wenn Sie ihn nach den früheren Phasen lesen, ist der Netzwerkbereich viel leichter zu interpretieren.
+
+| Häufiger Fehler | Warum er Sie kostet | Die Lösung |
+|---|---|---|
+| Mit dem Netzwerk-Tab beginnen | Sie überspringen die Namens- und Zeitlinien-Hinweise, die Sie später brauchen | Arbeiten Sie die Phasen ab

@@ -1,0 +1,119 @@
+export const metadata = {
+  title: "Guía paso a paso de Rat Lab: Resuelve el desafío Yellow RAT de CyberDefenders",
+  description: "Guía paso a paso completa de Rat Lab para el desafío Yellow RAT de CyberDefenders: usa Hybrid Analysis, VirusTotal y Red Canary para responder las seis preguntas.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## Por qué la guía paso a paso de Rat Lab es importante para los equipos azules
+
+Te entregan un único hash de archivo y esperan que expliques una intrusión completa. Esa es la realidad diaria del trabajo de inteligencia de amenazas cibernéticas (CTI), y la guía paso a paso de Rat Lab es una de las formas más rápidas de ensayarlo antes de que lo que está en juego sea real.
+
+Si puedes rastrear un hash sospechoso hasta una familia de malware, una carga útil depositada y un servidor de comando y control (C2) activo usando solo informes públicos, puedes escribir las detecciones que detengan el próximo incidente. Esta guía paso a paso de Rat Lab divide el desafío Yellow RAT de CyberDefenders en pasos repetibles, para que el flujo de trabajo se fije la próxima vez que una alerta real llegue a la cola de tu SOC.
+
+## Qué te pide resolver el escenario del laboratorio Yellow RAT
+
+En el escenario, una revisión rutinaria de seguridad de TI en GlobalTech Industries marca tráfico de red anómalo proveniente de múltiples estaciones de trabajo. Los empleados informan que sus consultas de búsqueda se redirigen a sitios web desconocidos. Recibes un único artefacto —un archivo de texto llamado `hash.txt` que contiene el hash SHA256 del malware sospechoso— más seis preguntas por responder.
+
+El objetivo no es "ganar" el laboratorio. Es demostrar una ruta de investigación repetible que un analista junior podría entregar a un respondedor de incidentes sin perder contexto.
+
+| Campo | Detalle |
+|---|---|
+| Plataforma | CyberDefenders (desafío CTI de equipo azul) |
+| Nombre del laboratorio | Yellow RAT Lab |
+| Artefacto proporcionado | `hash.txt` que contiene un hash SHA256 |
+| Hash de la muestra | 30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85 |
+| Organización víctima | GlobalTech Industries |
+| Síntomas reportados | Tráfico de red anómalo; consultas de búsqueda redirigidas |
+| Número de preguntas | 6 |
+| Habilidad principal evaluada | Pivotaje de inteligencia de amenazas entre fuentes públicas |
+
+### La pista inicial que te dan
+
+El hash es tu único punto de partida, y esa restricción es intencional. En un encargo real rara vez recibes una imagen forense completa el primer día: recibes un indicador y una fecha límite. Informes de la comunidad de analistas que han completado el laboratorio señalan que la muestra tiene un informe de sandbox existente de mediados de 2022, lo que significa que gran parte de tu trabajo inicial es leer en lugar de hacer ingeniería inversa.
+
+## Requisitos previos y herramientas para esta guía paso a paso de Rat Lab
+
+No necesitas experiencia en análisis de malware, un desensamblador ni una suscripción de pago. Sí necesitas tres pestañas del navegador, un archivo de notas y la disciplina de registrar de dónde proviene cada respuesta.
+
+| Herramienta | Ideal para | Dónde se esconden las respuestas |
+|---|---|---|
+| Hybrid Analysis | Informes de comportamiento en sandbox y actividad de dropper | Informes de Falcon Sandbox; Suspicious Indicators → External Systems |
+| VirusTotal | Metadatos de archivos, encabezados PE, detecciones de la comunidad, reputación de URL | Pestaña Details; pestaña Behavior → Network Communication |
+| Red Canary Intelligence | Informes seleccionados sobre familias de malware conocidas | Informes de amenazas publicados con indicadores observados |
+| Google / investigación de código abierto | Rellenar vacíos y confirmar la nomenclatura del proveedor | Blogs de proveedores, publicaciones de investigación, artículos de la comunidad |
+
+Algunos hábitos de preparación dan fruto de inmediato:
+
+- Crea cuentas gratuitas en las plataformas de análisis para poder buscar informes históricos.
+- Mantén una tabla en curso con columnas para pregunta, fuente y evidencia.
+- Nunca envíes el mismo hash a un sandbox público si las reglas de tu laboratorio prohíben compartirlo; la mayoría de los desafíos de CTI no tienen problema con ello, pero verifícalo primero.
+- Usa la función de búsqueda del navegador de forma agresiva; los informes largos de sandbox esconden indicadores en secciones anidadas profundas.
+
+Una vez que esas pestañas estén abiertas, la guía paso a paso de Rat Lab se convierte en un ejercicio de comprensión lectora más que en uno técnico.
+
+## Fase 1: Identifica el malware (preguntas 1–4)
+
+Comienza con Hybrid Analysis. Pega el hash en la búsqueda de informes y abre un informe de sandbox existente para la muestra; la ejecución de Windows 7 de 32 bits con una puntuación de amenaza en el rango medio de los 90 es la que señalan la mayoría de los informes de la comunidad. Dentro de ese informe encontrarás la familia de malware que da nombre al laboratorio, además de un informe de inteligencia de terceros enlazado que vale la pena guardar para preguntas posteriores.
+
+Desde ahí, pasa a VirusTotal y busca el mismo hash. La pestaña Details se convierte en tu espacio de trabajo principal para las siguientes tres preguntas.
+
+| Pregunta | Qué necesitas | Dónde está |
+|---|---|---|
+| 1. Familia de malware | El nombre de la familia detrás del tráfico anómalo | Informe de sandbox de Hybrid Analysis e informe del proveedor enlazado |
+| 2. Nombre de archivo común | El nombre con el que suele distribuirse la muestra | VirusTotal → Details → Signature info → Original Name |
+| 3. Marca temporal de compilación | Hora de compilación del ejecutable | VirusTotal → Details → Portable Executable Info → Header |
+| 4. Fecha del primer envío | Cuándo vio la comunidad la muestra por primera vez | VirusTotal → Details → History → First Submission |
+
+Dos de estas respuestas son fáciles de pasar por alto. El nombre de archivo común se encuentra bajo el encabezado File Version Information en lugar de en la lista de detecciones, y la marca temporal del primer envío está cerca de la parte superior de la pestaña Details, en el bloque History, no en los datos de comportamiento. Desplázate despacio y lee los subtítulos.
+
+Entender *por qué* importa cada respuesta hace que se te quede grabado. Una marca temporal de compilación insinúa cuánto tiempo ha existido el conjunto de herramientas y si estás ante una compilación reciente. La fecha del primer envío indica cuánto tiempo pudo haber estado circulando la muestra antes de que alguien la notara. Ambas alimentan directamente una línea de tiempo del incidente.
+
+## Fase 2: Delimita la carga útil depositada y el servidor C2 (preguntas 5–6)
+
+Las dos últimas preguntas pasan de los metadatos estáticos a lo que el malware hace en realidad. Es posible que VirusTotal no contenga los datos del artefacto que necesitas aquí, así que cambia al informe de inteligencia de Red Canary enlazado que encontraste en la Fase 1.
+
+Ese informe enumera el archivo `.dat` que la muestra escribe en la carpeta `AppData` del usuario: el artefacto cercano a la persistencia que buscarías en todas las demás estaciones de trabajo de la red. La misma sección suele nombrar la URL de C2 a la que se conecta la muestra, lo que responde la pregunta 6.
+
+| Pregunta | Qué necesitas | Dónde está |
+|---|---|---|
+| 5. Archivo `.dat` depositado | Nombre de archivo de la carga útil escrita en AppData | Informe de Red Canary (no siempre presente en VirusTotal) |
+| 6. Servidor C2 | La URL o dominio al que se comunica la muestra | Informe de Red Canary, luego confirmado en VirusTotal y Hybrid Analysis |
+
+No te detengas en una sola fuente para la respuesta de C2. El mejor hábito que enseña esta guía paso a paso de Rat Lab es la triple confirmación.
+
+## El hábito de la triple confirmación
+
+Cualquier fuente única puede estar equivocada, desactualizada o mal etiquetada. Cuando tres plataformas independientes coinciden en el mismo indicador, tu confianza en ese indicador —y en la regla de detección que construyas a partir de él— aumenta drásticamente.
+
+| Fuente | Tipo de evidencia | Qué confirma |
+|---|---|---|
+| Red Canary | Informe de incidente escrito por analistas | URL de C2 nombrada y el artefacto depositado |
+| VirusTotal | Cadenas estáticas más búsqueda de reputación de URL | La misma URL como dominio de patrón de memoria, con detecciones de proveedores |
+| Hybrid Analysis | Telemetría de sandbox | La URL listada bajo External Systems con contexto de reputación |
+
+Los informes de la comunidad destacan consistentemente esta triangulación como la habilidad más transferible del laboratorio. En producción, rara vez tendrás tres fuentes, pero el instinto de buscar una segunda opinión es lo que separa un indicador de compromiso (IOC) sólido de una suposición.
+
+## Mapa de respuestas de la guía paso a paso de Rat Lab
+
+Usa esta tabla como lista de verificación. Asigna cada pregunta al tipo de respuesta y a la fuente que la resuelve, para que puedas verificar tu progreso sin arruinarte la investigación a ti mismo.
+
+| # | Tipo de respuesta | Fuente principal | Fuente de respaldo |
+|---|---|---|---|
+| 1 | Nombre de la familia de malware | Informe de sandbox de Hybrid Analysis | Informe del proveedor enlazado |
+| 2 | Nombre de archivo común/original | VirusTotal → Signature info | Listados de archivos del sandbox |
+| 3 | Marca temporal de compilación | VirusTotal → PE Header | Datos estáticos del sandbox |
+| 4 | Fecha del primer envío | VirusTotal → History | Informes de la comunidad |
+| 5 | Nombre de archivo `.dat` depositado | Informe de Red Canary | Lista de archivos depositados del sandbox |
+| 6 | URL de C2 | Informe de Red Canary | VirusTotal Behavior + Hybrid Analysis External Systems |
+
+Un presupuesto de tiempo realista para un primer intento se ve así:
+
+| Fase | Tiempo típico | Entregable |
+|---|---|---|
+| Configuración y búsqueda de hash | 5–10 minutos | Familia de malware identificada |
+| Metadatos estáticos | 10–15 minutos | Nombre de archivo, marca temporal, primer envío |
+| Comportamiento y pivote de IOC | 15–20 minutos | Archivo depositado, servidor C2 |
+| Redacción y verificación | 10 minutos | Respuestas confirmadas y con fuentes |
+
+La mayoría de los analistas terminan entre 40 y 60 minutos en una primera ejecución y

@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Rat Lab Test Guide: A Step-by-Step Yellow RAT Walkthrough for CTF Players",
+  description: "Master the Rat Lab test with this walkthrough: threat intel tools, six objectives, and pro tips for progressing through the Yellow RAT challenge.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+Threat intelligence work rewards people who can move quickly between platforms, and the **Rat Lab test** is one of the cleanest ways to prove that skill. Instead of handing you a full packet capture or a live endpoint, this challenge gives you a single file hash and asks you to rebuild an entire intrusion story from public reporting. That matters because real incident response rarely starts with a complete picture — it starts with one indicator, and your job is to turn that indicator into context. Completing the Rat Lab test means you can identify a malware family, trace the artifacts it drops, and pin down the infrastructure it talks to, all without ever touching the victim machine.
+
+Below is a practical progression guide: what the challenge actually asks, which tools answer which question, and how to avoid the dead ends that stall most first-time analysts.
+
+## What the Rat Lab Test Actually Asks You to Do
+
+The Rat Lab test is a threat intelligence challenge built around a realistic scenario. An organization notices abnormal network traffic across several workstations, and employees report that their search queries are being redirected to unfamiliar sites. Your entry point is a hash file — typically a text file containing the SHA-256 value of the suspicious sample — and nothing else.
+
+From there, you are expected to research the sample using open-source intelligence platforms and answer a short set of investigative questions. The challenge is deliberately built so that no single platform has every answer. That design forces you to corroborate findings across sources, which is exactly how professional CTI work functions.
+
+| Challenge element | What to expect |
+|---|---|
+| Starting artifact | A single SHA-256 hash in a text file |
+| Investigation style | Passive OSINT and sandbox reporting |
+| Skill focus | Threat intel pivoting, malware triage |
+| Core platforms | Hybrid Analysis, VirusTotal, vendor CTI |
+| Answer format | Short strings, filenames, timestamps, domains |
+| Difficulty | Beginner-friendly, intermediate depth |
+| Typical completion | Roughly 30–60 minutes for a first attempt |
+
+## The Six Objectives and Where Each Answer Lives
+
+Most Rat Lab test variants follow the same investigative arc: identify the family, characterize the binary, find the dropped payload, then locate the command-and-control (C2) infrastructure. Knowing the order in advance saves you from re-reading the same reports four times.
+
+| # | Objective | Best source |
+|---|---|---|
+| 1 | Identify the malware family causing the traffic | Sandbox report search on Hybrid Analysis |
+| 2 | Find the common/original filename used | VirusTotal file details, signature info section |
+| 3 | Determine the compilation timestamp | VirusTotal portable executable header data |
+| 4 | Find when the sample was first submitted | VirusTotal submission history |
+| 5 | Identify the `.dat` file dropped in AppData | Vendor CTI report describing dropped files |
+| 6 | Identify the C2 server or URL | Vendor CTI report, cross-checked against sandbox behavior |
+
+The progression is intentional. Question 1 gives you the vocabulary you need for everything that follows — once you know the family name, the remaining questions become keyword-driven lookups rather than open-ended research.
+
+## Tools You Should Have Open Before You Start
+
+You do not need a lab full of virtual machines for this one. You need three browser tabs and a notes file. The entire Rat Lab test is an exercise in reading intelligence well, not in building an analysis environment.
+
+| Tool | What it gives you | How it helps in the Rat Lab test |
+|---|---|---|
+| Hybrid Analysis | Sandbox detonation reports, threat scores, external system listings | Confirms the family and validates the C2 endpoint |
+| VirusTotal | Multi-engine detections, PE metadata, submission history, behavior tab | Supplies filenames, timestamps, and URL reputation |
+| Vendor CTI reports | Analyst-written malware profiles with observable lists | Reveals dropped artifacts that metadata alone misses |
+| Search engines | Corroborating blog posts and community walkthroughs | Fills gaps when a platform is missing a field |
+
+For a broader sense of how these challenges are structured, the [CyberDefenders challenge platform](https://cyberdefenders.org/) is the official home of the Yellow RAT Lab and hosts the scenario briefs and answer submissions.
+
+## Step-by-Step Progression Through the Rat Lab Test
+
+### Step 1: Anchor Yourself on the Hash
+
+Paste the SHA-256 value into a report search first, not into a general web search. Sandbox databases index hashes and return prior analyses almost instantly, which gives you a family name and a behavioral summary in a single click. Pick the highest-scoring report available — deep-dive sandbox runs surface far more network and file-system activity than quick scans.
+
+### Step 2: Pivot to Static Metadata
+
+With the family known, move to a multi-engine file intelligence platform and open the file's detail view. Two fields answer two separate questions: the original filename recorded in the file's version information, and the compilation timestamp embedded in the portable executable header. Copy both exactly as shown — these answers are case-sensitive and often rejected for a stray character.
+
+### Step 3: Chase the Dropped Artifact
+
+The dropped `.dat` file is the question most analysts miss on their first pass, because multi-engine platforms often do not record it. Community reports and vendor intelligence write-ups list dropped files in their behavioral narratives, usually in a numbered list of observed indicators. Read the prose, not just the tables.
+
+### Step 4: Triple-Confirm the C2
+
+The final objective is the C2 endpoint, and the Rat Lab test deliberately rewards verification over speed. Player experience suggests the safest approach is to locate the URL in the vendor report, confirm it as a memory pattern or network communication on the multi-engine platform, and then check the domain's reputation score. Three independent confirmations make a wrong answer essentially impossible.
+
+| Step | Question answered | Confirmation method |
+|---|---|---|
+| 1 | Malware family | Sandbox report match on the hash |
+| 2 | Common filename | File version information field |
+| 3 | Compilation timestamp | PE header, not filesystem metadata |
+| 4 | First submission date | Platform history panel |
+| 5 | Dropped `.dat` file | Vendor CTI behavioral narrative |
+| 6 | C2 server | Report + behavior tab + domain reputation |
+
+## Common Mistakes That Slow Down Your Run
+
+Most failed attempts come down to process, not knowledge. The Rat Lab test is solvable by anyone comfortable reading technical reports, so the errors tend to be small and fixable.
+
+- **Searching the hash on the open web first.** You will burn ten minutes on unrelated results when a report database answers instantly.
+- **Copying answers with trailing punctuation.** A period at the end of a domain will fail validation.
+- **Confusing compilation time with first-seen time.** They are different fields in different panels and often months apart.
+- **Trusting one source for the C2.** The challenge is designed for corroboration; single-source answers are riskier than they look.
+- **Skipping the dropped-file question.** It lives in report prose rather than a structured field, so it is easy to overlook.
+- **Rushing the timestamp format.** Match the format the challenge expects, whether that is a full date or a date-time string.
+
+| Mistake | Why it costs you | Fix |
+|---|---|---|
+| Web-searching the hash | Noise, no direct match | Use a report database search |
+| Extra characters in answers | Validation failure | Trim whitespace and punctuation |
+| Mixing up timestamps | Wrong field entirely | Read the panel labels carefully |
+| Single-source C2 answer | Higher error rate | Confirm across three platforms |
+| Ignoring report prose | Missed dropped artifacts | Read narratives, not just tables |
+
+## What You Learn That Transfers to Real Work
+
+The value of the Rat Lab test is not the score — it is the muscle memory. Pivoting from a hash to a family, from a family to file metadata, and from metadata to network infrastructure is the same loop analysts run during live incidents. Speed comes from knowing which platform holds which field.
+
+If you want to stretch further, practice writing a short incident note after each attempt: the family name, the artifacts, the C2, and one sentence on remediation. Analysts who do this report that their recall of tool layout improves noticeably across repeated runs, which cuts completion time on subsequent challenges.
+
+## Frequently Asked Questions
+
+**Is the Rat Lab test suitable for beginners?**
+Yes. It assumes no malware reverse-engineering skill and no virtual machine setup. You only need basic familiarity with sandbox reports and file metadata panels. Most newcomers finish on their first or second serious attempt.
+
+**How long does the Rat Lab test usually take?**
+First-time runs generally land between 30 and 60 minutes, depending on how carefully you read the reports. Once you know which panel holds each answer, repeat attempts can drop well under 20 minutes.
+
+**Do I need paid threat intelligence tools?**
+No. The free tiers of the major analysis platforms provide everything the challenge requires, and public vendor reports cover the dropped-file question that metadata alone does not answer.
+
+**Why do my answers keep getting rejected?**
+Nine times out of ten it is formatting — trailing punctuation, mismatched case, or a timestamp pulled from the wrong field. Re-read the exact value shown in the report and paste it without edits.
+
+Work through the Rat Lab test slowly the first time and let the pivots become instinct. The score is nice, but the repeatable investigative rhythm you build is the real takeaway.

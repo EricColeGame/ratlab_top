@@ -1,0 +1,143 @@
+export const metadata = {
+  title: "Guia das Quests do Rat Lab: Resolva Cada Desafio de Threat Intel Passo a Passo",
+  description: "Um walkthrough prático de cada desafio das quests do Rat Lab, do hash inicial até a confirmação do C2, com as fontes exatas que os analistas usam.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+As quests do Rat Lab parecem enganosamente simples na superfície: você abre um arquivo de desafio, lê um único hash SHA256 e responde a uma curta lista de perguntas. Esse pequeno ponto de partida é justamente o objetivo. Concluir as quests do Rat Lab força você a percorrer todo o fluxo de trabalho de threat intelligence — alternando entre relatórios de sandbox, serviços de reputação e writeups de fornecedores até que cada afirmação seja confirmada por mais de uma fonte.
+
+Se você mira em resposta a incidentes, threat hunting ou trabalho de CTI, este lab é uma das formas mais eficientes de construir músculo investigativo real em uma tarde. Este guia detalha o que cada quest pede, qual ferramenta responde a ela e os erros que custam mais tempo aos analistas de primeira viagem.
+
+## O Que São as Quests do Rat Lab?
+
+O Rat Lab é um desafio prático de cyber threat intelligence construído em torno de um incidente realista. Você recebe um arquivo de desafio contendo um hash, e esse hash é sua única pista. A partir daí, uma sequência de quests conduz você de "o que é este arquivo?" até "com quem ele está se comunicando?"
+
+Walkthroughs da comunidade descrevem o cenário subjacente como uma verificação rotineira de segurança de TI em uma empresa de médio porte, onde tráfego de rede anormal aparece em várias estações de trabalho e as consultas de busca dos funcionários começam a redirecionar para sites desconhecidos. Esse enquadramento é intencional. Investigações reais raramente começam com um indicador limpo — elas começam com um sintoma vago e muitas suposições.
+
+| Quest | O Que Ela Pede | Onde a Resposta Costuma Estar |
+|---|---|---|
+| 1 | Família de malware causando o tráfego anormal | Relatório de sandbox encontrado por busca de hash |
+| 2 | Nome de arquivo comum que a amostra usa | Informações de versão / assinatura do arquivo em um serviço de reputação |
+| 3 | Timestamp de compilação do binário | Dados do cabeçalho do executável portátil |
+| 4 | Data em que a amostra foi enviada publicamente pela primeira vez | Linha do tempo do histórico de envios |
+| 5 | Nome do arquivo `.dat` deixado na pasta AppData | Writeup de detecção do fornecedor |
+| 6 | Servidor de command-and-control (C2) | Writeup do fornecedor, aba de comportamento, sistemas externos do sandbox |
+
+Cada quest se apoia na anterior. Se você pular etapas, não terá o contexto para interpretar o que está lendo.
+
+## Ferramentas Que Você Precisa Antes de Começar as Quests do Rat Lab
+
+Você não precisa de um conjunto de ferramentas pagas nem de uma VM de laboratório própria. Toda plataforma da qual as quests do Rat Lab dependem oferece um nível gratuito que é mais do que suficiente para concluir o desafio.
+
+| Ferramenta | Papel na Cadeia de Quests | Onde Procurar |
+|---|---|---|
+| Hybrid Analysis | Relatórios de execução em sandbox e listas de sistemas externos | Busca de relatórios por hash de arquivo |
+| VirusTotal | Identidade do arquivo, metadados de PE, comportamento, reputação de domínio | Aba Details e aba Behavior |
+| Red Canary Intelligence | Writeup de detecção do fornecedor cobrindo arquivos deixados e C2 | Relatório de detecção da família |
+| Busca aberta na web | Verificação cruzada de nomes de famílias com reportagens públicas | Blogs de fornecedores, posts de analistas |
+| Um arquivo de anotações | Acompanhar respostas, URLs e timestamps enquanto avança | Qualquer lugar — só use um |
+
+O artefato inicial documentado é um hash SHA256 armazenado em um arquivo de texto dentro do arquivo de desafio. Analistas que publicaram walkthroughs da comunidade observam que existem vários relatórios para o mesmo hash, então escolher qualquer relatório que corresponda ao seu hash funciona — você não precisa exatamente do mesmo que outra pessoa usou.
+
+Registrar-se na [plataforma de desafios CyberDefenders](https://cyberdefenders.org/) dá a você acesso a este lab mais uma grande biblioteca de investigações semelhantes, caso queira continuar depois.
+
+## Walkthrough das Quests do Rat Lab, Quest por Quest
+
+### Quest 1: Identifique a Família de Malware
+
+Copie o hash do arquivo de desafio e cole-o em uma busca de relatórios de sandbox. Você está procurando um relatório que mostre um registro de execução real, não apenas uma contagem de detecções. Relatórios da comunidade sugerem filtrar por relatórios com pontuação de ameaça alta e uma execução completa em sandbox anexada.
+
+Uma vez dentro do relatório, o nome da família aparece junto à classificação de ameaça. Anote-o exatamente como mostrado — as quests seguintes dependem de você buscar a família correta em outras plataformas.
+
+### Quests 2–4: Pivote Para o VirusTotal
+
+Com a família identificada, vá para um serviço de reputação e busque o mesmo hash. Três das quests são respondidas em uma única página, se você souber quais campos ler.
+
+| Quest | Campo a Ler | Caminho de Navegação |
+|---|---|---|
+| 2 | Original Name (o nome de arquivo comum) | Details → File Version Information → Signature info |
+| 3 | Compilation Timestamp | Details → PE Info → Header |
+| 4 | Data de First Submission | Details → History |
+
+Um ponto frequente de confusão: o *nome de arquivo comum* é o nome original registrado nas informações de versão do arquivo, não o nome interno do malware e não o rótulo de detecção. Essas são três strings diferentes, e o lab pede uma específica.
+
+O horário de compilação e o horário do primeiro envio também não têm relação entre si. Uma amostra pode ser compilada meses antes de alguém fazer o upload dela, e essa lacuna é, por si só, inteligência útil sobre quanto tempo o malware pode ter estado na natureza sem ser detectado.
+
+### Quest 5: Rastreie o Arquivo .dat Deixado Para Trás
+
+Esta é a primeira quest em que o serviço de reputação deixa de ser suficiente. A lista de arquivos deixados não está disponível lá, então você precisa mudar de fonte e ler um writeup de detecção do fornecedor.
+
+Relatórios de inteligência de fornecedores normalmente listam artefatos de persistência, arquivos deixados e chaves de registro em uma seção com marcadores perto do topo. Procure por um arquivo `.dat` gravado na pasta AppData do usuário. Esse detalhe importa operacionalmente — ele dá aos respondedores um arquivo concreto para caçar no restante do ambiente.
+
+### Quest 6: Confirme o Servidor C2
+
+A quest final pede o servidor de command-and-control com o qual a amostra se comunica. É aqui que as quests do Rat Lab recompensam a paciência em vez da velocidade, porque a resposta deve ser confirmada por pelo menos três ângulos.
+
+| Fonte | Seção a Verificar | O Que Ela Prova |
+|---|---|---|
+| Writeup de detecção do fornecedor | Lista de indicadores observados | O C2 foi visto em um ambiente real |
+| Serviço de reputação | Behavior → Network Communication | A string existe dentro da própria amostra |
+| Relatório de sandbox | Suspicious Indicators → External Systems | A amostra tentou essa conexão em tempo de execução |
+
+Depois de ter a URL, verifique a reputação do domínio no serviço de reputação. Um domínio sinalizado por vários engines fecha o ciclo e dá a você a confiança necessária para incluí-lo em uma blocklist.
+
+## Como as Quests do Rat Lab Ensinam Triangulação
+
+A verdadeira lição deste lab não é nenhuma resposta isolada. É o hábito de nunca confiar em uma única fonte. Cada quest empurra você para uma nova plataforma justamente porque nenhuma plataforma sozinha detém o quadro completo.
+
+| Achado | Fonte Primária | Fonte de Confirmação | Por Que a Verificação Cruzada Importa |
+|---|---|---|---|
+| Família de malware | Relatório de sandbox | Rótulo de detecção dos engines antimalware | Famílias são renomeadas e rebatizadas |
+| Arquivo deixado | Writeup do fornecedor | Artefatos do sistema de arquivos do sandbox | Arquivos deixados podem variar conforme a configuração |
+| Servidor C2 | Writeup do fornecedor | Aba de comportamento mais sistemas externos do sandbox | Strings em um binário nem sempre são contatadas |
+
+Esse hábito de triangulação se transfere diretamente para a resposta a incidentes real. A mesma lógica se aplica quando você confirma um indicador antes de bloqueá-lo, ou quando verifica a afirmação de um fornecedor contra sua própria telemetria antes de escalar.
+
+## Erros Comuns Que Deixam as Pessoas Mais Lentas
+
+| Erro | Por Que Acontece | Como Evitar |
+|---|---|---|
+| Abrir o relatório errado | Muitos relatórios compartilham o mesmo hash | Verifique se o hash corresponde antes de ler |
+| Ler o campo de nome de arquivo errado | Vários campos de nome ficam próximos uns dos outros | Confirme que você está em Signature info, não em detecções |
+| Confundir timestamps | Dados de compilação e de envio parecem semelhantes | Leia o rótulo do campo com atenção, não o formato do valor |
+| Presumir que um site tem tudo | A lista de arquivos deixados não está no serviço de reputação | Mude para inteligência de fornecedor para artefatos |
+| Parar em uma única fonte de C2 | O primeiro resultado parece conclusivo | Confirme em pelo menos três fontes |
+| Pular as anotações | As respostas se constroem umas sobre as outras | Registre cada achado enquanto avança |
+
+## Dicas Para Terminar as Quests do Rat Lab Mais Rápido
+
+- **Mantenha o hash na área de transferência.** Você vai colá-lo em três ou quatro plataformas antes de terminar.
+- **Abra abas em paralelo.** Carregue o relatório de sandbox, a página de reputação e o writeup do fornecedor lado a lado para comparar campos em vez de buscar de novo.
+- **Verifique a seção de histórico cedo.** Saber quando a amostra apareceu publicamente pela primeira vez dá contexto a tudo o que você lê depois.
+- **Escreva o nome da família exatamente como mostrado.** Erros de digitação levam buscas posteriores a becos sem saída.
+- **Leia o relatório do fornecedor inteiro, não só os indicadores.** Contexto sobre entrega e persistência frequentemente explica os artefatos que você encontra.
+- **Registre suas fontes.** Se você pretende publicar seu próprio writeup, citar de onde veio cada resposta é metade do valor.
+
+## Por Que Este Lab Vale o Seu Tempo
+
+As quests do Rat Lab comprimem uma investigação realista em um exercício curto e estruturado. Você pratica pivotagem por hash, leitura de metadados, caça a artefatos e confirmação de infraestrutura — as mesmas habilidades que aparecem em entrevistas de nível inicial para CTI e analista de SOC.
+
+A experiência dos jogadores em walkthroughs da comunidade aponta consistentemente para a mesma conclusão: o valor está no fluxo de trabalho, não nas respostas. Qualquer pessoa pode procurar uma resposta final. Ser capaz de explicar como você chegou lá, e qual fonte confirmou isso, é o que chama atenção.
+
+## FAQ
+
+**O que exatamente são as quests do Rat Lab?**
+
+São um conjunto estruturado de perguntas de desafio dentro de um lab de threat intelligence. Você começa com um único hash de arquivo e responde a seis perguntas cobrindo identificação de malware, metadados de arquivo, linha do tempo, artefatos deixados e infraestrutura de command-and-control.
+
+**Preciso de experiência em análise de malware para concluir as quests do Rat Lab?**
+
+Não é necessário engenharia reversa. Todas as respostas podem ser encontradas lendo relatórios de sandbox, páginas de serviços de reputação e writeups de inteligência de fornecedores. Familiaridade básica com caminhos de arquivos do Windows e metadados de PE ajuda, mas o lab ensina isso conforme você avança.
+
+**As quests do Rat Lab são gratuitas?**
+
+O lab é hospedado em uma plataforma de desafios comunitária que oferece acesso gratuito à sua biblioteca de desafios. Verifique o site anfitrião para detalhes atuais de conta e acesso antes de começar.
+
+**Quanto tempo levam as quests do Rat Lab?**
+
+A maioria dos analistas relata concluir em uma a duas horas na primeira tentativa. O gargalo geralmente não é a análise, mas lembrar qual aba guarda qual campo — quando você conhece os caminhos de navegação, as respostas vêm rápido.
+
+**Posso publicar meu próprio walkthrough depois?**
+
+Sim, e isso é incentivado. Escrever sua metodologia força você a justificar cada conclusão, que é exatamente a habilidade que as quests do Rat Lab foram projetadas para construir.

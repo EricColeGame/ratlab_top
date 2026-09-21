@@ -1,0 +1,96 @@
+export const metadata = {
+  title: "Rat Lab YouTube: Inside the Community Built Around RAT Lab Walkthroughs",
+  description: "Rat Lab YouTube turns malware analysis into a shared community challenge. Learn how RAT lab walkthroughs work and how to start one yourself.",
+  category: "community",
+  date: "2026-09-20",
+}
+
+Rat Lab YouTube is where curiosity about malware meets a screen recorder and a live chat window. If you have ever wondered how an analyst turns one suspicious file into a complete incident picture, the walkthroughs published across Rat Lab YouTube channels are the fastest free route from spectator to practitioner. The genre matters because it compresses work that normally happens under pressure inside a security operations center — identify the sample, map its behavior, find what it dropped, block what it talks to — into a lesson you can follow at your own pace, on your own machine, without ever touching live malware.
+
+The name comes from two simple words. A RAT is a remote access Trojan, a class of malware built to give an attacker quiet, persistent control of a victim's machine. A lab is the contained challenge environment where a known sample is studied with public tools. Put those ideas in front of a camera, add narration and a comment section, and you get a content category that teaches threat intelligence through repetition rather than lecture.
+
+## Why "Rat Lab" Is a Community, Not Just a Keyword
+
+The backbone of most Rat Lab YouTube content is a challenge platform. Communities like [CyberDefenders' free blue-team challenge platform](https://cyberdefenders.org/) publish exercises that hand an analyst a single artifact — often nothing more than a SHA256 file hash — and ask a series of questions about the incident behind it.
+
+Community reports describe the pattern well. A widely shared write-up of the "Yellow RAT Lab" from April 2025 sets the scene at a fictional company where employees' search queries are being redirected to unfamiliar sites and abnormal network traffic shows up during a routine security check. The analyst gets a hash. Everything else is research.
+
+What makes the format friendly to newcomers is that the sample is already documented and the answers already exist in public intelligence platforms. You are not detonating anything. You are learning to pivot.
+
+| Content type | Typical format | What you take away | Best for |
+|---|---|---|---|
+| Hash-to-family walkthrough | Short narrated screen recording | A named malware family with context | Absolute beginners |
+| Full challenge solve | Longer step-by-step session | An end-to-end incident picture | Beginners to intermediate |
+| Tool deep dive | Focused single-platform demo | Fluency in one analysis tool | Intermediate |
+| Live stream or write-up review | Unscripted, chat-driven | How analysts reason under uncertainty | Intermediate to advanced |
+
+## Anatomy of a Rat Lab Walkthrough
+
+Almost every well-made Rat Lab YouTube episode follows the same spine: a hash goes in, a structured set of questions comes out. The questions are rarely random. They mirror the order a real responder works in, moving from "what is this thing" to "what did it touch" to "who is it talking to."
+
+The Yellow RAT Lab community write-up is a clean example because its six questions map neatly onto six analyst tasks. Each one forces you into a different panel of a different tool, which is exactly why the format teaches so efficiently.
+
+| Stage | The question being asked | Where the answer usually lives | Skill practiced |
+|---|---|---|---|
+| 1 | Which malware family is this? | Sandbox report found by searching the hash | Hash pivoting |
+| 2 | What filename does it commonly use? | Sample details, "signature info" section | Triage and naming conventions |
+| 3 | When was it compiled? | Portable executable header metadata | Timeline building |
+| 4 | When was it first submitted publicly? | Submission history on the analysis platform | Understanding detection lag |
+| 5 | What file did it drop in AppData? | A vendor intelligence report | Host artifact hunting |
+| 6 | Which command-and-control server does it use? | Network behavior plus two corroborating sources | Network IOC extraction |
+
+Stage six is where the community's habits really show. A single-source answer is treated as a hypothesis, not a finding. Experienced viewers confirm the same C2 URL in the sample's memory-pattern strings, then in the "external systems" section of a sandbox report, then against the domain's reputation score. Three independent confirmations turn a guess into an indicator you could confidently hand to a firewall team.
+
+## The Toolchain Behind Every Rat Lab YouTube Walkthrough
+
+Rat Lab YouTube creators rarely use exotic software. The stack is deliberately small, free, and browser-based, which is a big part of why the content converts so many viewers into practitioners. If you can open a tab, you can follow along.
+
+| Tool | What it answers | Where to look | Cost |
+|---|---|---|---|
+| Hybrid Analysis / Falcon Sandbox | Behavior, dropped files, threat score | Report search, then a sandbox report | Free account |
+| [VirusTotal's public analysis reports](https://www.virustotal.com/) | Detections, file metadata, history, behavior | Details, Behavior, and History tabs | Free |
+| Vendor threat intelligence blogs | Curated narrative with concrete IOCs | Published research posts | Free |
+| Open web search | Corroboration and background | Search engine of your choice | Free |
+
+One frequently cited sandbox report in the Yellow RAT walkthrough is a Windows 7 32-bit analysis with a threat score of 94 out of 100 — the kind of number that tells you immediately that the sample is not benign and that the sandbox run captured enough behavior to be useful.
+
+The lesson a good host repeats is that no single platform is complete. Metadata like an original filename or a compilation timestamp may exist on one service but not another. Dropped file names often live only in a vendor's written research. Command-and-control infrastructure might show up in a behavior tab but be missing from the file details. Watching someone move between three sources is more instructive than watching them click one button.
+
+**Actionable tip:** keep a running notes file with a row per indicator — value, source, confidence. Analysts who do this in labs rarely stop doing it on the job.
+
+## Skills You Build by Following Rat Lab YouTube Content
+
+The obvious output of a walkthrough is an answer sheet. The real output is a search habit. Viewers who work through a dozen labs tend to develop the same handful of transferable skills, and they show up on a résumé far more convincingly than a list of tool names.
+
+| Skill | What it looks like in practice | Where it pays off |
+|---|---|---|
+| Hash pivoting | Moving from one identifier to every public report that mentions it | Alert triage queues |
+| Metadata reading | Pulling original filenames and compile timestamps from headers | Malware timeline reconstruction |
+| Artifact hunting | Knowing to check AppData for dropped data files | Host forensics and incident response |
+| Network IOC work | Extracting a C2 URL and checking domain reputation | Proxy and firewall blocking |
+| Corroboration and reporting | Confirming one indicator across three sources before writing it down | Written reports and interviews |
+
+A subtle benefit is vocabulary. Newcomers learn to say "indicator of compromise," "first submission time," and "memory pattern" naturally, which matters in interviews where phrasing signals familiarity as much as knowledge does.
+
+Another benefit is skepticism. Labs teach you that a detection label is a starting point, that compilation timestamps can be faked, and that a domain with a clean reputation score today may have been malicious two years ago. That instinct is hard to teach in a classroom and easy to absorb by watching someone reason out loud.
+
+## How to Start Watching (and Actually Learn)
+
+Passive viewing feels productive and teaches very little. The community's most consistent advice is to treat each video as a worked example you must reproduce, not a documentary.
+
+| Stage | What to do | What you produce |
+|---|---|---|
+| 1 | Watch one full walkthrough without pausing | A feel for the overall arc |
+| 2 | Re-watch it paused, replicating every pivot yourself | Hands-on tool familiarity |
+| 3 | Solve a new lab before watching the solution, then compare | Independent problem-solving |
+| 4 | Write a short public write-up of your own | A portfolio artifact and feedback |
+
+**Etiquette matters as much as technique.** Community norms are simple and consistently enforced:
+
+- Mark spoilers clearly when discussing answers in comments or forums.
+- Never share live malware samples or direct download links.
+- Credit the original write-up, platform, or vendor report you relied on.
+- Explain your reasoning, not just your answer — that is the part other people learn from.
+- Ask "why did you check that first?" rather than "what's the answer?"
+
+Player experience in these communities suggests the single biggest differentiator between viewers who

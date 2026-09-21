@@ -1,0 +1,127 @@
+export const metadata = {
+  title: "Rat Lab Community Guide: How Viewers Team Up to Shape RimWorld Colony Chaos",
+  description: "Discover how the Rat Lab community turns RimWorld into a viewer-driven social experiment — coins, raids, pings, pawn control, and streamer tools.",
+  category: "community",
+  date: "2026-09-20",
+}
+
+The Rat Lab community has turned one of gaming's most solitary genres into a group project. Instead of watching a creator quietly micromanage crops and bedrooms, viewers now spend coins to spawn raids, heal wounded pawns, or take direct control of a single colonist. That shift matters because it rewrites the relationship between streamer and audience — chat stops being a peanut gallery and becomes a second storyteller. Understanding how the Rat Lab community operates helps you decide whether to host a session, join one, or simply appreciate what a well-run interactive colony can become.
+
+## What Rat Lab Actually Is
+
+Rat Lab is a RimWorld mod that converts your colony into a live social experiment. Viewers open a web dashboard, browse your colony's real state, and spend in-game currency on actions that change what happens next. You keep playing the game you already love; your audience gets a control panel instead of a chat box.
+
+The project's headline technical feature is its "Sidecar" approach. Rather than asking RimWorld to render and encode a stream while it also simulates hundreds of pawns, a separate lightweight process captures your window and handles the video work. The practical result is that your game keeps ticking at full speed while viewers still get a smooth, fluid feed — even mid-raid.
+
+Two other design choices matter for anyone curious about this mod:
+
+- **No Twitch account is required.** Viewers connect through a browser link, which lowers the barrier for casual lurkers who would never bother authorizing a third-party app.
+- **Networking uses standard secure web ports.** That means hosting from restrictive networks — dorms, offices, shared apartments — is far more realistic than it used to be.
+
+If you want the canonical download and full feature list, the [official Rat Lab Steam Workshop page](https://steamcommunity.com/sharedfiles/filedetails/?id=3614801487) is the place to start. Note that the mod depends on a companion API mod, so check the required items list before subscribing.
+
+## How the Rat Lab Community Interacts With a Colony
+
+The viewer dashboard is where most of the Rat Lab community spends its time. It is deliberately built around information: viewers can see stockpiles, inventory, colonist traits, health conditions, and mood breakdowns without the streamer clicking a single pawn. That transparency is what makes the chaos feel earned rather than random.
+
+| Viewer Feature | What It Does | Why It Matters |
+|---|---|---|
+| My Pawn | Adopt a colonist, then issue move orders, toggle draft, and adjust work priorities | Turns passive viewers into invested "owners" of one character |
+| Interactive Pings | Click a spot on the video feed to create a visual ping in-game | Fast, low-cost communication that needs no voice chat |
+| Live Inventory | Real-time stockpile and carried-item display with icons | Viewers know what's scarce before spending coins |
+| Full Biography | Traits, health, and mood details on demand | Helps viewers make smart, story-aware decisions |
+| Real-Time Dashboard | Colony wealth, power usage, and faction relations | Gives the audience strategic context, not just spectacle |
+
+The "My Pawn" system is the big emotional hook. Once someone adopts a colonist, they stop voting on abstract events and start protecting a specific character. Player experience suggests this single feature converts lurkers into regulars faster than almost anything else in the mod.
+
+## The Streamer Panel: Total Control for the Host
+
+Chaos without guardrails gets old quickly, so the mod ships with a streamer panel that lets you define the rules of your own economy. You decide how many coins viewers earn passively per minute, and you can price every individual action separately. Want an orbital bombardment to cost a fortune? Set the number and let supply and demand do the rest.
+
+| Streamer Control | What You Adjust | Practical Example |
+|---|---|---|
+| Economy Management | Passive income rate and per-action prices | Make raids cheap and healing expensive for a brutal run |
+| Granular Cooldowns | Global pacing limits plus per-action timers | Cap devastating events to once per hour |
+| Action Toggles | Enable or disable individual events | Keep mechanoid drops out of a medieval-themed colony |
+| Karma Balancing | Force a mix of helpful and harmful events | Guarantee the story doesn't collapse into pure griefing |
+
+That karma lever is quietly one of the smartest tools available. Community members report that sessions stay healthier when "good" events — healing, resource drops, rescues — are required alongside "bad" ones. Viewers feel like participants in a narrative rather than an audience for a demolition derby.
+
+## Pacing a Session: Practical Advice for New Hosts
+
+The most common early mistake is treating the mod as a vending machine for disasters. A colony that gets hammered every five minutes produces a short, forgettable stream. Slower economies create tension, because every coin spent becomes a decision.
+
+| Setting | Starting Suggestion for New Hosts | Rationale |
+|---|---|---|
+| Passive coin rate | Low to moderate | Scarcity makes each purchase feel meaningful |
+| Event cooldowns | Generous at first, tighten over time | Prevents a chaotic first hour |
+| Karma balance | Favor a healthy mix of good and bad | Keeps viewers from feeling punished |
+| Action toggles | Disable the harshest options on day one | Lets you learn the system without a wipe |
+| Public vs. private mode | Private for testing, public for events | Learn the dashboard before inviting strangers |
+
+Practical tips that experienced hosts share with newcomers:
+
+- **Announce your economy openly.** Tell viewers the coin rate and the price list so they can plan purchases instead of guessing.
+- **Give a short briefing before each session.** A thirty-second recap of the colony's situation focuses spending on the problems that actually matter.
+- **Reward milestones.** Hand out bonus coins for surviving a raid or completing a project, and the audience starts rooting for the colony, not against it.
+- **Keep a "wishlist" running.** Let viewers suggest goals, then price the actions that would achieve them.
+
+## DLC Integration and Event Variety
+
+Rat Lab integrates with all official RimWorld expansions, which is why a long-running session rarely feels repetitive. Each DLC adds its own flavor of viewer-triggered chaos.
+
+| Expansion | Examples of Viewer-Triggered Events |
+|---|---|
+| Royalty | Summoning tribute collectors or growing anima trees |
+| Ideology | Demanding rituals, spawning Gauranlen pods, or triggering hacker camps |
+| Biotech | Calling in boss groups, dropping wastepacks, or delivering genepacks |
+| Anomaly | Unleashing death palls, blood rain, pit gates, or the Golden Cube |
+
+Because you can toggle each action individually, you're never forced into content that clashes with your colony's theme. A tribal run doesn't have to accept mechanoid visits, and a horror-focused Anomaly playthrough can lean all the way into dread.
+
+## Hardware, Privacy, and Comfort
+
+The mod is designed to be hands-off on the technical side. The Sidecar process detects your hardware and picks the best available encoder automatically — hardware encoders on modern GPUs, with an optimized CPU fallback for machines that lack a dedicated card. Hosts on modest laptops should expect results to depend on their processor, but the option exists rather than being locked away.
+
+Privacy deserves a mention too, because it's a fair question whenever a mod bundles an executable. According to the project's own documentation, game state and video fragments are sent over encrypted WebSocket connections, no video is recorded or stored, session data lives in memory and is wiped when the session ends, and authentication is handled through locally generated session credentials. That's a reasonable transparency standard for an interactive streaming mod.
+
+Two practical notes from the wider player base: full Linux support has been a long-requested feature and is not yet available, and some hosts have run into session and connection hiccups during the mod's early update cycles. If you're planning a big community event, run a private test session first.
+
+## Joining and Contributing to the Rat Lab Community
+
+The social side of this mod is as interesting as the technical side. The project is open source — both the mod itself and the server infrastructure have public repositories — and the author maintains a Discord where bug reports and suggestions are collected. That feedback loop shows up directly in the changelog: features like the viewer pawn-control system and the Sidecar capture method arrived in response to how people actually used earlier versions.
+
+| How to Participate | Where to Go | Best For |
+|---|---|---|
+| Install the mod | Steam Workshop page for Rat Lab | Hosts and players |
+| Report bugs or suggest features | Official community Discord and Steam comments | Everyone |
+| Read or contribute code | Public source repositories linked from the mod page | Developers |
+| Watch or join a session | Public colony listings through the web dashboard | Viewers without a Twitch account |
+
+Typical community-reported issues and their usual explanations:
+
+| Symptom | Likely Cause | Common Fix |
+|---|---|---|
+| Viewer coin balances reset between streams | Session-based economy not persisting | Confirm your session settings before going live |
+| Admin dashboard rejects the password | Copy error or stale credentials | Re-copy both the admin URL and password from mod settings |
+| Nothing appears in the dashboard | Game paused | Unpause — the mod needs an active game tick to sync data |
+| Broken community invite links | Expired invite | Ask in the Steam comments for a current link |
+
+If you're a creator, the honest assessment is this: the mod rewards patience and planning. Test privately, tune your economy, brief your audience, and the Rat Lab community will give you a colonist story you could never have written alone.
+
+## Frequently Asked Questions
+
+**Do viewers need a Twitch account to join?**
+No. Viewers open a browser dashboard and connect through a link, which is one reason the Rat Lab community attracts people who normally never interact with streams.
+
+**Can I control how much chaos viewers create?**
+Yes. The streamer panel includes passive income rates, per-action pricing, granular cooldowns, individual action toggles, and a karma-balancing system that forces a mix of helpful and harmful events.
+
+**Does streaming this way hurt my game's performance?**
+The whole point of the Sidecar design is to avoid that. A separate process handles capture and encoding so RimWorld itself isn't doing the heavy lifting, which keeps frame rates smoother during large raids.
+
+**Is Linux supported?**
+Not fully. The author has stated that Linux support is planned but still some distance away, so Windows hosts currently have the smoothest experience.
+
+**Is my gameplay footage stored anywhere?**
+The project documentation says no video is recorded or retained — session data is held in memory and cleared when the session ends. Still, review the full technical disclosure on the mod page before your first public run.

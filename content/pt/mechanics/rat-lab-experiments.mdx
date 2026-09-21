@@ -1,0 +1,134 @@
+export const metadata = {
+  title: "Experimentos do Rat Lab: Um Guia Completo de Mecânicas para Testes e Resultados",
+  description: "Domine os experimentos do Rat Lab com este guia de mecânicas que aborda variáveis, controles, características de reprodução, registro de dados e design de testes repetíveis.",
+  category: "mechanics",
+  date: "2026-09-20",
+}
+
+## Por Que os Experimentos do Rat Lab Recompensam Paciência em Vez de Clicar sem Parar
+
+Se você já começou uma run, mudou cinco coisas de uma vez e não teve ideia de qual mudança realmente funcionou, você já entende o problema que este guia resolve. Os **experimentos do Rat Lab** são construídos em torno de causa e efeito: você monta um teste, observa o que acontece e ajusta. Jogadores que tratam o laboratório como um caça-níquel queimam recursos; jogadores que o tratam como uma feira de ciências continuam descobrindo combinações que ninguém documentou. Essa diferença se resume a como você planeja seus **experimentos do Rat Lab**, não à velocidade com que você clica.
+
+Este guia aborda as mecânicas por trás dos testes: como isolar variáveis, como construir uma run de base, como ler resultados ambíguos e como registrar dados para que suas melhores descobertas sobrevivam a mais de uma sessão. Tudo aqui é escrito a partir de princípios gerais de mecânicas e da experiência relatada pela comunidade, então trate isto como uma estrutura que você adapta à sua própria build, e não como uma lista de respostas fixas.
+
+## O Loop Central de uma Única Run de Teste
+
+Todo experimento no laboratório segue mais ou menos o mesmo formato. Assim que você internaliza o loop, para de adivinhar e começa a iterar. A tabela abaixo detalha cada fase, o que você realmente faz durante ela e onde a maioria dos jogadores descarrilha.
+
+| Fase | O Que Você Faz | Onde os Jogadores Erram |
+|---|---|---|
+| Observar | Anotar o estado atual do seu laboratório, do sujeito e dos recursos | Pular completamente o registro do "antes" |
+| Formular hipótese | Anotar um resultado esperado antes de tocar em qualquer coisa | Decidir o objetivo depois de ver os resultados |
+| Montar | Alterar exatamente uma variável | Alterar três variáveis "para economizar tempo" |
+| Executar | Deixar o teste terminar sem interferência | Interromper no meio da run e perder a amostra |
+| Registrar | Anotar o resultado imediatamente | Confiar na memória entre sessões |
+| Iterar | Ajustar uma coisa e repetir | Começar um teste totalmente novo e sem relação |
+
+O hábito mais valioso de todo o jogo é a regra da variável única. Ela custa mais runs no curto prazo e economiza dezenas no longo prazo, porque um resultado limpo responde a uma pergunta real em vez de criar duas novas.
+
+### Por Que a Run de Base É Inegociável
+
+Antes de testar qualquer coisa empolgante, faça um teste simples e sem modificações e registre o que acontece. Essa é a sua base. Sem ela, você não tem como saber se um resultado veio da sua mudança ou do comportamento natural do sujeito. Relatos da comunidade apontam consistentemente a ausência de bases como o motivo número um pelo qual jogadores interpretam mal os próprios dados.
+
+## Variáveis, Controles e o Que Você Realmente Consegue Isolar
+
+Em termos mecânicos, um experimento tem variáveis independentes (o que você muda), variáveis dependentes (o que você mede) e variáveis controladas (o que você mantém estável). O laboratório recompensa jogadores capazes de nomear as três antes de uma run começar.
+
+| Tipo de Variável | Papel no Laboratório | Exemplo Prático | Como Mantê-la Limpa |
+|---|---|---|---|
+| Independente | A única coisa que você muda de propósito | Dieta, ambiente, nível de estimulação | Mudar apenas uma por run |
+| Dependente | O resultado que você mede | Mudança de comportamento, crescimento, expressão de características | Escolher um sinal mensurável, não uma impressão |
+| Controlada | Tudo o que deve permanecer idêntico | Configuração da sala, tempo, rotina de manuseio | Manter uma lista de verificação escrita |
+| Confundidora | Mudança acidental que você não planejou | Manuseio extra, alimentação atrasada | Refazer a run se suspeitar de uma |
+
+Variáveis confundidoras são as assassinas silenciosas de uma boa pesquisa. Se você manuseou um sujeito mais do que o normal no mesmo dia em que mudou o ambiente dele, o resultado não diz nada. Refaça a run antes de registrá-lo como descoberta.
+
+### Tamanho do Grupo e Testes Repetidos
+
+Um único teste é uma anedota. Três testes começam a parecer um padrão. Quando você está testando algo em torno do qual pretende construir uma estratégia, execute várias vezes antes de se comprometer. Isso vale especialmente para qualquer coisa que afete linhagens de reprodução ou a progressão de longo prazo do laboratório, onde uma leitura ruim no começo pode te prender a uma configuração fraca por horas.
+
+## Um Plano de Teste Passo a Passo Que Você Pode Reutilizar
+
+Jogadores mais novos costumam perguntar como é um experimento "adequado" do início ao fim. A resposta curta é que ele parece chato — e é a chatice que torna os dados confiáveis.
+
+| Passo | Ação | Por Que Importa |
+|---|---|---|
+| 1 | Definir uma pergunta clara | Objetivos vagos produzem dados vagos |
+| 2 | Fazer uma run de base sem mudanças | Dá a você algo com que comparar |
+| 3 | Escolher uma única variável independente | Mantém a causa e efeito legíveis |
+| 4 | Preparar os sujeitos da forma mais uniforme possível | Reduz o ruído da variação natural |
+| 5 | Executar o teste e resistir à tentação de interferir | A interferência invalida a amostra |
+| 6 | Registrar os resultados em um formato fixo | Torna possível a comparação posterior |
+| 7 | Repetir pelo menos duas vezes | Separa padrão de coincidência |
+| 8 | Só então mudar uma segunda variável | Constrói entendimento em camadas com segurança |
+
+Jogadores que seguem essa sequência tendem a relatar progresso mais rápido no laboratório do que os que experimentam aleatoriamente, simplesmente porque desperdiçam menos runs com dados inutilizáveis. Não é uma barreira de habilidade — é uma barreira de organização.
+
+## Lendo Resultados: Reconhecimento de Padrões e Interação de Características
+
+Depois que você tem dados limpos, começa a parte interessante. Os resultados geralmente se encaixam em um de alguns padrões reconhecíveis, e cada padrão sugere um próximo passo diferente.
+
+| Padrão de Resultado | O Que Provavelmente Significa | Seu Próximo Passo |
+|---|---|---|
+| Mudança forte e repetível | A variável é genuinamente influente | Fixe-a como um fator conhecido |
+| Mudança fraca ou inconsistente | Amostra pequena demais ou variável mal escolhida | Refaça a run com mais testes |
+| Mudança em apenas alguns sujeitos | Variável oculta ou diferença individual | Acompanhe os sujeitos separadamente |
+| Oposto do esperado | Sua hipótese estava errada, ou existe um fator de confusão | Verifique a montagem e depois revise a hipótese |
+| Nada mensurável | A variável pode ser cosmética ou inerte nesta build | Despriorize e teste outra coisa |
+
+A interação de características é onde os **experimentos do Rat Lab** ficam genuinamente profundos. Duas mudanças que não fazem nada sozinhas podem produzir um efeito perceptível quando combinadas, e é por isso que o teste em camadas importa. O detalhe é que você só consegue detectar interação de forma confiável se cada componente tiver sido testado isoladamente antes.
+
+### Documentando Resultados Estranhos
+
+Relatos da comunidade mencionam com frequência runs "inúteis" que se revelaram importantes semanas depois. Mantenha um arquivo de anotações com uma seção para resultados que você ainda não consegue explicar. Quando alguém da comunidade mencionar um desfecho estranho, você pode descobrir que já tem a metade que faltava da resposta.
+
+## Erros Comuns Que Arruínam Experimentos de Outro Modo Bons
+
+A maioria dos experimentos fracassados não é causada por azar. É causada por um punhado de erros repetíveis.
+
+- **Mudar várias variáveis em uma única run.** Você não aprende nada sobre qual delas importou.
+- **Pular a base.** Sem um ponto de comparação, todo resultado é ruído.
+- **Registrar depois do fato.** A memória comprime e reescreve detalhes, geralmente a seu favor.
+- **Superinterpretar amostras pequenas.** Uma run dramática não é uma mecânica.
+- **Ignorar o grupo de controle.** Você precisa de uma referência inalterada para medir contra ela.
+- **Abandonar cedo demais uma linha promissora.** Alguns efeitos só aparecem em prazos mais longos.
+- **Nunca compartilhar descobertas.** Jogadores isolados redescobrem os mesmos fundamentos repetidamente.
+
+Se você está navegando por lojas e quer ter uma ideia de como jogos sandbox experimentais costumam ser apresentados a novos jogadores, as [páginas de catálogo da loja da Steam](https://store.steampowered.com/) são uma referência útil para entender como mecânicas são descritas e comparadas.
+
+## Acompanhando Seus Dados Sem Transformar Isso em Uma Tarefa Chata
+
+Um sistema de acompanhamento só funciona se você realmente for usá-lo. Mantenha-o mínimo: uma linha por run, com as mesmas colunas todas as vezes. Consistência vale mais que detalhe.
+
+| Métrica | Por Que Registrá-la | Frequência Sugerida |
+|---|---|---|
+| Número da run | Permite rastrear descobertas até sua origem | Toda run |
+| Variável alterada | Núcleo da análise de causa e efeito | Toda run |
+| Notas de montagem | Captura fatores de confusão ocultos | Toda run |
+| Resultado observado | O ponto de dado em si | Toda run |
+| Nível de confiança | Sinaliza descobertas especulativas vs. sólidas | Toda run |
+| Ideia de acompanhamento | Evita que você perca sua próxima pergunta | Quando surgir inspiração |
+
+Se você mantiver isso simples, os **experimentos do Rat Lab** param de parecer exploração às cegas e começam a parecer um projeto com impulso. Essa mudança de mentalidade é o que separa jogadores que estagnam dos jogadores que publicam descobertas.
+
+### Trabalhando Com a Comunidade
+
+Compartilhar resultados — positivos ou negativos — é uma das formas mais eficientes de acelerar o seu próprio entendimento. Resultados negativos ("isto não fez nada em seis testes") economizam um tempo enorme para outros jogadores. Resultados positivos se espalham mais rápido, mas ambos são valiosos. Apenas seja claro sobre em quantos testes sua afirmação se baseia, para que os outros possam avaliá-la adequadamente.
+
+## Perguntas Frequentes Sobre os Experimentos do Rat Lab
+
+**Quantos testes eu preciso fazer antes de confiar em um resultado?**
+Não existe um número universal, mas uma boa regra geral é repetir qualquer resultado pelo menos três vezes antes de construir uma estratégia em cima dele. Se um resultado variar muito entre runs, continue repetindo ou reconsidere se sua variável foi definida com precisão suficiente.
+
+**O que devo testar primeiro no laboratório?**
+Comece pelas variáveis que são mais baratas de alterar e mais rápidas de observar. Runs rápidas e de baixo custo dão a você o maior aprendizado por hora no começo. Guarde as variáveis lentas e caras para quando você já tiver um modelo funcional de como seu laboratório se comporta.
+
+**Por que meus resultados continuam se contradizendo?**
+Resultados contraditórios quase sempre apontam para uma variável confundidora ou uma montagem inconsistente. Reescreva sua lista de verificação, faça uma nova base e mude apenas uma coisa de cada vez. A consistência do seu processo importa mais do que as variáveis específicas que você escolhe.
+
+**Os experimentos do Rat Lab têm uma resposta "correta" a descobrir?**
+Parcialmente. Muitos sistemas têm regras subjacentes consistentes, mas as descobertas interessantes geralmente vêm de combinar mecânicas de formas que o design original não anunciava. É por isso que a experimentação metódica supera copiar uma lista de respostas — você encontra coisas que ninguém escreveu ainda.
+
+## Considerações Finais: Método Vence a Sorte
+
+Tudo nos **experimentos do Rat Lab** se resume a um princípio: um teste limpo responde a uma pergunta, e um teste bagunçado cria novas. Construa uma base, mude uma variável, registre tudo e repita. Faça isso de forma consistente e você vai descobrir mais do que jogadores que simplesmente clicam mais rápido. Mantenha suas anotações honestas, compartilhe o que aprender e trate cada resultado confuso como o início de uma pergunta melhor, e não como um beco sem saída.

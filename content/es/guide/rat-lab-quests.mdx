@@ -1,0 +1,143 @@
+export const metadata = {
+  title: "Guía de las misiones de Rat Lab: Resuelve cada desafío de inteligencia de amenazas paso a paso",
+  description: "Un recorrido práctico por cada desafío de las misiones de Rat Lab, desde el hash inicial hasta la confirmación del C2, con las fuentes exactas que usan los analistas.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+Las misiones de Rat Lab parecen engañosamente simples a primera vista: abres un archivo de desafío, lees un único hash SHA256 y respondes una breve lista de preguntas. Ese diminuto punto de partida es justamente el objetivo. Completar las misiones de Rat Lab te obliga a recorrer todo el flujo de trabajo de inteligencia de amenazas —pivotando entre informes de sandbox, servicios de reputación e informes de proveedores hasta que cada afirmación queda confirmada por más de una fuente.
+
+Si te orientas a respuesta a incidentes, búsqueda de amenazas o trabajo de CTI, este laboratorio es una de las formas más eficientes de desarrollar músculo investigativo real en una tarde. Esta guía desglosa qué pide cada misión, qué herramienta la responde y los errores que más tiempo les cuestan a los analistas primerizos.
+
+## ¿Qué son las misiones de Rat Lab?
+
+El Rat Lab es un desafío práctico de inteligencia de amenazas cibernéticas construido en torno a un incidente realista. Recibes un archivo de desafío que contiene un hash, y ese hash es tu única pista. A partir de ahí, una secuencia de misiones te lleva desde «¿qué es este archivo?» hasta «¿con quién está hablando?».
+
+Los walkthroughs de la comunidad describen el escenario subyacente como una revisión rutinaria de seguridad de TI en una empresa mediana donde aparece tráfico de red anómalo en varias estaciones de trabajo, y las consultas de búsqueda de los empleados comienzan a redirigirse a sitios web desconocidos. Ese encuadre es deliberado. Las investigaciones reales rara vez comienzan con un indicador limpio: empiezan con un síntoma vago y muchas conjeturas.
+
+| Misión | Qué pregunta | Dónde suele estar la respuesta |
+|---|---|---|
+| 1 | Familia de malware que causa el tráfico anómalo | Informe de sandbox encontrado mediante búsqueda por hash |
+| 2 | Nombre de archivo común que usa la muestra | Información de versión de archivo / firma en un servicio de reputación |
+| 3 | Marca temporal de compilación del binario | Datos de la cabecera del ejecutable portátil |
+| 4 | Fecha en que la muestra se envió públicamente por primera vez | Línea temporal del historial de envíos |
+| 5 | Nombre del archivo `.dat` depositado en AppData | Informe de detección del proveedor |
+| 6 | Servidor de mando y control (C2) | Informe del proveedor, pestaña de comportamiento, sistemas externos del sandbox |
+
+Cada misión se basa en la anterior. Si te adelantas, no tendrás el contexto para interpretar lo que estás leyendo.
+
+## Herramientas que necesitas antes de empezar las misiones de Rat Lab
+
+No necesitas una cadena de herramientas de pago ni tu propia máquina virtual de laboratorio. Todas las plataformas en las que se apoyan las misiones de Rat Lab ofrecen un nivel gratuito más que suficiente para terminar el desafío.
+
+| Herramienta | Función en la cadena de misiones | Dónde buscar |
+|---|---|---|
+| Hybrid Analysis | Informes de ejecución en sandbox y listas de sistemas externos | Búsqueda de informes por hash de archivo |
+| VirusTotal | Identidad del archivo, metadatos PE, comportamiento, reputación de dominio | Pestaña Details y pestaña Behavior |
+| Red Canary Intelligence | Informe de detección del proveedor que cubre archivos depositados y C2 | Informe de detección para la familia |
+| Búsqueda web abierta | Verificación cruzada de nombres de familias con reportes públicos | Blogs de proveedores, publicaciones de analistas |
+| Un archivo de notas temporal | Registrar respuestas, URL y marcas temporales a medida que avanzas | Donde sea, solo usa uno |
+
+El artefacto inicial documentado es un hash SHA256 almacenado en un archivo de texto dentro del archivo del desafío. Los analistas que han publicado walkthroughs comunitarios señalan que existen múltiples informes para el mismo hash, así que elegir cualquier informe que coincida con tu hash funciona; no necesitas exactamente el que usó otra persona.
+
+Registrarte en la [plataforma de desafíos CyberDefenders](https://cyberdefenders.org/) te da acceso a este laboratorio más una amplia biblioteca de investigaciones similares si quieres seguir después.
+
+## Walkthrough de las misiones de Rat Lab, misión por misión
+
+### Misión 1: Identifica la familia de malware
+
+Copia el hash del archivo del desafío y pégalo en una búsqueda de informes de sandbox. Buscas un informe que muestre un registro de ejecución real, no solo un recuento de detecciones. Los informes de la comunidad sugieren filtrar por informes con una puntuación de amenaza alta y una ejecución completa en sandbox adjunta.
+
+Una vez dentro del informe, el nombre de la familia aparece junto a la clasificación de amenaza. Anótalo exactamente como se muestra; las misiones posteriores dependen de que busques la familia correcta en otras plataformas.
+
+### Misiones 2–4: Pivota a VirusTotal
+
+Con la familia identificada, pasa a un servicio de reputación y busca el mismo hash. Tres de las misiones se responden en una sola página si sabes qué campos leer.
+
+| Misión | Campo que leer | Ruta de navegación |
+|---|---|---|
+| 2 | Original Name (el nombre de archivo común) | Details → File Version Information → Signature info |
+| 3 | Compilation Timestamp | Details → PE Info → Header |
+| 4 | Fecha de First Submission | Details → History |
+
+Un punto frecuente de confusión: el *nombre de archivo común* es el nombre original registrado en la información de versión del archivo, no el nombre interno del malware y no la etiqueta de detección. Esas son tres cadenas diferentes, y el laboratorio pide una específica.
+
+La hora de compilación y la hora del primer envío tampoco están relacionadas. Una muestra puede compilarse meses antes de que alguien la suba, y esa brecha es en sí misma inteligencia útil sobre cuánto tiempo pudo haber estado el malware en circulación sin ser detectado.
+
+### Misión 5: Rastrea el archivo .dat depositado
+
+Esta es la primera misión en la que el servicio de reputación deja de ser suficiente. La lista de archivos depositados no está disponible allí, así que tienes que cambiar de fuente y leer un informe de detección del proveedor.
+
+Los informes de inteligencia de proveedores suelen enumerar artefactos de persistencia, archivos depositados y claves de registro en una sección con viñetas cerca del principio. Busca un archivo `.dat` escrito en la carpeta AppData del usuario. Ese detalle importa operativamente: les da a los respondedores un archivo concreto que buscar en el resto del entorno.
+
+### Misión 6: Confirma el servidor C2
+
+La misión final pide el servidor de mando y control con el que se comunica la muestra. Aquí es donde las misiones de Rat Lab recompensan la paciencia por encima de la velocidad, porque la respuesta debe confirmarse desde al menos tres ángulos.
+
+| Fuente | Sección que revisar | Qué demuestra |
+|---|---|---|
+| Informe de detección del proveedor | Lista de indicadores observados | El C2 se vio en un entorno real |
+| Servicio de reputación | Behavior → Network Communication | La cadena existe dentro de la propia muestra |
+| Informe de sandbox | Suspicious Indicators → External Systems | La muestra intentó esa conexión en tiempo de ejecución |
+
+Una vez que tengas la URL, revisa la reputación del dominio en el servicio de reputación. Un dominio marcado por múltiples motores cierra el círculo y te da la confianza para incluirlo en una lista de bloqueo.
+
+## Cómo las misiones de Rat Lab enseñan la triangulación
+
+La verdadera lección de este laboratorio no es ninguna respuesta individual. Es el hábito de no confiar nunca en una sola fuente. Cada misión te empuja a una nueva plataforma precisamente porque ninguna plataforma por sí sola tiene la imagen completa.
+
+| Hallazgo | Fuente principal | Fuente de confirmación | Por qué importa la verificación cruzada |
+|---|---|---|---|
+| Familia de malware | Informe de sandbox | Etiqueta de detección de motores antimalware | Las familias se renombran y se remarcan |
+| Archivo depositado | Informe del proveedor | Artefactos del sistema de archivos del sandbox | Los archivos depositados pueden variar según la configuración |
+| Servidor C2 | Informe del proveedor | Pestaña Behavior más sistemas externos del sandbox | Las cadenas en un binario no siempre se contactan |
+
+Este hábito de triangulación se traslada directamente a la respuesta real a incidentes. La misma lógica aplica cuando confirmas un indicador antes de bloquearlo, o cuando verificas la afirmación de un proveedor contra tu propia telemetría antes de escalar.
+
+## Errores comunes que ralentizan a la gente
+
+| Error | Por qué ocurre | Cómo evitarlo |
+|---|---|---|
+| Abrir el informe equivocado | Muchos informes comparten el mismo hash | Verifica que el hash coincida antes de leer |
+| Leer el campo de nombre de archivo equivocado | Varios campos de nombre están cerca entre sí | Confirma que estás en Signature info, no en detecciones |
+| Mezclar marcas temporales | Los datos de compilación y envío se parecen | Lee con cuidado la etiqueta del campo, no el formato del valor |
+| Asumir que un sitio tiene todo | La lista de archivos depositados no está en el servicio de reputación | Cambia a inteligencia de proveedores para los artefactos |
+| Detenerse en una sola fuente de C2 | El primer hallazgo parece concluyente | Confirma con un mínimo de tres fuentes |
+| Omitir las notas | Las respuestas se construyen unas sobre otras | Registra cada hallazgo a medida que avanzas |
+
+## Consejos para terminar las misiones de Rat Lab más rápido
+
+- **Mantén el hash en tu portapapeles.** Lo pegarás en tres o cuatro plataformas antes de terminar.
+- **Abre pestañas en paralelo.** Carga el informe de sandbox, la página de reputación y el informe del proveedor uno al lado del otro para comparar campos en lugar de volver a buscar.
+- **Revisa la sección de historial temprano.** Saber cuándo apareció públicamente la muestra por primera vez enmarca todo lo demás que leas.
+- **Escribe el nombre de la familia exactamente como se muestra.** Los errores de ortografía llevan las búsquedas posteriores a callejones sin salida.
+- **Lee todo el informe del proveedor, no solo los indicadores.** El contexto sobre entrega y persistencia a menudo explica los artefactos que encuentras.
+- **Registra tus fuentes.** Si planeas publicar tu propio análisis, citar de dónde salió cada respuesta es la mitad del valor.
+
+## Por qué vale la pena dedicarle tiempo a este laboratorio
+
+Las misiones de Rat Lab comprimen una investigación realista en un ejercicio breve y estructurado. Practicas pivoteo por hash, lectura de metadatos, caza de artefactos y confirmación de infraestructura: las mismas habilidades que aparecen en entrevistas de nivel inicial para analistas de CTI y SOC.
+
+La experiencia de los jugadores en los walkthroughs comunitarios apunta consistentemente a la misma conclusión: el valor está en el flujo de trabajo, no en las respuestas. Cualquiera puede buscar una respuesta final. Poder explicar cómo llegaste allí, y qué fuente lo confirmó, es lo que llama la atención.
+
+## Preguntas frecuentes
+
+**¿Qué son exactamente las misiones de Rat Lab?**
+
+Son un conjunto estructurado de preguntas de desafío dentro de un laboratorio de inteligencia de amenazas. Empiezas con un único hash de archivo y respondes seis preguntas que cubren identificación de malware, metadatos de archivo, línea temporal, artefactos depositados e infraestructura de mando y control.
+
+**¿Necesito experiencia en análisis de malware para completar las misiones de Rat Lab?**
+
+No se requiere ingeniería inversa. Todas las respuestas se pueden encontrar leyendo informes de sandbox, páginas de servicios de reputación e informes de inteligencia de proveedores. Una familiaridad básica con rutas de archivos de Windows y metadatos PE ayuda, pero el laboratorio lo enseña sobre la marcha.
+
+**¿Las misiones de Rat Lab son gratuitas?**
+
+El laboratorio está alojado en una plataforma de desafíos comunitaria que ofrece acceso gratuito a su biblioteca de desafíos. Consulta el sitio anfitrión para conocer los detalles actuales de cuenta y acceso antes de empezar.
+
+**¿Cuánto tiempo llevan las misiones de Rat Lab?**
+
+La mayoría de los analistas informa que termina en una o dos horas en el primer intento. El cuello de botella normalmente no es el análisis, sino recordar qué pestaña contiene qué campo; una vez que conoces las rutas de navegación, las respuestas llegan rápido.
+
+**¿Puedo publicar mi propio walkthrough después?**
+
+Sí, y se recomienda. Escribir tu metodología te obliga a justificar cada conclusión, que es exactamente la habilidad que las misiones de Rat Lab están diseñadas para desarrollar.

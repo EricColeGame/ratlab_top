@@ -1,0 +1,108 @@
+export const metadata = {
+  title: "Locais do Rat Lab: O mapa completo de todos os artefatos a verificar",
+  description: "Um guia prático de todos os locais do Rat Lab — arquivos dropados, chaves de registro, abas de sandbox e endpoints de C2 — com um mapa de progressão passo a passo.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+Se você está travado no meio do Rat Lab e as respostas parecem espalhadas por uma dúzia de abas do navegador, o problema real normalmente não é o seu conjunto de ferramentas — é que você ainda não sabe quais **locais do Rat Lab** verificar, e em qual ordem. Um lab de RAT coloca você dentro de uma investigação de intrusão ao vivo com quase nada para começar: tipicamente um único hash de arquivo e um cenário de um parágrafo.
+
+A boa notícia é que esses labs são feitos para serem resolvidos. Cada pergunta é mapeada para um local específico de artefato — uma pasta no disco, uma chave de registro, uma aba dentro de um relatório de sandbox ou um endpoint de rede de saída. Quando você sabe quais **locais do Rat Lab** correspondem a cada etapa, a progressão deixa de ser horas de tentativa e erro e se transforma em uma checklist enxuta e repetível.
+
+## O que é o Rat Lab e por que os locais guiam toda a investigação
+
+"Rat Lab" é a abreviação de um exercício prático de inteligência de ameaças cibernéticas (CTI) construído em torno de um Trojan de Acesso Remoto. A premissa é sempre a mesma: um RAT já chegou dentro de uma organização fictícia, tráfego anormal foi detectado, e você é o analista que precisa reconstruir o que aconteceu usando apenas plataformas públicas de pesquisa.
+
+Como um RAT toca tantas partes de um sistema, o lab é na verdade uma caça ao tesouro em três planos de evidência:
+
+- **O plano do endpoint** — arquivos que a amostra dropa, pastas de preparação onde ela se esconde e entradas de registro ou de agendador que ela usa para sobreviver a uma reinicialização.
+- **O plano da rede** — o domínio ou URL de comando e controle (C2) para o qual a amostra faz beacon, além de qualquer cadeia de redirecionamento que explique o tráfego suspeito.
+- **O plano da inteligência** — os relatórios públicos em que outros analistas já documentaram a mesma amostra, seus nomes de arquivo e sua infraestrutura.
+
+As perguntas são sequenciadas de forma deliberada. Você identifica primeiro a família de malware, depois fixa o nome do arquivo, em seguida o timestamp de compilação, depois a data da primeira detecção, então os artefatos dropados e, por fim, o servidor de C2. Cada resposta desbloqueia a próxima, e cada uma vive em um local específico. Plataformas como o [ambiente de lab de blue team da CyberDefenders](https://cyberdefenders.org/) seguem exatamente esse arco de identificar → persistir → comunicar, e é por isso que um mapa vence a força bruta todas as vezes.
+
+## Os locais essenciais do Rat Lab em um relance
+
+Antes de tocar em uma única caixa de busca, ajuda enxergar o tabuleiro inteiro. A tabela abaixo lista os locais que respondem a quase todas as perguntas que um lab de RAT faz.
+
+| # | Local | Onde fica | O que você extrai |
+|---|---|---|---|
+| 1 | Arquivo com o hash da amostra | Download do desafio (muitas vezes um `.txt` simples) | O SHA256 a partir do qual você faz todos os pivôs |
+| 2 | Arquivo do relatório de sandbox | Busca de relatórios em um serviço público de análise de malware | Análises anteriores, pontuação de veredito, resumo de comportamento |
+| 3 | Informações de versão e assinatura do arquivo | A aba "Details" da amostra | Nome de arquivo original usado em campo |
+| 4 | Cabeçalho do executável portátil | A mesma aba "Details", seção de cabeçalho | Timestamp de compilação |
+| 5 | Histórico de submissões | A aba "Details", painel de histórico | Data da primeira submissão |
+| 6 | Relatório de inteligência do fornecedor vinculado | Referenciado dentro do relatório de sandbox | Artefatos `.dat` dropados e notas de persistência |
+| 7 | Behavior → comunicação de rede | A aba "Behavior" da amostra | URL ou domínio de C2 como string de memória |
+| 8 | Indicadores suspeitos → sistemas externos | Relatório de sandbox, seção de indicadores | Corroboração independente do C2 |
+
+Observe que seis dos oito locais ficam dentro de duas páginas que você já tem abertas. A maioria dos iniciantes perde tempo caçando novas ferramentas quando a resposta está a uma rolagem de distância.
+
+## Locais do Rat Lab por etapa de progressão
+
+A dificuldade nesses labs raramente vem da complexidade — vem de fazer os passos fora de ordem. Veja como os locais se alinham com a progressão.
+
+| Etapa | Tipo de pergunta | Local principal | Fonte alternativa |
+|---|---|---|---|
+| 1 | Qual é a família de malware? | Arquivo do relatório de sandbox | Artigo do fornecedor |
+| 2 | Qual nome de arquivo ele usa? | Metadados de assinatura / versão | Listagem de arquivos do sandbox |
+| 3 | Quando foi compilado? | Informações do cabeçalho PE | Ferramentas de análise estática |
+| 4 | Quando foi visto pela primeira vez? | Histórico de submissões | Posts de blog de threat intel |
+| 5 | O que ele dropou? | Relatório do fornecedor ou lista de arquivos dropados | Listagem de arquivos do endpoint na VM do lab |
+| 6 | Para onde ele se comunica? | Seção de rede da aba Behavior | Indicadores de sistemas externos |
+
+Três hábitos mantêm essa progressão limpa:
+
+- **Responda em ordem.** Nomes de arquivo e timestamps de compilação parecem triviais, mas são os termos de busca que abrem as etapas seguintes.
+- **Anote cada resposta.** Perguntas posteriores frequentemente reutilizam valores anteriores, e rededuzi-los desperdiça minutos que você não recupera.
+- **Faça verificação cruzada antes de enviar.** Uma única fonte pode estar incompleta; duas ou três fontes concordando é certeza.
+
+## Dentro da máquina: locais de endpoint, registro e rede
+
+### Onde arquivos dropados costumam parar
+
+Quase todo RAT precisa de algum lugar para gravar sua configuração, um payload de segundo estágio ou uma cópia de trabalho de si mesmo. Em ambientes Windows, esses locais são quase sempre graváveis pelo usuário, porque é onde um processo sem privilégios pode escrever sem acionar nada.
+
+| Tipo de artefato | Local típico (geral) | Valor investigativo |
+|---|---|---|
+| Arquivo de configuração ou dados dropado | A pasta AppData do perfil do usuário (Roaming ou Local) | ID de campanha, configurações de beacon, lista de C2 |
+| Executável secundário | Pastas graváveis pelo usuário, como AppData, Temp, Downloads ou Public | Reexecução e evasão de defesas |
+| Persistência por usuário | Chave Run sob a hive de registro do usuário atual | Reinicialização no logon |
+| Tarefa agendada | Biblioteca do Agendador de Tarefas | Execução recorrente, muitas vezes disfarçada de tarefa do sistema |
+| Entrada de serviço | Chave de registro Services | Persistência elevada, em nível de SYSTEM |
+| Dados de sequestro do navegador | Pasta de perfil do navegador | Explica o sintoma de buscas redirecionadas |
+
+Os caminhos exatos variam conforme a amostra e a versão do lab, então trate a tabela como uma checklist de busca e não como um gabarito fixo. O padrão é o que importa: pastas graváveis pelo usuário para arquivos, chaves de autostart e definições de tarefas para persistência.
+
+### A pergunta sobre o artefato dropado
+
+Esta é a etapa em que muitos analistas ficam presos, porque a habitual aba "Details" simplesmente não tem a resposta. Relatos da comunidade de pessoas que passaram pelo desafio Yellow RAT Lab descrevem o mesmo pivô: quando a página da amostra não lista os componentes dropados, você migra para o relatório de inteligência do fornecedor vinculado no relatório de sandbox. Esse artigo normalmente nomeia o arquivo `.dat` e a pasta em que ele foi gravado — informações que o sandbox simplesmente nunca capturou.
+
+### Locais de rede: encontrando o C2
+
+A etapa final é quase sempre a infraestrutura de comando e controle, e é aquela em que vários locais devem concordar antes de você firmar uma resposta.
+
+| Artefato de rede | Onde encontrá-lo | O que ele confirma |
+|---|---|---|
+| URL ou domínio de C2 | Aba Behavior → comunicação de rede | O callback principal |
+| Reputação do domínio | Consulta desse domínio na mesma plataforma de inteligência | Veredito malicioso e data da primeira detecção |
+| Lista de sistemas externos | Seção de indicadores suspeitos | Corroboração independente |
+| Log de requisições DNS / HTTP | Log de rede do sandbox | Intervalo de beacon, user agent, cabeçalhos |
+| Cadeia de redirecionamento | Texto do cenário mais evidências do navegador | O sintoma de tráfego anormal |
+| URLs de download de payload | Lista de requisições HTTP do sandbox | Entrega do segundo estágio |
+
+Uma regra prática útil: se o mesmo domínio aparece em uma lista de strings de memória, em um log de rede e em uma consulta de reputação, você tem uma confirmação tripla. Se apenas uma fonte o sinaliza, continue cavando antes de enviar.
+
+## Dicas práticas, erros comuns e atalhos da comunidade
+
+Trabalhar os locais com eficiência é uma habilidade por si só. Estes hábitos separam uma execução de lab de vinte minutos de uma maratona de duas horas:
+
+1. **Leia o briefing do cenário duas vezes.** O sintoma descrito na introdução — buscas redirecionadas, tráfego de saída incomum, lentidão em estações de trabalho específicas — normalmente aponta direto para o mecanismo que você deve encontrar.
+2. **Mantenha uma janela do navegador por fonte.** Relatório de sandbox, plataforma de reputação e artigo do fornecedor lado a lado eliminam a navegação constante para frente e para trás.
+3. **Corte valores antes de colar.** Espaços no final e aspas curvas causam mais envios falhos do que respostas erradas.
+4. **Use o hash da amostra em tudo.** É o único identificador que amarra todos os locais do Rat Lab ao mesmo trecho de código.
+5. **Releia a aba "Behavior" por último.** É a página mais rica, e lê-la depois das etapas anteriores torna a seção de rede muito mais fácil de interpretar.
+
+| Erro comum | Por que isso custa caro | A correção |
+|---|---|---|
+| Começar pela aba de rede | Você pula as pistas de nomenclatura e de linha do tempo de que precisará depois | Siga as etapas

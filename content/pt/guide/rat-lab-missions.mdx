@@ -1,0 +1,112 @@
+export const metadata = {
+  title: "Missões do Rat Lab: Um Guia Completo de Passo a Passo para Desafios de RAT em Threat Intel",
+  description: "Aprenda a resolver missões do Rat Lab passo a passo: triagem de hash de malware, pivôs no VirusTotal e Hybrid Analysis, arquivos dropados e descoberta de C2.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## O Que São as Missões do Rat Lab?
+
+Se você já ficou encarando um único hash de arquivo e se perguntou por onde começar, as missões do Rat Lab são a maneira mais rápida de transformar esse olhar perdido em um fluxo de trabalho repetível. Cada uma dessas missões do Rat Lab coloca você dentro de uma intrusão simulada e pede que você reconstrua toda a história a partir de uma ou duas pistas. Isso importa porque os gestores de contratação em threat intelligence se importam menos com o que você memorizou e mais com a forma como você pivota quando tudo o que você tem é um artefato e uma pergunta.
+
+O formato é deliberadamente enxuto de propósito. Uma empresa fictícia detecta algo incomum — tráfego de rede de saída anormal, consultas de busca de funcionários sendo redirecionadas para sites desconhecidos, um endpoint sinalizando um binário suspeito. Você recebe um arquivo de texto com o hash de uma amostra e um briefing do cenário. Todo o resto precisa ser conquistado por meio de pesquisa.
+
+O rótulo "lab" descreve o exercício, não a dificuldade. A classe de malware no centro desses desafios é um trojan de acesso remoto (RAT) — código que dá a um operador controle interativo sobre um host infectado. Resolver o desafio significa responder a um conjunto fixo de perguntas sobre essa amostra com evidências que você possa apontar.
+
+### Por Que Esse Formato Treina Analistas de Verdade
+
+Os desafios de RAT comprimem a primeira hora de um incidente real em um quebra-cabeça autossuficiente. Você faz a triagem de um binário desconhecido, identifica sua família, mapeia sua infraestrutura e reporta os achados — o mesmo ciclo que um analista de primeiro nível executa a cada turno. A diferença é que, em um lab, as respostas são conhecidas, então você pode verificar se o seu método funcionou em vez de chutar.
+
+## Habilidades Essenciais Que Toda Missão do Rat Lab Testa
+
+| Habilidade testada | Como ela aparece na prática | Por que ela importa no trabalho |
+|---|---|---|
+| Triagem de hash | Passar o hash de uma amostra por serviços de análise multi-mecanismo | O primeiro movimento em quase toda investigação real de malware |
+| Perfilamento da amostra | Extrair nome de arquivo original, metadados do compilador e datas de primeira detecção | Constrói uma linha do tempo e ajuda a delimitar o alcance da infecção |
+| Descoberta de artefatos | Encontrar arquivos dropados, caminhos de staging e locais de persistência | Diz aos respondedores exatamente o que procurar em outros hosts |
+| Mapeamento de infraestrutura | Identificar endpoints de comando e controle (C2) | Permite bloqueio, sinkholing e contenção |
+| Correlação de fontes | Confirmar uma resposta em várias plataformas | Evita respostas erradas dadas com confiança |
+| Reporte | Escrever respostas curtas, precisas e com formatação correta | Espelha a escrita de tickets e notas de passagem de turno em um SOC |
+
+Observe que nenhuma dessas habilidades exige que você faça engenharia reversa de assembly manualmente. Esses desafios são sobre disciplina de pesquisa, não sobre heroísmo. É isso que os torna acessíveis para iniciantes e ainda úteis para analistas experientes que querem um treino estruturado.
+
+## O Kit de Ferramentas de Threat Intelligence Que Você Precisa
+
+As missões do Rat Lab raramente exigem algo exótico. Um navegador, uma ou duas contas gratuitas em plataformas públicas de análise e disposição para ler relatórios longos vão te levar pela maioria delas. A [plataforma CyberDefenders](https://cyberdefenders.org/) que popularizou esse estilo de desafio foi construída exatamente em torno dessa premissa — ferramentas gratuitas, cenários realistas.
+
+| Ferramenta | O que ela oferece | Pergunta típica que ela responde |
+|---|---|---|
+| Hybrid Analysis | Relatórios do Falcon Sandbox, resumos de comportamento, listas de sistemas externos | Qual execução de sandbox corresponde à minha amostra, e com o que ela se comunicou? |
+| [VirusTotal](https://www.virustotal.com/) | Detecções multi-mecanismo, detalhes do arquivo, comportamento, relações, histórico de envio | Nome da família, nome de arquivo original, data de compilação, primeiro envio |
+| Relatórios de inteligência de fornecedores | Análise escrita por humanos de uma família específica de malware | Arquivos dropados e infraestrutura de C2 observada |
+| Mecanismos de busca e blogs de CTI | Contexto de campanha e convenções de nomenclatura de famílias | "Qual é essa família, e quem já escreveu sobre ela antes?" |
+| MITRE ATT&CK | Nomenclatura padrão de técnicas e táticas | Transformar achados brutos em terminologia defensável |
+
+Uma observação rápida sobre cada um. Serviços de sandbox são sua rota mais rápida de um hash bruto até uma narrativa de comportamento. Scanners multi-mecanismo são sua melhor fonte de metadados estáticos de arquivos. Relatórios de fornecedores preenchem as lacunas que a automação deixa passar. Os mecanismos de busca amarram tudo.
+
+Relatos da comunidade feitos por autores de walkthroughs são genuinamente úteis como uma verificação de sanidade depois que você resolveu um problema, mas nunca devem ser sua primeira parada. Resolva primeiro, compare depois — caso contrário, você não aprende nada e o próximo desafio te humilha.
+
+## Um Fluxo de Trabalho Passo a Passo para as Missões do Rat Lab
+
+A ordem em que você resolve as missões do Rat Lab importa mais do que a velocidade bruta. Analistas que pulam direto para um mecanismo de busca em busca de respostas geralmente travam nas perguntas seguintes. Siga esta sequência em vez disso.
+
+| Passo | Ação | Onde procurar |
+|---|---|---|
+| 1 | Leia o cenário duas vezes e liste os sintomas relatados pela vítima | Briefing do desafio |
+| 2 | Copie o hash exatamente — sem espaços em branco no início ou no fim | Arquivo de artefato fornecido |
+| 3 | Pesquise o hash em um serviço de sandbox e abra o relatório mais rico | Busca de relatórios do sandbox |
+| 4 | Extraia detalhes estáticos do arquivo de um scanner multi-mecanismo | Painel de detalhes do arquivo |
+| 5 | Procure artefatos dropados em análises de fornecedores e da comunidade | Relatórios específicos da família |
+| 6 | Confirme o endpoint de C2 a partir de pelo menos três fontes | Sistemas externos do sandbox, comportamento de rede do scanner, relatório do fornecedor |
+| 7 | Formate cada resposta exatamente como o formulário de envio espera | Página de envio |
+
+### Comece Pelo Hash, Não Por Chutes
+
+Cole o hash na plataforma de análise de sua escolha antes de fazer qualquer outra coisa. Qualquer espaço em branco, um caractere perdido ou um erro de maiúsculas e minúsculas vai retornar "not found" e te fazer correr atrás de uma amostra que não existe. Copie de um editor de texto simples, nunca de um documento formatado.
+
+### Leia o Relatório, Não Apenas Passe os Olhos na Pontuação
+
+Os resultados de busca do sandbox frequentemente retornam várias execuções da mesma amostra. Escolha aquela com a maior pontuação de ameaça e os dados comportamentais mais completos, geralmente o snapshot de desktop Windows em vez de um ambiente mais antigo ou móvel. Profundidade vence conveniência aqui.
+
+### Confirme o C2 Sob Três Ângulos
+
+Uma única menção de um endereço IP ou URL não prova nada — pode ser um falso positivo da própria telemetria do sandbox. As respostas mais fortes aparecem na lista de sistemas externos do relatório do sandbox, na seção de comportamento de comunicação de rede do scanner e em um artigo de fornecedor. Quando três fontes independentes concordam, envie com confiança.
+
+## Arquétipos de Perguntas Que Você Deve Esperar
+
+Em toda a família de desafios, as mesmas seis perguntas continuam ressurgindo com roupagens um pouco diferentes. Aprender os arquétipos permite que você avance mais rápido em amostras desconhecidas.
+
+| Arquétipo de pergunta | Onde a resposta geralmente está | Pegadinha comum |
+|---|---|---|
+| Nome da família do malware | Cabeçalho do relatório do sandbox, rótulos de veredito multi-mecanismo | Os mecanismos discordam; use o nome que o relatório principal usa |
+| Nome de arquivo comum ou original | Painel de informações de versão/assinatura do arquivo | O nome original não é o nome de arquivo visto no disco |
+| Data de compilação | Metadados do cabeçalho do executável portátil | O formato e o fuso horário devem corresponder exatamente ao formulário |
+| Data do primeiro envio | Painel de histórico de envios | Não confunda o primeiro envio com a primeira detecção |
+| Arquivo `.dat` dropado | Relatório de análise do fornecedor | A telemetria do scanner pode não tê-lo — mude para artigos escritos por humanos |
+| Servidor ou URL de C2 | Seções de comportamento de rede e sistemas externos | Verifique a reputação antes de responder |
+
+As missões do Rat Lab recompensam precisão em vez de velocidade em quase todas essas perguntas. Uma resposta certa inserida no formato errado ainda conta como errada.
+
+## Erros Comuns Que Custam Pontos
+
+A maioria das missões do Rat Lab é perdida por erros de processo, não por habilidade analítica. Aqui estão os modos de falha contra os quais vale a pena se proteger.
+
+| Erro | Abordagem melhor |
+|---|---|
+| Confiar em uma única fonte | Verifique cada resposta em pelo menos dois lugares independentes |
+| Pular relatórios de fornecedores | A automação às vezes deixa passar artefatos dropados por completo |
+| Colar um hash com espaços em branco ocultos | Limpe-o primeiro em um editor de texto simples |
+| Apressar a data e hora | Corresponda ao formato solicitado, incluindo UTC se especificado |
+| Confundir hashes da amostra e de arquivos dropados | Rastreie a qual artefato cada hash pertence |
+| Responder à pergunta que você presumiu que foi feita | Releia o enunciado imediatamente antes de enviar |
+
+Alguns hábitos separam as pessoas que terminam de forma limpa das pessoas que refazem o desafio:
+
+- Mantenha um arquivo de rascunho contínuo com cada hash, domínio e data e hora que você encontrar, além de qual fonte ele veio.
+- Tire um screenshot do painel exato onde você encontrou cada resposta, para que você possa defender seu raciocínio depois.
+- Registre qual snapshot de sandbox e qual relatório você usou — você vai precisar disso se uma pergunta fizer referência a um comportamento que você já viu.
+- Escreva uma breve nota de metodologia no final. É uma excelente preparação para entrevistas e um artefato público útil se você publicar walkthroughs.
+
+## Perguntas Frequentes
+
+**Quanto tempo as missões do Rat Lab geralmente levam

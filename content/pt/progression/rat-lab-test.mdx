@@ -1,0 +1,77 @@
+export const metadata = {
+  title: "Guia do Teste Rat Lab: Um Walkthrough Passo a Passo do Yellow RAT para Jogadores de CTF",
+  description: "Domine o teste Rat Lab com este walkthrough: ferramentas de inteligência de ameaças, seis objetivos e dicas profissionais para progredir no desafio Yellow RAT.",
+  category: "progression",
+  date: "2026-09-20",
+}
+
+O trabalho de inteligência de ameaças recompensa quem consegue transitar rapidamente entre plataformas, e o **teste Rat Lab** é uma das formas mais objetivas de comprovar essa habilidade. Em vez de entregar uma captura de pacotes completa ou um endpoint ativo, este desafio fornece um único hash de arquivo e pede que você reconstrua toda uma história de intrusão a partir de relatórios públicos. Isso importa porque a resposta a incidentes real raramente começa com um quadro completo — ela começa com um indicador, e sua tarefa é transformar esse indicador em contexto. Concluir o teste Rat Lab significa que você consegue identificar uma família de malware, rastrear os artefatos que ela deixa e localizar a infraestrutura com a qual ela se comunica, tudo sem nunca tocar na máquina vítima.
+
+Abaixo está um guia prático de progressão: o que o desafio realmente pede, quais ferramentas respondem a cada pergunta e como evitar os becos sem saída que travam a maioria dos analistas iniciantes.
+
+## O Que o Teste Rat Lab Realmente Pede Que Você Faça
+
+O teste Rat Lab é um desafio de inteligência de ameaças construído em torno de um cenário realista. Uma organização percebe tráfego de rede anormal em várias estações de trabalho, e funcionários relatam que suas consultas de busca estão sendo redirecionadas para sites desconhecidos. Seu ponto de entrada é um arquivo de hash — normalmente um arquivo de texto contendo o valor SHA-256 da amostra suspeita — e nada mais.
+
+A partir daí, espera-se que você pesquise a amostra usando plataformas de inteligência de fontes abertas e responda a um curto conjunto de perguntas investigativas. O desafio foi criado deliberadamente para que nenhuma plataforma isolada tenha todas as respostas. Esse design força você a corroborar descobertas entre fontes, que é exatamente como funciona o trabalho profissional de CTI.
+
+| Elemento do desafio | O que esperar |
+|---|---|
+| Artefato inicial | Um único hash SHA-256 em um arquivo de texto |
+| Estilo de investigação | OSINT passivo e relatórios de sandbox |
+| Foco de habilidades | Pivotagem de inteligência de ameaças, triagem de malware |
+| Plataformas principais | Hybrid Analysis, VirusTotal, CTI de fornecedores |
+| Formato das respostas | Strings curtas, nomes de arquivo, timestamps, domínios |
+| Dificuldade | Amigável para iniciantes, profundidade intermediária |
+| Conclusão típica | Cerca de 30–60 minutos na primeira tentativa |
+
+## Os Seis Objetivos e Onde Cada Resposta Está
+
+A maioria das variantes do teste Rat Lab segue o mesmo arco investigativo: identificar a família, caracterizar o binário, encontrar o payload deixado e, então, localizar a infraestrutura de comando e controle (C2). Saber a ordem de antemão evita que você releia os mesmos relatórios quatro vezes.
+
+| # | Objetivo | Melhor fonte |
+|---|---|---|
+| 1 | Identificar a família de malware que causa o tráfego | Busca de relatórios de sandbox no Hybrid Analysis |
+| 2 | Encontrar o nome de arquivo comum/original usado | Detalhes do arquivo no VirusTotal, seção de informações de assinatura |
+| 3 | Determinar o timestamp de compilação | Dados do cabeçalho do executável portátil no VirusTotal |
+| 4 | Descobrir quando a amostra foi enviada pela primeira vez | Histórico de envios do VirusTotal |
+| 5 | Identificar o arquivo `.dat` deixado em AppData | Relatório de CTI do fornecedor descrevendo arquivos deixados |
+| 6 | Identificar o servidor ou URL de C2 | Relatório de CTI do fornecedor, verificado em cruzamento com o comportamento no sandbox |
+
+A progressão é intencional. A pergunta 1 fornece o vocabulário necessário para tudo o que vem depois — depois que você sabe o nome da família, as perguntas restantes se tornam buscas guiadas por palavras-chave, em vez de pesquisa aberta.
+
+## Ferramentas que Você Deve Deixar Abertas Antes de Começar
+
+Você não precisa de um laboratório cheio de máquinas virtuais para este desafio. Precisa de três abas do navegador e um arquivo de anotações. Todo o teste Rat Lab é um exercício de ler bem inteligência, não de montar um ambiente de análise.
+
+| Ferramenta | O que ela oferece | Como ajuda no teste Rat Lab |
+|---|---|---|
+| Hybrid Analysis | Relatórios de detonação em sandbox, pontuações de ameaça, listagens de sistemas externos | Confirma a família e valida o endpoint de C2 |
+| VirusTotal | Detecções de múltiplos mecanismos, metadados de PE, histórico de envios, aba de comportamento | Fornece nomes de arquivo, timestamps e reputação de URL |
+| Relatórios de CTI de fornecedores | Perfis de malware escritos por analistas com listas de observáveis | Revela artefatos deixados que os metadados sozinhos não mostram |
+| Mecanismos de busca | Posts de blog e walkthroughs da comunidade que corroboram informações | Preenche lacunas quando falta um campo em uma plataforma |
+
+Para ter uma visão mais ampla de como esses desafios são estruturados, a [plataforma de desafios CyberDefenders](https://cyberdefenders.org/) é a casa oficial do Yellow RAT Lab e hospeda os briefs de cenário e o envio de respostas.
+
+## Progressão Passo a Passo pelo Teste Rat Lab
+
+### Etapa 1: Ancore-se no Hash
+
+Cole o valor SHA-256 primeiro em uma busca de relatórios, não em uma pesquisa geral na web. Bancos de dados de sandbox indexam hashes e retornam análises anteriores quase instantaneamente, o que fornece um nome de família e um resumo comportamental em um único clique. Escolha o relatório disponível com a maior pontuação — execuções de sandbox em modo aprofundado revelam muito mais atividade de rede e de sistema de arquivos do que verificações rápidas.
+
+### Etapa 2: Faça Pivot para Metadados Estáticos
+
+Com a família conhecida, vá para uma plataforma de inteligência de arquivos com múltiplos mecanismos e abra a visualização de detalhes do arquivo. Dois campos respondem a duas perguntas separadas: o nome de arquivo original registrado nas informações de versão do arquivo, e o timestamp de compilação incorporado ao cabeçalho do executável portátil. Copie ambos exatamente como mostrado — essas respostas diferenciam maiúsculas de minúsculas e muitas vezes são rejeitadas por um caractere fora de lugar.
+
+### Etapa 3: Persiga o Artefato Deixado
+
+O arquivo `.dat` deixado é a pergunta que a maioria dos analistas erra na primeira passada, porque plataformas com múltiplos mecanismos frequentemente não o registram. Relatórios da comunidade e análises de inteligência de fornecedores listam arquivos deixados em suas narrativas comportamentais, geralmente em uma lista numerada de indicadores observados. Leia a prosa, não apenas as tabelas.
+
+### Etapa 4: Confirme o C2 Três Vezes
+
+O objetivo final é o endpoint de C2, e o teste Rat Lab recompensa deliberadamente a verificação em vez da velocidade. A experiência dos jogadores sugere que a abordagem mais segura é localizar a URL no relatório do fornecedor, confirmá-la como padrão de memória ou comunicação de rede na plataforma com múltiplos mecanismos e, em seguida, verificar a pontuação de reputação do domínio. Três confirmações independentes tornam uma resposta errada praticamente impossível.
+
+| Etapa | Pergunta respondida | Método de confirmação |
+|---|---|---|
+| 1 | Família de malware | Correspondência de relatório de sandbox pelo hash |
+| 2 | Nome de arquivo comum | Campo de informações de versão

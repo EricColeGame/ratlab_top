@@ -1,0 +1,122 @@
+export const metadata = {
+  title: "Misiones de Rat Lab: Guía completa paso a paso para retos de RAT de threat intel",
+  description: "Aprende a resolver las misiones de Rat Lab paso a paso: triaje de hashes de malware, pivotes en VirusTotal y Hybrid Analysis, archivos dropeados y descubrimiento de C2.",
+  category: "guide",
+  date: "2026-09-20",
+}
+
+## ¿Qué son las misiones de Rat Lab?
+
+Si alguna vez te has quedado mirando un único hash de archivo preguntándote por dónde empezar, las misiones de Rat Lab son la forma más rápida de convertir esa mirada en blanco en un flujo de trabajo repetible. Cada una de estas misiones de Rat Lab te sumerge en una intrusión simulada y te pide reconstruir toda la historia a partir de una o dos pistas. Eso importa porque a los responsables de contratación en threat intelligence les importa menos lo que has memorizado y más cómo pivotas cuando lo único que tienes es un artefacto y una pregunta.
+
+El formato es deliberadamente escaso a propósito. Una empresa ficticia detecta algo inusual: tráfico de red saliente anómalo, consultas de búsqueda de empleados redirigidas a sitios web desconocidos, un endpoint que marca un binario sospechoso. Recibes un archivo de texto con el hash de una muestra y un briefing del escenario. Todo lo demás hay que ganárselo mediante investigación.
+
+La etiqueta "lab" describe el ejercicio, no la dificultad. La clase de malware en el centro de estos retos es un troyano de acceso remoto (RAT, por sus siglas en inglés): código que otorga a un operador control interactivo sobre un host infectado. Resolver el reto significa responder un conjunto fijo de preguntas sobre esa muestra con evidencia que puedas señalar.
+
+### Por qué este formato entrena a analistas reales
+
+Los retos de RAT comprimen la primera hora de un incidente real en un rompecabezas autocontenido. Haces triaje de un binario desconocido, identificas su familia, mapeas su infraestructura y reportas hallazgos: el mismo bucle que ejecuta un analista de nivel uno en cada turno. La diferencia es que en un laboratorio las respuestas se conocen, así que puedes verificar si tu método funcionó en lugar de adivinar.
+
+## Habilidades clave que evalúa toda misión de Rat Lab
+
+| Habilidad evaluada | Cómo se ve en la práctica | Por qué importa en el trabajo |
+|---|---|---|
+| Triaje de hashes | Pasar el hash de una muestra por servicios de análisis multi-motor | El primer movimiento en casi cualquier investigación real de malware |
+| Perfilado de muestras | Extraer el nombre de archivo original, metadatos del compilador y fechas de primera detección | Construye una línea temporal y ayuda a delimitar hasta dónde se propagó una infección |
+| Descubrimiento de artefactos | Encontrar archivos dropeados, rutas de staging y ubicaciones de persistencia | Indica a los respondedores exactamente qué buscar en otros hosts |
+| Mapeo de infraestructura | Identificar los endpoints de command-and-control (C2) | Permite el bloqueo, el sinkholing y la contención |
+| Correlación de fuentes | Confirmar una respuesta en múltiples plataformas | Evita respuestas incorrectas pero confiadas |
+| Reporte | Escribir respuestas breves, precisas y con el formato correcto | Refleja la redacción de tickets y las notas de traspaso en un SOC |
+
+Fíjate en que ninguna de estas habilidades requiere que hagas ingeniería inversa de ensamblador a mano. Estos retos tratan sobre disciplina de investigación, no sobre heroicidades. Eso es lo que los hace accesibles para principiantes y aún útiles para analistas con experiencia que quieren un ejercicio estructurado.
+
+## El kit de threat intelligence que necesitas
+
+Las misiones de Rat Lab rara vez requieren algo exótico. Un navegador, una o dos cuentas gratuitas en plataformas de análisis públicas y la disposición a leer informes largos te llevarán a través de la mayoría de ellas. La [plataforma CyberDefenders](https://cyberdefenders.org/) que popularizó este estilo de retos está construida exactamente sobre esa premisa: herramientas gratuitas, escenarios realistas.
+
+| Herramienta | Qué te aporta | Pregunta típica que responde |
+|---|---|---|
+| Hybrid Analysis | Informes de Falcon Sandbox, resúmenes de comportamiento, listas de sistemas externos | ¿Qué ejecución en sandbox coincide con mi muestra y con qué contactó? |
+| [VirusTotal](https://www.virustotal.com/) | Detecciones multi-motor, detalles del archivo, comportamiento, relaciones, historial de envíos | Nombre de la familia, nombre de archivo original, marca de tiempo de compilación, primer envío |
+| Informes de inteligencia de proveedores | Análisis escrito por humanos de una familia de malware concreta | Archivos dropeados e infraestructura C2 observada |
+| Motores de búsqueda y blogs de CTI | Contexto de campaña y convenciones de nomenclatura de familias | "¿Qué es esta familia y quién ha escrito sobre ella antes?" |
+| MITRE ATT&CK | Nomenclatura estándar de técnicas y tácticas | Convertir hallazgos en bruto en terminología defendible |
+
+Una nota rápida sobre cada uno. Los servicios de sandbox son tu ruta más rápida desde un hash desnudo hasta una narrativa de comportamiento. Los escáneres multi-motor son tu mejor fuente para metadatos estáticos de archivos. Los informes de proveedores rellenan los huecos que la automatización pasa por alto. Los motores de búsqueda lo unen todo.
+
+Los informes de la comunidad, escritos por autores de walkthroughs, son genuinamente útiles como verificación de cordura después de haber resuelto un problema, pero nunca deberían ser tu primera parada. Primero resuelve, después compara; de lo contrario no aprendes nada y el siguiente reto te humilla.
+
+## Un flujo de trabajo paso a paso para las misiones de Rat Lab
+
+El orden en que trabajas las misiones de Rat Lab importa más que la velocidad bruta. Los analistas que saltan directamente a un motor de búsqueda en busca de respuestas suelen atascarse en las preguntas de seguimiento. Sigue esta secuencia en su lugar.
+
+| Paso | Acción | Dónde mirar |
+|---|---|---|
+| 1 | Lee el escenario dos veces y anota los síntomas reportados por la víctima | Briefing del reto |
+| 2 | Copia el hash exactamente, sin espacios en blanco al principio ni al final | Archivo de artefacto proporcionado |
+| 3 | Busca el hash en un servicio de sandbox y abre el informe más completo | Búsqueda de informes de sandbox |
+| 4 | Extrae los detalles estáticos del archivo desde un escáner multi-motor | Panel de detalles del archivo |
+| 5 | Caza artefactos dropeados en análisis de proveedores y de la comunidad | Informes específicos de la familia |
+| 6 | Confirma el endpoint C2 con al menos tres fuentes | Sistemas externos del sandbox, comportamiento de red del escáner, informe del proveedor |
+| 7 | Da formato a cada respuesta exactamente como espera el formulario de envío | Página de envío |
+
+### Empieza por el hash, no por adivinar
+
+Pega el hash en tu plataforma de análisis preferida antes de hacer cualquier otra cosa. Cualquier espacio en blanco, un carácter perdido o un error de mayúsculas y minúsculas devolverá "no encontrado" y te enviará a perseguir una muestra que no existe. Copia desde un editor de texto plano, nunca desde un documento con formato.
+
+### Lee el informe, no solo ojees la puntuación
+
+Los resultados de búsqueda de sandbox a menudo devuelven varias ejecuciones de la misma muestra. Elige la que tenga la puntuación de amenaza más alta y los datos de comportamiento más completos, normalmente la instantánea de escritorio de Windows en lugar de un entorno más antiguo o móvil. La profundidad gana a la comodidad aquí.
+
+### Confirma el C2 desde tres ángulos
+
+Una única mención de una dirección IP o URL no prueba nada: podría ser un falso positivo de la propia telemetría del sandbox. Las respuestas más sólidas aparecen en la lista de sistemas externos del informe del sandbox, en la sección de comportamiento de comunicación de red del escáner y en un escrito de un proveedor. Cuando tres fuentes independientes coinciden, envía con confianza.
+
+## Arquetipos de preguntas que deberías esperar
+
+A lo largo de toda la familia de retos, las mismas seis preguntas reaparecen con ropajes ligeramente distintos. Aprender los arquetipos te permite avanzar más rápido con muestras desconocidas.
+
+| Arquetipo de pregunta | Dónde suele vivir la respuesta | Trampa habitual |
+|---|---|---|
+| Nombre de la familia de malware | Cabecera del informe de sandbox, etiquetas de veredicto multi-motor | Los motores no coinciden; usa el nombre que emplea el informe principal |
+| Nombre de archivo común u original | Panel de información de versión/firma del archivo | El nombre original no es el nombre de archivo visto en disco |
+| Marca de tiempo de compilación | Metadatos de la cabecera del ejecutable portátil | El formato y la zona horaria deben coincidir exactamente con el formulario |
+| Fecha del primer envío | Panel de historial de envíos | No confundas el primer envío con la primera detección |
+| Archivo `.dat` dropeado | Informe de análisis del proveedor | La telemetría del escáner puede no incluirlo: pivota a escritos humanos |
+| Servidor o URL de C2 | Secciones de comportamiento de red y sistemas externos | Verifica la reputación antes de responder |
+
+Las misiones de Rat Lab premian la precisión por encima de la velocidad en casi todas estas. Una respuesta correcta introducida con el formato equivocado sigue contando como incorrecta.
+
+## Errores comunes que cuestan puntos
+
+La mayoría de las misiones de Rat Lab se pierden por errores de proceso, no por habilidad analítica. Aquí están los modos de fallo contra los que conviene protegerse.
+
+| Error | Mejor enfoque |
+|---|---|
+| Confiar en una sola fuente | Verifica cada respuesta en al menos dos lugares independientes |
+| Saltarse los informes de proveedores | La automatización a veces pasa por alto artefactos dropeados por completo |
+| Pegar un hash con espacios en blanco ocultos | Límpialo antes en un editor de texto plano |
+| Ir con prisa en la marca de tiempo | Ajusta el formato solicitado, incluida la UTC si se especifica |
+| Mezclar hashes de la muestra y de archivos dropeados | Lleva registro de a qué artefacto pertenece cada hash |
+| Responder a la pregunta que asumiste que se hacía | Relee el enunciado justo antes de enviar |
+
+Unos cuantos hábitos separan a quienes terminan limpiamente de quienes rehacen el reto:
+
+- Mantén un archivo de borrador en marcha con cada hash, dominio y marca de tiempo que encuentres, además de de qué fuente provino.
+- Haz capturas de pantalla del panel exacto donde encontraste cada respuesta, para poder defender tu razonamiento después.
+- Registra qué instantánea de sandbox y qué informe usaste; lo necesitarás si una pregunta hace referencia a un comportamiento que ya viste.
+- Escribe una breve nota de metodología al final. Es una excelente preparación para entrevistas y un artefacto público útil si publicas walkthroughs.
+
+## Preguntas frecuentes
+
+**¿Cuánto suelen durar las misiones de Rat Lab?**
+Los informes de la comunidad sugieren que la mayoría de los retos de una sola muestra tardan entre treinta minutos y dos horas, dependiendo de lo cómodo que estés con las plataformas de análisis. La primera siempre es la más lenta.
+
+**¿Necesito herramientas de pago para completar las misiones de Rat Lab?**
+No. Los servicios de sandbox públicos, los escáneres multi-motor gratuitos y las publicaciones de blogs de proveedores cubren la inmensa mayoría de las preguntas. Si un reto requiere algo especializado, el briefing normalmente lo indica.
+
+**¿Cuál es la diferencia entre un RAT y un Rat Lab?**
+Un RAT es una clase de malware que otorga a un atacante el control remoto de una máquina víctima. Un Rat Lab es un reto de formación construido en torno al análisis de uno: el malware es el sujeto y el laboratorio es el aula.
+
+**¿Puede ayudarme a mi carrera resolver misiones de Rat Lab?**
+Sí, por dos razones. Primero, el flujo de trabajo (triaje de hashes, descubrimiento de artefactos, mapeo de infraestructura, reporte) es exactamente lo que piden los roles de nivel inicial en threat intelligence y SOC. Segundo, publicar un walkthrough claro te da una pieza de portafolio que demuestra que puedes hacer el trabajo, no solo describirlo.

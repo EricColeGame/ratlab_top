@@ -1,0 +1,113 @@
+export const metadata = {
+  title: "Walkthrough em Vídeo do Rat Lab: Domine a Análise de Malware RAT Passo a Passo",
+  description: "Um guia completo em vídeo do Rat Lab — o que o desafio de análise de RAT abrange, como acompanhar walkthroughs, quais ferramentas usar e dicas para resolver todas as perguntas.",
+  category: "media",
+  date: "2026-09-20",
+}
+
+Um único hash SHA256 é tudo o que você recebe. Nenhum nome de arquivo, nenhum domínio, nenhuma anotação útil da equipe de endpoint — apenas 64 caracteres e uma história sobre funcionários cujas consultas de busca começaram a cair em sites desconhecidos. Essa é a premissa por trás do desafio Rat Lab, e é exatamente por isso que um vídeo bem feito sobre o Rat Lab vale uma hora do seu tempo.
+
+Um vídeo do Rat Lab comprime a tentativa e erro de uma investigação real em um fluxo de trabalho repetível: hash → plataforma de reputação → relatório de sandbox → pivôs comportamentais → command-and-control confirmado. Se você é um analista de SOC em treinamento ou um profissional de blue team revisando conhecimentos de threat intelligence, assistir alguém navegar pelas mesmas seis perguntas desenvolve um reconhecimento de padrões que nenhum gabarito jamais vai proporcionar.
+
+Este guia aborda o que o laboratório realmente pergunta, quais plataformas fazem o trabalho pesado, como um vídeo típico do Rat Lab divide a investigação em fases e como extrair habilidade real das imagens em vez de simplesmente copiar respostas.
+
+## O Que É o Desafio em Vídeo do Rat Lab?
+
+O Rat Lab é um exercício de cyber threat intelligence (CTI) construído em torno de uma única amostra de malware descoberta dentro da rede de uma empresa fictícia. No cenário, uma auditoria de segurança de rotina sinaliza tráfego anormal em várias estações de trabalho, e os investigadores descobrem que as consultas de busca dos funcionários estão sendo redirecionadas para sites desconhecidos. A única pista que você recebe é um hash de arquivo SHA256.
+
+Essa restrição é justamente o ponto central. Você não pode anexar um debugger nem percorrer o binário linha a linha — você precisa pesquisá-lo. Um vídeo do Rat Lab documenta essa pesquisa do início ao fim: onde colar o hash, quais abas realmente importam e como confirmar uma descoberta antes de assumir uma resposta.
+
+O desafio está organizado em seis perguntas que cobrem a família de malware, o nome de arquivo comum usado pela amostra, seu timestamp de compilação, sua data de primeiro envio, um artefato deixado na pasta AppData e o servidor de command-and-control (C2) com o qual ela se comunica. Write-ups da comunidade circulam amplamente porque essas seis perguntas correspondem quase uma a uma às habilidades que um analista de nível inicial aplica todos os dias.
+
+## O Que Você Realmente Aprende com um Vídeo do Rat Lab
+
+O valor de um vídeo do Rat Lab não são as respostas — é a memória muscular. Criadores diferentes seguem rotas ligeiramente distintas, mas o conjunto de habilidades subjacente é consistente.
+
+| Habilidade | Por que importa | Onde aparece no laboratório |
+|---|---|---|
+| Triagem a partir do hash | Consultas de reputação são o caminho mais rápido para obter contexto | O movimento de abertura para todas as perguntas |
+| Leitura de metadados estáticos | Timestamps de compilação sugerem cronogramas de desenvolvimento | Inspeção do cabeçalho do executável portável |
+| Caça a artefatos | Arquivos deixados para trás revelam staging e persistência | O arquivo `.dat` na pasta AppData |
+| Pivô de rede | A identificação do C2 orienta bloqueio e contenção | Abas de comportamento e relatórios de inteligência |
+| Triangulação de fontes | Qualquer fonte isolada pode estar incompleta | A mesma URL confirmada em três lugares |
+| Disciplina de relatório | As respostas precisam ser defensáveis, não adivinhadas | Toda resposta enviada |
+
+O que separa um walkthrough útil de um esquecível é a narração. Um criador que explica *por que* clicou em determinada aba ensina uma regra de decisão. Um criador que simplesmente lê as respostas na tela não ensina nada que você não pudesse ter pesquisado por conta própria.
+
+Relatos da comunidade destacam consistentemente o mesmo ponto de virada: o momento em que a investigação deixa de ser uma consulta de hash e se torna um incidente real, quando um arquivo deixado para trás ou um artefato de rede conecta a amostra a algo vivo.
+
+## As Ferramentas Por Trás de Todo Walkthrough em Vídeo do Rat Lab
+
+Quase todo vídeo do Rat Lab percorre o mesmo pequeno conjunto de ferramentas. Saber no que cada plataforma é boa permite que você acompanhe sem pausar a cada trinta segundos.
+
+| Ferramenta | O que você verifica | Pergunta que ela responde |
+|---|---|---|
+| Hybrid Analysis (Falcon Sandbox) | Busca de relatórios por hash, veredictos de sandbox, indicadores suspeitos, sistemas externos | Família de malware; confirmação do C2 |
+| VirusTotal | Aba Details (informações de assinatura, cabeçalho PE), History, Behavior | Nome de arquivo comum; timestamp de compilação; primeiro envio; C2 |
+| Relatório de inteligência da Red Canary | Comportamentos documentados e atividade de rede observada | Arquivo deixado para trás; URL do C2 |
+| Plataforma CyberDefenders | Briefing do desafio, arquivos e envio de respostas | Contextualização de toda a investigação |
+| MITRE ATT&CK | Mapeamento de técnicas para write-ups | Contexto e qualidade do relatório |
+
+O relatório de sandbox costuma ser a primeira parada porque faz mais do que nomear a ameaça — ele informa o que a amostra *fez*. Walkthroughs da comunidade apontam que o envio de sandbox com maior pontuação é normalmente o primeiro que vale a pena ler, já que um veredicto forte geralmente significa detalhes comportamentais mais ricos.
+
+O VirusTotal então se torna a ferramenta de trabalho para metadados. A aba Details expõe coisas que um sandbox não mostra: o nome de arquivo original escondido nas informações de assinatura, o timestamp de compilação oculto no cabeçalho do executável portável e a data do primeiro envio no painel History. A aba Behavior é onde vive a comunicação de rede, e muitas vezes é ali que uma string de domínio suspeita surge como padrão de memória.
+
+A inteligência da Red Canary adiciona a camada humana — um relato escrito por um analista sobre os arquivos deixados e os endpoints contatados. Quando as três fontes concordam quanto a um domínio, você tem o que os analistas chamam de confirmação tripla: uma descoberta sólida o suficiente para agir.
+
+Se você quiser explorar a plataforma que hospeda esse estilo de desafio, navegue pela [biblioteca oficial de desafios do CyberDefenders](https://cyberdefenders.org/) para ver a programação atual de laboratórios.
+
+## Fase a Fase: Como um Walkthrough em Vídeo do Rat Lab se Desenrola
+
+A maioria dos walkthroughs percorre as perguntas em ordem, porque cada resposta alimenta a seguinte. Aqui está o esqueleto que você verá repetidamente.
+
+| Fase | Tema da pergunta | Fonte principal | Artefato que você procura |
+|---|---|---|---|
+| 1 | Qual família de malware está presente? | Hybrid Analysis | Nome da família no relatório de sandbox |
+| 2 | Qual nome de arquivo ela usa? | VirusTotal | Nome original nas informações de assinatura |
+| 3 | Quando foi compilada? | VirusTotal | Timestamp de compilação no cabeçalho PE |
+| 4 | Quando foi vista pela primeira vez? | VirusTotal | Data do primeiro envio no History |
+| 5 | O que ela deixou para trás? | Relatório da Red Canary | Arquivo `.dat` na pasta AppData |
+| 6 | Com qual C2 ela se comunica? | Todas as três | URL do C2 e reputação do domínio |
+
+As fases um e dois estabelecem a identidade. O nome da família indica com que classe de ferramenta você está lidando, e o nome de arquivo comum fornece um pivô para caçar a mesma amostra em outras máquinas. Em um incidente real, esse nome de arquivo se torna uma consulta de endpoint em toda a frota.
+
+As fases três e quatro estabelecem a linha do tempo. O horário de compilação informa quando a ferramenta foi construída; o primeiro envio informa quando a comunidade de segurança em geral a viu pela primeira vez. A diferença entre essas duas datas é genuinamente útil — um intervalo longo pode significar que a amostra circulou silenciosamente antes que alguém percebesse.
+
+As fases cinco e seis estabelecem o impacto. Os arquivos deixados para trás mostram o que persiste em disco, enquanto o domínio C2 é o que você entrega à equipe de rede para bloqueio. É nesta fase que um vídeo do Rat Lab justifica seu valor, porque você vê um analista se recusar a aceitar uma única fonte e, em vez disso, confirmar o mesmo domínio em um relatório de fornecedor, uma aba de comportamento e a lista de sistemas externos de um sandbox.
+
+## Dicas Para Aproveitar ao Máximo um Vídeo do Rat Lab
+
+Assistir passivamente é a maneira mais rápida de esquecer tudo até quinta-feira. Trate o vídeo como um parceiro de laboratório, não como uma aula.
+
+- **Pause antes de cada revelação.** Quando o criador diz "vamos verificar a aba Details", pare o vídeo e faça você mesmo primeiro.
+- **Mantenha uma folha de anotações.** Registre todo hash, nome de arquivo, timestamp, domínio e caminho de arquivo que encontrar.
+- **Assista às partes desconhecidas em velocidade normal.** Acelere para 1,5x apenas nos trechos que você já domina.
+- **Reconstrua a cadeia no dia seguinte.** Sem o vídeo, tente reconstruir como cada resposta foi obtida.
+- **Compare dois criadores.** Walkthroughs diferentes muitas vezes fazem pivôs distintos para a mesma resposta, e as diferenças são a lição.
+- **Escreva o "por quê", não o "o quê".** Uma resposta que você consegue justificar sobrevive a uma entrevista; uma string memorizada, não.
+
+Aqui estão os erros que aparecem com mais frequência nos comentários e nas discussões da comunidade.
+
+| Erro | Por que prejudica | Abordagem melhor |
+|---|---|---|
+| Pular o relatório de sandbox | Você perde tanto a nomeação da família quanto os sistemas externos | Leia primeiro o relatório com maior pontuação |
+| Confiar em uma única fonte para o C2 | Descobertas de fonte única podem estar desatualizadas ou incompletas | Confirme em três fontes independentes |
+| Ignorar metadados do PE | O horário de compilação rende pontos fáceis e contexto real | Verifique os detalhes do cabeçalho desde cedo |
+| Assistir tudo em velocidade dupla | Nada fica na memória | Desacelere nos pivôs desconhecidos |
+| Copiar respostas literalmente | Reprovado em avaliações práticas | Explique o raciocínio nas suas anotações |
+
+Nada disso exige ferramentas pagas. As plataformas envolvidas oferecem visibilidade gratuita suficiente para concluir a investigação, o que é grande parte da razão pela qual este laboratório é uma recomendação tão comum para quem está migrando para o trabalho de threat intelligence.
+
+## Perguntas Frequentes Sobre os Vídeos do Rat Lab
+
+**Quanto tempo costuma durar um walkthrough em vídeo do Rat Lab?**
+A maioria vai de dez a trinta minutos, dependendo de quanta narração o criador adiciona. Um vídeo do Rat Lab que dedica tempo extra explicando a navegação nas ferramentas costuma ser mais valioso do que um vídeo rápido, mesmo que leve o dobro do tempo para terminar.
+
+**Preciso de contas nas plataformas de análise para acompanhar?**
+Você consegue visualizar uma boa quantidade de dados de relatórios sem fazer login, mas contas gratuitas liberam detalhes adicionais, como relatórios comportamentais completos e dados históricos de envio. Se você pretende refazer os passos por conta própria, vale a pena gastar os dois minutos do cadastro.
+
+**Um vídeo do Rat Lab é útil para iniciantes completos?**
+Sim, desde que você escolha um voltado para novatos. O laboratório assume que você sabe o que é um hash de arquivo, mas não muito além disso. Acompanhar um walkthrough é uma forma eficiente de aprender as interfaces do VirusTotal e do Hybrid Analysis sem ficar vagando pelas abas às cegas.
+
+**Posso aplicar no trabalho o que aprendo em um vídeo do Rat Lab?**
+O fluxo de trabalho se transfere diretamente. Triagem de hash, revisão de metadados, caça a artefatos e confirmação de C2 são tarefas cotidianas em resposta a incidentes e threat intelligence. As respostas específicas mudam a cada amostra; o processo ensinado no vídeo do Rat Lab, não.
