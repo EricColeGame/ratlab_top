@@ -1,1 +1,393 @@
-{}
+{
+  "site": {
+    "name": "Rat Lab Wiki",
+    "shortName": "Rat Lab",
+    "tagline": "Guias de Fuga do Laboratório, Mutações e Códigos",
+    "description": "A Rat Lab Wiki oferece guias de Roblox Rat Lab, dicas de mutação, informações de jogo, detalhes de classes e funções, atualizações e tudo o que você precisa para dominar o laboratório.",
+    "legalNotice": "Wiki não oficial criada por fãs. Feita por jogadores, para jogadores."
+  },
+  "nav": {
+    "guide": "Guia",
+    "mechanics": "Mecânicas",
+    "items": "Itens",
+    "progression": "Progressão",
+    "community": "Comunidade",
+    "media": "Mídia"
+  },
+  "home": {
+    "meta": {
+      "title": "Rat Lab Wiki - Códigos, Guias e Mutações",
+      "description": "A Rat Lab Wiki oferece guias de Roblox Rat Lab, dicas de mutação, informações de jogo, detalhes de classes e funções, atualizações e tudo o que você precisa para dominar o laboratório."
+    },
+    "hero": {
+      "eyebrow": "Aventura de Fuga de Laboratório no Roblox",
+      "title": "Rat Lab Wiki",
+      "description": "Rat Lab é um jogo de experimentos científicos no Roblox onde os jogadores atuam como cobaias, cientistas ou forças de segurança. Escape de testes, crie mutações e sobreviva dentro de um complexo de pesquisa letal.",
+      "stats": [
+        "Mais de 841 mil visitas",
+        "3 funções disponíveis",
+        "0 códigos ativos",
+        "Atualizações semanais"
+      ],
+      "primaryCta": "Guia para Iniciantes",
+      "secondaryCta": "Guia de Mutações",
+      "tertiaryCta": "Códigos Ativos",
+      "videoLabel": "Mídia oficial"
+    },
+    "updates": {
+      "title": "Últimas Atualizações",
+      "browse": "Navegar por Todos os Guias",
+      "viewAll": "Ver Tudo"
+    },
+    "start": {
+      "eyebrow": "Comece Aqui",
+      "title": "Sua Jornada em Rat Lab",
+      "cards": [
+        {
+          "number": "1",
+          "title": "Guia para Iniciantes",
+          "description": "Aprenda o ciclo básico de fuga, navegação pelas câmaras e controles essenciais para sobreviver à sua primeira rodada no laboratório."
+        },
+        {
+          "number": "2",
+          "title": "Progressão Rápida",
+          "description": "Descubra as rotas mais eficientes pelas câmaras de teste e otimize a conclusão de tarefas para avançar velozmente."
+        },
+        {
+          "number": "3",
+          "title": "Guia de Mutações",
+          "description": "Experimente traços genéticos e aprimoramentos biológicos para desbloquear habilidades cruciais de fuga e resolução de quebra-cabeças."
+        },
+        {
+          "number": "4",
+          "title": "Objetivos de Missão",
+          "description": "Cumpra tarefas de pesquisa diárias, destranque portas de segurança e supere experimentos complexos nas câmaras."
+        }
+      ]
+    },
+    "popular": {
+      "eyebrow": "Guias Populares",
+      "title": "Tópicos em Destaque",
+      "quickLinks": [
+        "Fuga do Laboratório",
+        "Passo a Passo Inicial",
+        "Guia de Mutações",
+        "Detonado do Nível 4"
+      ]
+    },
+    "aboutGame": {
+      "title": "O que é Rat Lab?",
+      "paragraphs": [
+        "Rat Lab é uma aventura imersiva de quebra-cabeças e fuga no Roblox na qual os jogadores assumem papéis de cobaias navegando por instalações de pesquisa hostis. Desenvolvido pela Evil Science, o jogo desafia você a superar câmaras de teste automatizadas, contornar protocolos de segurança e desvendar os segredos do complexo laboratorial.",
+        "Seja dominando quebra-cabeças espaciais, testando mutações genéticas ou cooperando com aliados para abrir saídas de emergência, nossa wiki traz detonados completos, listas de checagem e estratégias de progressão para todos os jogadores."
+      ],
+      "stats": [
+        {
+          "label": "Desenvolvedor",
+          "value": "Evil Science"
+        },
+        {
+          "label": "Plataforma",
+          "value": "Roblox"
+        },
+        {
+          "label": "Gênero",
+          "value": "Aventura e Quebra-cabeça"
+        },
+        {
+          "label": "Visitas",
+          "value": "841K+"
+        },
+        {
+          "label": "Funções",
+          "value": "3 Disponíveis"
+        },
+        {
+          "label": "Atualizações",
+          "value": "Semanais"
+        }
+      ],
+      "cta": "Explorar Todos os Guias"
+    },
+    "explore": {
+      "title": "Explore a Rat Lab Wiki",
+      "description": "Confira guias aprofundados de Rat Lab, rotas pelas câmaras, listas de níveis de mutações, códigos ativos e estratégias essenciais de sobrevivência para jogadores de Roblox.",
+      "modules": [
+        {
+          "order": 1,
+          "name": "Guia Geral de Rat Lab",
+          "description": "Uma introdução completa sobre a jogabilidade de Rat Lab, objetivos, mecânicas centrais e dinâmica de fuga do laboratório, permitindo que novos jogadores compreendam o jogo de imediato.",
+          "href": "/mechanics/rat-lab-game",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Objetivo",
+              "detail": "Percorra câmaras de teste conectadas e alcance a saída das instalações."
+            },
+            {
+              "label": "Perigos",
+              "detail": "Desvie de lasers automáticos, saídas de gás tóxico e patrulhas de segurança."
+            },
+            {
+              "label": "Trabalho em Equipe",
+              "detail": "Coordene o acionamento de alavancas e liberação de portas com outras cobaias."
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "name": "Guia para Iniciantes em Rat Lab",
+          "description": "Guia focado nos primeiros passos, estratégias básicas, ações decisivas e dicas de sobrevivência para jogadores novatos progredirem sem dificuldades.",
+          "href": "/guide/rat-lab-walkthrough",
+          "displayType": "step-by-step",
+          "highlights": [
+            {
+              "label": "1",
+              "detail": "Analise a câmara e examine todos os interruptores e conduítes interativos."
+            },
+            {
+              "label": "2",
+              "detail": "Trace um plano de movimentação antes de pisar em placas de pressão cronometradas."
+            },
+            {
+              "label": "3",
+              "detail": "Teste variáveis de forma isolada para desvendar causas e efeitos de cada enigma."
+            },
+            {
+              "label": "4",
+              "detail": "Colete notas de pesquisa e fuja para consolidar os espólios da partida."
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "name": "Guia de Mutações de Rat Lab",
+          "description": "Guia aprofundado sobre o sistema de mutações: como os cientistas produzem compostos genéticos e como os ratos empregam habilidades e melhorias únicas.",
+          "href": "/mechanics/rat-lab-experiments",
+          "displayType": "tier-grid",
+          "highlights": [
+            {
+              "label": "S",
+              "detail": "Agilidade Aprimorada: Salto elevado e velocidade cruciais para desviar de armadilhas no piso."
+            },
+            {
+              "label": "A",
+              "detail": "Escudo Antiacidês: Diminui drasticamente o dano recebido por poças e vazamentos químicos."
+            },
+            {
+              "label": "B",
+              "detail": "Roer Cabos: Agiliza a interação para neutralizar conduítes e travas de segurança."
+            },
+            {
+              "label": "C",
+              "detail": "Pelagem Térmica: Proteção modesta contra câmaras congeladas e correntes de ar de dutos."
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "name": "Guia de Ferramentas de Rat Lab",
+          "description": "Inventário explicativo com as diversas ferramentas, equipamentos e itens desbloqueáveis para compreender o funcionamento de cada recurso.",
+          "href": "/items/rat-lab-set",
+          "displayType": "code-cards",
+          "highlights": [
+            {
+              "label": "Cartão de Acesso",
+              "detail": "Abre portas de segurança de nível 1 e escotilhas do laboratório",
+              "badge": "Ferramenta"
+            },
+            {
+              "label": "Scanner",
+              "detail": "Detecta fiações embutidas e sensores de pressão nas paredes",
+              "badge": "Utilitário"
+            },
+            {
+              "label": "Chave Inglesa",
+              "detail": "Destrava grelhas de ventilação presas para passagem furtiva",
+              "badge": "Ferramenta"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "name": "Códigos de Rat Lab",
+          "description": "Área dedicada ao monitoramento de recompensas ativas, códigos promocionais e bônus de atualizações para resgate no jogo.",
+          "href": "/progression/rat-lab-tasks",
+          "displayType": "code-cards",
+          "highlights": [
+            {
+              "label": "RATLAB2026",
+              "detail": "Resgate para obter 500 créditos extras de pesquisa e bônus inicial",
+              "badge": "Ativo"
+            },
+            {
+              "label": "MUTATION",
+              "detail": "Resgate para receber um frasco de traço experimental no saguão",
+              "badge": "Ativo"
+            },
+            {
+              "label": "ESCAPE",
+              "detail": "Resgate para ganhar 250 moedas de queijo e um item cosmético",
+              "badge": "Ativo"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "name": "Atualizações de Rat Lab",
+          "description": "Registro de novidades, rebalanceamentos, eventos sazonais e avisos dos criadores para ficar por dentro das mudanças mais recentes.",
+          "href": "/progression/rat-lab-levels",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Patch V1.4",
+              "detail": "Inclusão do setor de testes Nível 4 com mecânicas avançadas de quebra-cabeças com laser."
+            },
+            {
+              "label": "Novos Traços",
+              "detail": "Chegada de 3 mutações experimentais voltadas para agilidade e mitigação de riscos."
+            },
+            {
+              "label": "Correções",
+              "detail": "Resolução de descompassos em placas de pressão durante fugas cooperativas."
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "name": "Comunidade e Discord de Rat Lab",
+          "description": "Central com redes sociais oficiais, comunicados e grupos de bate-papo para conectar você aos demais jogadores de Rat Lab.",
+          "href": "/community/rat-lab-community",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Discord",
+              "detail": "Participe de conversas, monte grupos para fuga e receba avisos de novidades."
+            },
+            {
+              "label": "Roblox",
+              "detail": "Acompanhe o grupo Evil Science para notas de atualização e anúncios."
+            },
+            {
+              "label": "YouTube",
+              "detail": "Assista a guias da comunidade, resoluções de enigmas e vídeos de speedrun."
+            }
+          ]
+        },
+        {
+          "order": 8,
+          "name": "Recursos de Jogabilidade de Rat Lab",
+          "description": "Visão geral detalhando as atribuições de ratos, cientistas e agentes de segurança, dinâmicas de fuga e a proposta única do jogo no Roblox.",
+          "href": "/mechanics/rat-lab-escape",
+          "displayType": "card-list",
+          "highlights": [
+            {
+              "label": "Ratos de Laboratório",
+              "detail": "Solucione enigmas do cenário, rasteje por dutos e fuja do laboratório."
+            },
+            {
+              "label": "Cientistas",
+              "detail": "Introduza variáveis de teste, monitore sujeitos e opere as câmaras."
+            },
+            {
+              "label": "Segurança",
+              "detail": "Faça patrulha em áreas de contenção, trave o perímetro e impeça as fugas."
+            }
+          ]
+        }
+      ]
+    },
+    "faq": {
+      "title": "Perguntas Frequentes",
+      "description": "Respostas diretas para as dúvidas mais comuns a respeito de Rat Lab.",
+      "items": [
+        {
+          "question": "O que é Rat Lab?",
+          "answer": "Rat Lab é um jogo de quebra-cabeça e fuga no Roblox criado pela Evil Science, onde os jogadores exploram câmaras de testes arriscadas, desbloqueiam mutações e tentam escapar de um centro de pesquisa ultra-secreto."
+        },
+        {
+          "question": "Como fugir do laboratório em Rat Lab?",
+          "answer": "Para escapar, é necessário reconhecer a disposição das salas, resolver desafios espaciais e elétricos, cooperar para acionar botões sincronizados e destrancar as portas de saída antes da interceptação da segurança."
+        },
+        {
+          "question": "O que são as mutações em Rat Lab?",
+          "answer": "Mutações em Rat Lab são aprimoramentos biológicos experimentais que concedem atributos como maior velocidade de corrida, saltos mais altos, imunidade química e manuseio rápido de dutos."
+        },
+        {
+          "question": "Existem códigos ativos em Rat Lab?",
+          "answer": "Códigos para Rat Lab podem ser liberados pelos desenvolvedores em metas comunitárias ou novas versões. Acesse frequentemente nossa área de códigos para conferir os itens ativos e o modo de resgate."
+        },
+        {
+          "question": "Dá para jogar Rat Lab sozinho ou em grupo?",
+          "answer": "Rat Lab conta com suporte tanto para desafios individuais quanto para cooperação multijogador. Jogar em equipe facilita muito o acionamento simultâneo de travas e o planejamento de rotas de fuga."
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Pronto para Escapar do Rat Lab?",
+      "description": "Dos passos iniciais nas câmaras de teste ao domínio completo de mutações e técnicas de sobrevivência, nossa wiki da comunidade traz guias gratuitos e atualizados.",
+      "primary": "Ler o Guia para Iniciantes",
+      "secondary": "Jogar no Roblox"
+    }
+  },
+  "guide": {
+    "overviewTitle": "Guias e Detonados de Rat Lab",
+    "overviewDescription": "Passo a passo minucioso, soluções de missões e roteiros de conquistas para triunfar nos desafios de Rat Lab."
+  },
+  "mechanics": {
+    "overviewTitle": "Mecânicas e Sistemas de Rat Lab",
+    "overviewDescription": "Análise minuciosa de experimentos de laboratório, enigmas de evasão, portais e regras de desafio em Rat Lab."
+  },
+  "items": {
+    "overviewTitle": "Itens, Emblemas e Recompensas de Rat Lab",
+    "overviewDescription": "Catálogo integral de emblemas, coberturas de cabeça, trajes cosméticos, troféus e aparatos em Rat Lab."
+  },
+  "progression": {
+    "overviewTitle": "Níveis e Progressão em Rat Lab",
+    "overviewDescription": "Guias detalhando níveis de Rat Lab, localização de câmaras do laboratório, tarefas de pesquisa e marcas de teste."
+  },
+  "community": {
+    "overviewTitle": "Comunidade e Discussões de Rat Lab",
+    "overviewDescription": "Conecte-se com outros pesquisadores e jogadores de Rat Lab no Discord, Reddit, fóruns Steam e canais comunitários."
+  },
+  "media": {
+    "overviewTitle": "Vídeos e Mídia de Rat Lab",
+    "overviewDescription": "Confira gravações de gameplay, detonados em vídeo, demonstrações jogáveis e trailers empolgantes de Rat Lab."
+  },
+  "shared": {
+    "wikiNavigation": "Navegação da Wiki",
+    "activeCodes": "Códigos Ativos",
+    "updated": "Atualizado",
+    "viewAllCodes": "Ver todos os códigos",
+    "playOnRoblox": "Jogar no Roblox",
+    "inThisSection": "Nesta seção",
+    "tableOfContents": "Índice",
+    "nextSteps": "Próximos Passos",
+    "needHelp": "Precisa de Ajuda?",
+    "relatedReading": "Leituras Recomendadas",
+    "relatedGuides": "Guias Relacionados",
+    "readMore": "Ler mais",
+    "officialMedia": "Mídia oficial",
+    "home": "Início",
+    "noGuidesAvailable": "Nenhum guia disponível ainda. Volte em breve!"
+  },
+  "footer": {
+    "aboutTitle": "Rat Lab Wiki",
+    "about": "A Rat Lab Wiki é um portal independente mantido pela comunidade com foco em rotas de fuga, mutações genéticas, funções de rato e cientista, códigos promocionais e conhecimentos vitais para iniciantes e veteranos.",
+    "quickLinks": "Links Rápidos",
+    "guides": "Guias",
+    "legal": "Termos Legais",
+    "copyright": "2026 Rat Lab Wiki. Sem afiliação com Evil Science ou Roblox.",
+    "description": "Jogo de fuga de laboratório no Roblox desenvolvido por Evil Science. Fuja de testes, desbloqueie mutações e sobreviva.",
+    "playGame": "Jogar no Roblox",
+    "officialDiscord": "Discord Oficial",
+    "officialYoutube": "YouTube Oficial",
+    "vvBuilder": "Guias da Wiki",
+    "beginnerGuide": "Guia para Iniciantes",
+    "raceGuides": "Guias de Funções",
+    "bossGuides": "Guia de Mutações",
+    "buildGuide": "Guia de Fuga",
+    "privacyPolicy": "Política de Privacidade",
+    "termsOfService": "Termos de Serviço"
+  }
+}
