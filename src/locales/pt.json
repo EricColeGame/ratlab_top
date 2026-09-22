@@ -12,7 +12,9 @@
     "items": "Itens",
     "progression": "Progressão",
     "community": "Comunidade",
-    "media": "Mídia"
+    "media": "Mídia",
+    "toggleTheme": "Alternar tema",
+    "menu": "Menu"
   },
   "home": {
     "meta": {
