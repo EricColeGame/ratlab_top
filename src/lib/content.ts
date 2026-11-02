@@ -52,6 +52,8 @@ export interface ContentMetadata {
   image?: string;
   badge?: string;
   summary?: string;
+  /** Keep the URL crawlable but explicitly excluded from search indexes and discovery. */
+  noindex?: boolean;
 }
 
 // Heading 结构（从 MDX 源文件提取）
@@ -166,7 +168,7 @@ export async function getAllContent(contentType: string, language: Locale): Prom
   );
 
   return items
-    .filter((item): item is ContentItem => Boolean(item))
+    .filter((item): item is ContentItem => item !== null && !item.metadata.noindex)
     .sort((a, b) => a.metadata.title.localeCompare(b.metadata.title));
 }
 
@@ -337,6 +339,7 @@ export function getDynamicNavigation(language: Locale = "en"): NavGroup[] {
 
       try {
         const source = fs.readFileSync(fullPath, "utf-8");
+        if (/noindex:\s*true/.test(source)) continue;
         // 提取 metadata.title
         const titleMatch = source.match(/title:\s*["'](.+?)["']/);
         if (titleMatch) title = titleMatch[1];
@@ -387,5 +390,18 @@ export async function getAllContentPaths(language: Locale) {
     return segments.map((slug) => ({ contentType: entry.name, slug }));
   });
 
+  return paths;
+}
+
+/**
+ * 获取可索引内容路径（用于 sitemap）
+ * noindex 隔离页仍会静态生成，但不进入 sitemap。
+ */
+export async function getIndexableContentPaths(language: Locale) {
+  const paths: Array<{ contentType: string; slug: string[] }> = [];
+  for (const contentType of CONTENT_TYPES) {
+    const items = await getAllContent(contentType, language);
+    paths.push(...items.map((item) => ({ contentType, slug: item.segments })));
+  }
   return paths;
 }

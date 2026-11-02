@@ -7,6 +7,7 @@ export interface SiteConfig {
   url: string;
   supportEmail: string;
   gameUrl?: string;
+  developerGroupUrl?: string;
   heroVideoId?: string;
   social?: {
     discord?: string;
@@ -27,11 +28,7 @@ export const siteConfig: SiteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://ratlab.top",
   supportEmail: "support@ratlab.top",
   gameUrl: "https://www.roblox.com/games/105904727825849/Rat-Lab",
-  heroVideoId: "YeQwtwyEpCs",
-  social: {
-    discord: "https://discord.gg/roblox",
-    youtube: "https://www.youtube.com/@roblox",
-  },
+  developerGroupUrl: "https://www.roblox.com/groups/176619995/Evil-Science",
   locales: ["en", "es", "pt", "de"],
   defaultLocale: "en",
 };

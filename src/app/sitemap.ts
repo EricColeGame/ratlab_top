@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getAllContentPaths } from "@/lib/content";
+import { getIndexableContentPaths } from "@/lib/content";
 import { routing } from "@/i18n/routing";
 
 export const dynamic = "force-static";
@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic paths: scan actual MDX content files
-  const contentPaths = await getAllContentPaths("en");
+  const contentPaths = await getIndexableContentPaths("en");
   const dynamicPaths = contentPaths.map((item) => `/${[item.contentType, ...item.slug].join("/")}`);
 
   const paths = [...staticPaths, ...dynamicPaths];

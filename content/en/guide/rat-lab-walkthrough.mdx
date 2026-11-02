@@ -1,145 +1,77 @@
 export const metadata = {
-  title: "Rat Lab Walkthrough: Solve the CyberDefenders Yellow RAT Challenge",
-  description: "Complete Rat Lab walkthrough for CyberDefenders' Yellow RAT challenge — use Hybrid Analysis, VirusTotal, and Red Canary to answer all six questions.",
+  title: "Rat Lab Walkthrough: Your First Session, Roles, and Escape",
+  description: "A source-checked first-session walkthrough for the Roblox Rat Lab: choose a role, learn the session timer, run an experiment, or clear three stages and escape.",
   category: "guide",
   date: "2026-09-20",
+  lastModified: "2026-11-02",
 }
 
-## Why the Rat Lab Walkthrough Matters for Blue Teams
+This walkthrough is for the **Roblox experience Rat Lab by Evil Science**. It does not cover the Steam puzzle game *Lab Rat*, the Portal comic, or a malware-analysis challenge. The goal is to get you from the official game page into a useful first round without inventing a map or a stat table.
 
-You are handed a single file hash and expected to explain an entire intrusion. That is the daily reality of cyber threat intelligence (CTI) work, and the Rat Lab walkthrough is one of the fastest ways to rehearse it before the stakes are real.
+## Before You Join
 
-If you can trace a suspicious hash to a malware family, a dropped payload, and a live command-and-control (C2) server using only public reporting, you can write the detections that stop the next incident. This Rat Lab walkthrough breaks the CyberDefenders Yellow RAT challenge into repeatable steps, so the workflow sticks the next time a real alert lands in your SOC queue.
+Use the [official Rat Lab page](https://www.roblox.com/games/105904727825849/Rat-Lab). The place ID is 105904727825849 and the universe ID is 10598688389. The game is free, and the developer describes three roles: Lab Rat, Scientist, and Security.
 
-## What the Yellow RAT Lab Scenario Asks You to Solve
+The official listing also gives the key progression rule: tools unlock the longer you play, but the timer resets every session. Do not expect a permanent account level to carry your tool access forward.
 
-In the scenario, a routine IT security check at GlobalTech Industries flags abnormal network traffic coming from multiple workstations. Employees report that their search queries are being redirected to unfamiliar websites. You receive a single artifact — a text file named `hash.txt` containing the SHA256 hash of the suspected malware — plus six questions to answer.
+## Step 1: Choose the Role You Want to Learn
 
-The point is not to "beat" the lab. It is to demonstrate a repeatable investigation path that a junior analyst could hand off to an incident responder without losing context.
-
-| Field | Detail |
-|---|---|
-| Platform | CyberDefenders (blue team CTI challenge) |
-| Lab name | Yellow RAT Lab |
-| Artifact provided | `hash.txt` containing one SHA256 hash |
-| Sample hash | 30E527E45F50D2BA82865C5679A6FA998EE0A1755361AB01673950810D071C85 |
-| Victim organization | GlobalTech Industries |
-| Reported symptoms | Abnormal network traffic; redirected search queries |
-| Number of questions | 6 |
-| Core skill tested | Threat intelligence pivoting across public sources |
-
-### The Initial Clue You Are Given
-
-The hash is your only starting point, and that constraint is intentional. In a real engagement you rarely get a full forensic image on day one — you get an indicator and a deadline. Community reports from analysts who have finished the lab note that the sample has an existing sandbox report from mid-2022, which means much of your early work is reading rather than reversing.
-
-## Prerequisites and Tools for This Rat Lab Walkthrough
-
-You do not need malware analysis experience, a disassembler, or a paid subscription. You do need three browser tabs, a notes file, and the discipline to record where each answer came from.
-
-| Tool | Best For | Where Answers Hide |
+| If you want to... | Choose | First objective |
 |---|---|---|
-| Hybrid Analysis | Sandbox behavior reports and dropper activity | Falcon Sandbox reports; Suspicious Indicators → External Systems |
-| VirusTotal | File metadata, PE headers, community detections, URL reputation | Details tab; Behavior tab → Network Communication |
-| Red Canary Intelligence | Curated reporting on known malware families | Published threat reports with observed indicators |
-| Google / open-source research | Filling gaps and confirming vendor naming | Vendor blogs, research posts, community write-ups |
+| Escape and get outside | Lab Rat | Learn containment, find a breakable wall, clear three stages |
+| Create and test mutations | Scientist | Run a first experiment on a live subject |
+| Stop runners | Security | Recapture a runner and return them to a closed cell |
 
-A few setup habits pay off immediately:
+There is no official evidence that these are unlockable heroes. They are roles within the experience.
 
-- Create free accounts on the analysis platforms so you can search historical reports.
-- Keep a running table with columns for question, source, and evidence.
-- Never submit the same hash to a public sandbox if your lab rules forbid sharing — most CTI challenges are fine with it, but check first.
-- Use the browser's find function aggressively; long sandbox reports hide indicators deep in nested sections.
+## Step 2: Play the Role Objective
 
-Once those tabs are open, the Rat Lab walkthrough becomes a reading comprehension exercise more than a technical one.
+### Lab Rat route
 
-## Phase 1: Identify the Malware (Questions 1–4)
+1. Learn the containment area and watch security movement.
+2. Test the bite on a wall that reacts to it.
+3. Progress through all three stages.
+4. Reach the outside to satisfy the **Out of the Lab** badge.
 
-Start with Hybrid Analysis. Paste the hash into the report search and open an existing sandbox report for the sample — the Windows 7 32-bit run with a threat score in the mid-90s is the one most community reports point to. Within that report you will find the malware family that gives the lab its name, plus a linked third-party intelligence report worth bookmarking for later questions.
+The badge confirms the three-stage and bite objectives, but not a specific map layout. See the full [escape guide](/en/mechanics/rat-lab-escape).
 
-From there, pivot to VirusTotal and search the same hash. The Details tab becomes your primary workspace for the next three questions.
+### Scientist route
 
-| Question | What You Need | Where It Lives |
-|---|---|---|
-| 1. Malware family | The family name behind the abnormal traffic | Hybrid Analysis sandbox report and linked vendor reporting |
-| 2. Common filename | The name the sample typically ships as | VirusTotal → Details → Signature info → Original Name |
-| 3. Compilation timestamp | Build time of the executable | VirusTotal → Details → Portable Executable Info → Header |
-| 4. First submission date | When the community first saw the sample | VirusTotal → Details → History → First Submission |
+1. Join as a Scientist.
+2. Create a mutation.
+3. Test it on a live rat subject.
+4. Record the result and check for **For Science**.
+5. Keep experimenting toward **New Specimen**, which is awarded for logging a mutation nobody had recorded.
 
-Two of these answers are easy to miss. The common filename sits under the File Version Information header rather than in the detection list, and the first submission timestamp lives near the top of the Details tab in the History block — not in the behavior data. Scroll slowly and read the subheadings.
+See [Mutations and Experiments](/en/mechanics/rat-lab-experiments) for the verified loop.
 
-Understanding *why* each answer matters makes it stick. A compilation timestamp hints at how long the tooling has existed and whether you are dealing with a fresh build. The first submission date tells you how long the sample may have been circulating before anyone noticed. Both feed directly into an incident timeline.
+### Security route
 
-## Phase 2: Scope the Dropped Payload and C2 Server (Questions 5–6)
+1. Join as Security.
+2. Watch for rats attempting to leave containment.
+3. Recapture a runner and return them to a closed cell.
+4. Check for **Caught One**.
 
-The last two questions move from static metadata into what the malware actually does. VirusTotal may not carry the artifact data you need here, so switch to the linked Red Canary intelligence report you found in Phase 1.
+## Step 3: Use Badges as Checkpoints
 
-That report lists the `.dat` file the sample writes into the user's `AppData` folder — the persistence-adjacent artifact you would hunt for across every other workstation on the network. The same section typically names the C2 URL the sample reaches out to, which answers Question 6.
+The six official badges are a better progress checklist than a made-up level table. The first-join badge is **Test Subject**. The role-specific badges are **Out of the Lab**, **Through the Wall**, **For Science**, **New Specimen**, and **Caught One**. The complete requirements are on the [badge guide](/en/guide/rat-lab-achievements).
 
-| Question | What You Need | Where It Lives |
-|---|---|---|
-| 5. Dropped `.dat` file | Filename of the payload written to AppData | Red Canary report (not always present on VirusTotal) |
-| 6. C2 server | The URL or domain the sample beacons to | Red Canary report, then confirmed on VirusTotal and Hybrid Analysis |
+## What to Ignore
 
-Do not stop at one source for the C2 answer. The best habit this Rat Lab walkthrough teaches is triple confirmation.
+- A hash, VirusTotal, or CyberDefenders walkthrough.
+- A Portal 2 comic summary.
+- A Steam store page for a different game called *Lab Rat*.
+- A paid “tool unlock” or “mutation code” offer.
+- Exact keybinds, mutation percentages, or map coordinates without a developer source.
 
-## The Triple-Confirmation Habit
+## Related Pages
 
-Any single source can be wrong, stale, or mislabeled. When three independent platforms agree on the same indicator, your confidence in that indicator — and in the detection rule you build from it — rises sharply.
+- [Roles, tools, and session mechanics](/en/mechanics/rat-lab-game)
+- [How to escape](/en/mechanics/rat-lab-escape)
+- [How scientists experiment](/en/mechanics/rat-lab-experiments)
+- [Official community entry points](/en/community/rat-lab-community)
 
-| Source | Evidence Type | What It Confirms |
-|---|---|---|
-| Red Canary | Analyst-written incident report | Named C2 URL and the dropped artifact |
-| VirusTotal | Static strings plus URL reputation lookup | The same URL as a memory-pattern domain, with vendor detections |
-| Hybrid Analysis | Sandbox telemetry | The URL listed under External Systems with reputation context |
+## Source
 
-Community reports consistently highlight this triangulation as the single most transferable skill in the lab. In production, you will rarely get three sources — but the instinct to look for a second opinion is what separates a solid indicator of compromise (IOC) from a guess.
-
-## Rat Lab Walkthrough Answer Map
-
-Use this table as a checklist. It maps each question to the answer type and the source that resolves it, so you can verify your progress without spoiling the investigation for yourself.
-
-| # | Answer Type | Primary Source | Backup Source |
-|---|---|---|---|
-| 1 | Malware family name | Hybrid Analysis sandbox report | Linked vendor report |
-| 2 | Common/original filename | VirusTotal → Signature info | Sandbox file listings |
-| 3 | Compilation timestamp | VirusTotal → PE Header | Sandbox static data |
-| 4 | First submission date | VirusTotal → History | Community reporting |
-| 5 | Dropped `.dat` filename | Red Canary report | Sandbox dropped-files list |
-| 6 | C2 URL | Red Canary report | VirusTotal Behavior + Hybrid Analysis External Systems |
-
-A realistic time budget for a first attempt looks like this:
-
-| Phase | Typical Time | Deliverable |
-|---|---|---|
-| Setup and hash lookup | 5–10 minutes | Malware family identified |
-| Static metadata | 10–15 minutes | Filename, timestamp, first submission |
-| Behavior and IOC pivot | 15–20 minutes | Dropped file, C2 server |
-| Write-up and verification | 10 minutes | Confirmed, sourced answers |
-
-Most analysts finish somewhere between 40 and 60 minutes on a first run and closer to 20 minutes on a repeat attempt with the same methodology.
-
-## Common Mistakes to Avoid
-
-- **Answering from memory instead of evidence.** Every answer should be traceable to a specific tab or report section.
-- **Skipping the Red Canary report.** Without it, the dropped `.dat` file is nearly impossible to resolve.
-- **Confusing the compilation timestamp with the first submission date.** They are different fields in different sections of VirusTotal, and they tell different stories.
-- **Ignoring URL reputation.** Checking the C2 domain against VirusTotal adds context that strengthens your final report.
-- **Rushing the write-up.** A walkthrough is judged on the reasoning as much as the answers.
-
-If you want the official challenge set and scoring rules, the [CyberDefenders training platform](https://cyberdefenders.org/) is the authoritative source; other labs on the site use the same hash-first format and reinforce the same pivot skills.
-
-## FAQ
-
-**Is the Rat Lab walkthrough beginner-friendly?**
-Yes. If you can search a file hash and read a report, you can complete it. The challenge rewards careful reading far more than reverse-engineering skill, which is why it is often recommended as an entry point into CTI work.
-
-**Do I need paid accounts for the tools used in this Rat Lab walkthrough?**
-No. Free tiers on Hybrid Analysis and VirusTotal cover everything the six questions require. The third-party intelligence report referenced in the lab is publicly available.
-
-**How long does the Yellow RAT Lab take?**
-Community reports suggest 40–60 minutes for a first attempt, including reading time. Once you know the pivot order, a second run takes roughly 20 minutes.
-
-**What skills does the Rat Lab walkthrough actually build?**
-Hash pivoting, static metadata interpretation, sandbox report reading, IOC extraction, and the source-correlation habit that turns a single indicator into a defensible incident finding. Those are day-one SOC and CTI skills.
-
-Finish the lab, then write your own summary as if a teammate had to act on it. That final step is where the Rat Lab walkthrough turns from an exercise into a habit.
+- [Official Rat Lab page](https://www.roblox.com/games/105904727825849/Rat-Lab), checked 2026-11-02.
+- Roblox public game and badge APIs for universe 10598688389, checked 2026-11-02.
